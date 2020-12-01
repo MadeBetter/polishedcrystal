@@ -76,8 +76,8 @@ FacingStepDown1:
 
 FacingStepDown3:
 	db 4 ; #
-	db  0,  8, 0 | X_FLIP, $80
-	db  0,  0, 0 | X_FLIP, $81
+	db  0,  0, 0, $80
+	db  0,  8, 0, $81
 	db  8,  8, 2 | X_FLIP, $82
 	db  8,  0, 2 | X_FLIP, $83
 
@@ -98,8 +98,8 @@ FacingStepUp1:
 
 FacingStepUp3:
 	db 4 ; #
-	db  0,  8, 0 | X_FLIP, $84
-	db  0,  0, 0 | X_FLIP, $85
+	db  0,  0, 0, $84
+	db  0,  8, 0, $85
 	db  8,  8, 2 | X_FLIP, $86
 	db  8,  0, 2 | X_FLIP, $87
 
