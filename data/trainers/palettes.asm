@@ -4,7 +4,11 @@ TrainerPalettes:
 
 if !DEF(MONOCHROME)
 INCLUDE "gfx/trainers/cal.pal"
+KrisPalette:
 INCLUDE "gfx/trainers/carrie.pal"
+ChrisPalette:
+INCLUDE "gfx/trainers/skin.pal"
+CrysPalette:
 INCLUDE "gfx/trainers/jacky.pal"
 INCLUDE "gfx/trainers/euna.pal"
 INCLUDE "gfx/trainers/falkner.pal"
