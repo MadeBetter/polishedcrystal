@@ -8672,11 +8672,87 @@ InitBattleDisplay:
 	predef PlaceGraphic
 	call ApplyTilemapInVBlank
 	call HideSprites
+	call .LoadChrisColorLayerSprites  ; Restore color layer sprites after HideSprites
 	ld a, CGB_BATTLE_COLORS
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
 	xor a
 	ldh [hSCX], a
+	ret
+
+.LoadChrisColorLayerSprites:
+	; Only for Chris (male player)
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	ret z
+	ld a, [wPlayerGender]
+	and a ; PLAYER_MALE
+	ret nz
+
+	; Create color layer OAM sprites (overlaying the background tiles)
+	; Start at slot 12 to avoid being overwritten by enemy Pokemon (slots 0-11)
+	ld hl, wShadowOAM + 12 * 4
+	ld a, $55  ; Start tile for color layer
+	ldh [hMapObjectIndexBuffer], a
+	ld b, $6   ; 6 rows
+	ld d, 8 * 8   ; Starting Y position
+.color_outer
+	ld c, $6   ; 6 columns
+	ld e, 3 * 8  ; Starting X position (tilemap column 2 + sprite offset)
+.color_inner
+	; Check if current tile should be skipped (transparent tiles)
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55  ; Get tile number 0-35
+
+	; Skip tiles: 0, 1, 6, 7, 12, 18, 19, 24
+	cp 0
+	jr z, .skip_sprite
+	cp 1
+	jr z, .skip_sprite
+	cp 6
+	jr z, .skip_sprite
+	cp 7
+	jr z, .skip_sprite
+	cp 12
+	jr z, .skip_sprite
+	cp 18
+	jr z, .skip_sprite
+	cp 19
+	jr z, .skip_sprite
+	cp 24
+	jr z, .skip_sprite
+
+	; Create sprite for this tile
+	ld a, d
+	ld [hli], a  ; Y position
+	ld a, e
+	ld [hli], a  ; X position
+	ldh a, [hMapObjectIndexBuffer]
+	ld [hli], a  ; Tile index
+	inc a
+	ldh [hMapObjectIndexBuffer], a
+	ld a, $0  ; Use OBJ palette 0 (enemy colors)
+	ld [hli], a  ; Attributes
+	jr .next_position
+
+.skip_sprite
+	; Don't create sprite, but still increment tile index
+	ldh a, [hMapObjectIndexBuffer]
+	inc a
+	ldh [hMapObjectIndexBuffer], a
+
+.next_position
+	; Increment X position
+	ld a, e
+	add $8
+	ld e, a  ; Increment X (move right)
+	dec c
+	jr nz, .color_inner
+	ld a, d
+	add $8
+	ld d, a  ; Increment Y (move down)
+	dec b
+	jr nz, .color_outer
 	ret
 
 .BlankBGMap:
@@ -8746,7 +8822,22 @@ CopyBackpic:
 	ldh [hGraphicStartTile], a
 	hlcoord 2, 6
 	lb bc, 6, 6
-	predef_jump PlaceGraphic
+	predef PlaceGraphic
+
+	; Load color layer for Chris
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	ret z ; Don't load color layer for Lyra
+	ld a, [wPlayerGender]
+	and a ; PLAYER_MALE
+	ret nz ; Only for Chris
+
+	; Load chris_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
+	ld hl, ChrisBackpicColor
+	ld de, vTiles0 tile $55
+	lb bc, BANK("Trainer Backpics"), 6 * 6
+	call DecompressRequest2bpp
+	ret
 
 .LoadTrainerBackpicAsOAM:
 	ld hl, wShadowOAM
