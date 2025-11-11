@@ -8704,28 +8704,100 @@ InitBattleDisplay:
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55  ; Get tile number 0-35
 
-	; Skip tiles: 0, 1, 6, 7, 12, 18, 19, 24
+	; Skip white tiles: 0, 1, 5, 6, 7, 11, 12, 18, 19, 21, 23, 24, 30
 	cp 0
-	jr z, .skip_sprite
+	jp z, .skip_sprite
 	cp 1
-	jr z, .skip_sprite
+	jp z, .skip_sprite
+	cp 5
+	jp z, .skip_sprite
 	cp 6
-	jr z, .skip_sprite
+	jp z, .skip_sprite
 	cp 7
-	jr z, .skip_sprite
+	jp z, .skip_sprite
+	cp 11
+	jp z, .skip_sprite
 	cp 12
-	jr z, .skip_sprite
+	jp z, .skip_sprite
 	cp 18
-	jr z, .skip_sprite
+	jp z, .skip_sprite
 	cp 19
-	jr z, .skip_sprite
+	jp z, .skip_sprite
+	cp 21
+	jp z, .skip_sprite
+	cp 23
+	jp z, .skip_sprite
 	cp 24
-	jr z, .skip_sprite
+	jp z, .skip_sprite
+	cp 30
+	jp z, .skip_sprite
 
 	; Create sprite for this tile
+	; Y position (tile 15: +1px down)
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+	cp 15
 	ld a, d
+	jr nz, .no_y_adjust
+	inc a
+.no_y_adjust
 	ld [hli], a  ; Y position
-	ld a, e
+
+	; X position adjustments
+	push de ; Save D, E (Y, X positions)
+	push bc ; Save B, C (row/column counters)
+
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+	ld b, a  ; Tile number in b
+	ld a, e  ; X position in a
+
+	; Check tile 4: +1px right
+	ld c, a  ; Save X in c
+	ld a, b
+	cp 4
+	ld a, c
+	jr nz, .check_tile10
+	inc a
+	jr .x_adjust_done
+
+.check_tile10
+	; Check tile 10: +5px right
+	ld c, a
+	ld a, b
+	cp 10
+	ld a, c
+	jr nz, .check_tile22
+	add 5
+	jr .x_adjust_done
+
+.check_tile22
+	; Check tile 22: +2px right
+	ld c, a
+	ld a, b
+	cp 22
+	ld a, c
+	jr nz, .check_tile31_34
+	add 2
+	jr .x_adjust_done
+
+.check_tile31_34
+	; Check tiles 31-34: -1px left
+	ld c, a
+	ld a, b
+	cp 31
+	jr c, .x_restore
+	cp 35
+	jr nc, .x_restore
+	ld a, c
+	dec a
+	jr .x_adjust_done
+
+.x_restore
+	ld a, c
+.x_adjust_done
+	pop bc ; Restore B, C
+	pop de ; Restore D, E
 	ld [hli], a  ; X position
 	ldh a, [hMapObjectIndexBuffer]
 	ld [hli], a  ; Tile index
@@ -8747,12 +8819,12 @@ InitBattleDisplay:
 	add $8
 	ld e, a  ; Increment X (move right)
 	dec c
-	jr nz, .color_inner
+	jp nz, .color_inner
 	ld a, d
 	add $8
 	ld d, a  ; Increment Y (move down)
 	dec b
-	jr nz, .color_outer
+	jp nz, .color_outer
 	ret
 
 .BlankBGMap:
