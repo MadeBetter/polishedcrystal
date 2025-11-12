@@ -8689,6 +8689,27 @@ InitBattleDisplay:
 	and a ; PLAYER_MALE
 	ret nz
 
+	; Load chris_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
+	; Ensure we're writing to VRAM bank 0
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld hl, ChrisBackpicColor
+	ld de, vTiles0 tile $55
+	lb bc, BANK("Trainer Backpics"), 6 * 6
+	call DecompressRequest2bpp
+	; Wait for any remaining tile copy requests to complete
+.wait_decompress
+	call DelayFrame
+	ldh a, [hRequested2bpp]
+	and a
+	jr nz, .wait_decompress
+
+	pop af
+	ldh [rVBK], a
+
 	; Create color layer OAM sprites (overlaying the background tiles)
 	; Start at slot 12 to avoid being overwritten by enemy Pokemon (slots 0-11)
 	ld hl, wShadowOAM + 12 * 4
@@ -8896,19 +8917,6 @@ CopyBackpic:
 	lb bc, 6, 6
 	predef PlaceGraphic
 
-	; Load color layer for Chris
-	ld a, [wBattleType]
-	cp BATTLETYPE_TUTORIAL
-	ret z ; Don't load color layer for Lyra
-	ld a, [wPlayerGender]
-	and a ; PLAYER_MALE
-	ret nz ; Only for Chris
-
-	; Load chris_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
-	ld hl, ChrisBackpicColor
-	ld de, vTiles0 tile $55
-	lb bc, BANK("Trainer Backpics"), 6 * 6
-	call DecompressRequest2bpp
 	ret
 
 .LoadTrainerBackpicAsOAM:
