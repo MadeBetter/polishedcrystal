@@ -12,14 +12,10 @@ ShowPlayerMonsRemaining:
 	call DrawPlayerPartyIconHUDBorder
 	ld hl, wPartyCount
 	call StageBallTilesData
-	; ldpixel wPlaceBallsX, 12, 12
-	ld a, 12 * 8
-	ld hl, wPlaceBallsX
-	ld [hli], a
-	ld [hl], a
-	ld a, 8
+	; Player balls at tilemap (11, 10)
+	hlcoord 11, 10
+	ld a, 1
 	ld [wPlaceBallsDirection], a
-	ld hl, wShadowOAM
 	jmp LoadTrainerHudOAM
 
 EnemySwitch_TrainerHud:
@@ -32,14 +28,10 @@ ShowOTTrainerMonsRemaining:
 	call DrawEnemyPartyIconHUDBorder
 	ld hl, wOTPartyCount
 	call StageBallTilesData
-	; ldpixel wPlaceBallsX, 9, 4
-	ld hl, wPlaceBallsX
-	ld a, 9 * 8
-	ld [hli], a
-	ld [hl], 4 * 8
-	ld a, -8
+	; Enemy balls at tilemap (8, 2)
+	hlcoord 8, 2
+	ld a, -1
 	ld [wPlaceBallsDirection], a
-	ld hl, wShadowOAM + PARTY_LENGTH * 4
 	jmp LoadTrainerHudOAM
 
 StageBallTilesData:
@@ -55,13 +47,13 @@ StageBallTilesData:
 	push bc
 	ld a, b
 	cp c
-	ld b, $34 ; empty slot
+	ld b, $82 ; <BALL_EMPTY>, empty slot
 	jr nc, .load
 
 	assert MON_HP == MON_STATUS + 2
 	inc hl
 	inc hl ; points to w(OT)PartyMon1HP
-	dec b ; $33, fainted
+	dec b ; $81, <BALL_FAINT>, fainted
 	ld a, [hli]
 	and a
 	jr nz, .got_hp
@@ -73,11 +65,11 @@ StageBallTilesData:
 	dec hl
 	jr z, .load
 
-	dec b ; $32, statused
+	dec b ; $80, <BALL_STATUS>, statused
 	ld a, [hl]
 	and a
 	jr nz, .load
-	dec b ; $31, normal
+	dec b ; $7f, <BALL_NORMAL>, normal
 
 .load
 	ld a, b
@@ -160,49 +152,51 @@ LinkBattle_TrainerHuds:
 	call LoadBallIconGFX
 	ld hl, wPartyCount
 	call StageBallTilesData
-	ld hl, wPlaceBallsX
-	ld a, 10 * 8
-	ld [hli], a
-	ld [hl], 8 * 8
-	ld a, $8
+	; Player balls at tilemap (9, 6)
+	hlcoord 9, 6
+	ld a, 1
 	ld [wPlaceBallsDirection], a
-	ld hl, wShadowOAM
 	call LoadTrainerHudOAM
 
 	ld hl, wOTPartyCount
 	call StageBallTilesData
-	ld hl, wPlaceBallsX
-	ld a, 10 * 8
-	ld [hli], a
-	ld [hl], 13 * 8
-	ld hl, wShadowOAM + PARTY_LENGTH * 4
+	; Enemy balls at tilemap (9, 11)
+	hlcoord 9, 11
+	ld a, 1
+	ld [wPlaceBallsDirection], a
 	; fallthrough
 
 LoadTrainerHudOAM:
+; Write party ball icons as BG tiles to tilemap
+; hl = tilemap position
+; wPlaceBallsDirection = 1 (right) or -1 (left)
+; wBuffer1 = 6 ball tile IDs from StageBallTilesData
+	push bc
 	ld de, wBuffer1
-	ld c, PARTY_LENGTH
-.loop
-	ld a, [wPlaceBallsY]
-	ld [hli], a
-	ld a, [wPlaceBallsX]
-	ld [hli], a
-	ld a, [de]
-	ld [hli], a
-	ld a, PAL_BATTLE_OB_YELLOW
-	ld [hli], a
-	ld a, [wPlaceBallsX]
-	ld b, a
 	ld a, [wPlaceBallsDirection]
-	add b
-	ld [wPlaceBallsX], a
+	ld c, a
+	ld b, PARTY_LENGTH
+.loop
+	ld a, [de]
+	ld [hl], a
 	inc de
-	dec c
+
+	; Move to next tilemap position
+	ld a, c
+	add l
+	ld l, a
+	adc h
+	sub l
+	ld h, a
+
+	dec b
 	jr nz, .loop
+	pop bc
 	ret
 
 LoadBallIconGFX:
 	ld de, .gfx
-	ld hl, vTiles0 tile $31
+	ld hl, vTiles2 tile $7f
 	lb bc, BANK(LoadBallIconGFX), 4
 	jmp Get2bpp
 
