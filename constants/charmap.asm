@@ -77,11 +77,11 @@ DEF BATTLEEXTRA_GFX_START EQU $5f
 	charmap "◣",        $71
 	charmap "<NONO>",   $72
 
-	; Party ball status icons
-	charmap "<BALL_NORMAL>", $7f
-	charmap "<BALL_STATUS>", $80
-	charmap "<BALL_FAINT>",  $81
-	charmap "<BALL_EMPTY>",  $82
+	; Party ball status icons (reuse HP bar tiles during battle intro)
+	charmap "<BALL_NORMAL>", $63
+	charmap "<BALL_STATUS>", $64
+	charmap "<BALL_FAINT>",  $65
+	charmap "<BALL_EMPTY>",  $66
 
 	charmap "<XP1>",    $73
 	charmap "<XP2>",    $74

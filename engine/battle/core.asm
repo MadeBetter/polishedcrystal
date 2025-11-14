@@ -7977,6 +7977,14 @@ BattleIntro:
 	lb bc, 4, 12
 	call ClearBox
 	call ClearSprites
+	; Clear ball icon tilemap positions to prevent visual glitch
+	hlcoord 11, 10
+	lb bc, 1, 6  ; 1 row, 6 columns (the 6 ball positions)
+	call ClearBox
+	; Wait for tilemap to fully transfer to VRAM
+	call ApplyTilemapInVBlank
+	; Now reload HP bar tiles
+	call _LoadBattleFontsHPBar
 	ld a, [wBattleMode]
 	dec a
 	call z, UpdateEnemyHUD

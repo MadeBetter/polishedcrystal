@@ -2,6 +2,7 @@ BattleStart_TrainerHuds:
 	ld a, $e4
 	ldh [rOBP0], a
 	call LoadBallIconGFX
+	call LoadBallIconPalettes
 	call ShowPlayerMonsRemaining
 	ld a, [wBattleMode]
 	dec a
@@ -47,13 +48,13 @@ StageBallTilesData:
 	push bc
 	ld a, b
 	cp c
-	ld b, $82 ; <BALL_EMPTY>, empty slot
+	ld b, $66 ; <BALL_EMPTY>, empty slot
 	jr nc, .load
 
 	assert MON_HP == MON_STATUS + 2
 	inc hl
 	inc hl ; points to w(OT)PartyMon1HP
-	dec b ; $81, <BALL_FAINT>, fainted
+	dec b ; $65, <BALL_FAINT>, fainted
 	ld a, [hli]
 	and a
 	jr nz, .got_hp
@@ -65,11 +66,11 @@ StageBallTilesData:
 	dec hl
 	jr z, .load
 
-	dec b ; $80, <BALL_STATUS>, statused
+	dec b ; $64, <BALL_STATUS>, statused
 	ld a, [hl]
 	and a
 	jr nz, .load
-	dec b ; $7f, <BALL_NORMAL>, normal
+	dec b ; $63, <BALL_NORMAL>, normal
 
 .load
 	ld a, b
@@ -172,36 +173,84 @@ LoadTrainerHudOAM:
 ; wPlaceBallsDirection = 1 (right) or -1 (left)
 ; wBuffer1 = 6 ball tile IDs from StageBallTilesData
 	push bc
+	push de
 	ld de, wBuffer1
 	ld a, [wPlaceBallsDirection]
 	ld c, a
 	ld b, PARTY_LENGTH
 .loop
+	; Write ball tile
 	ld a, [de]
 	ld [hl], a
 	inc de
 
+	; Check if this is the last ball
+	dec b
+	jr z, .done
+
 	; Move to next tilemap position
 	ld a, c
-	add l
-	ld l, a
-	adc h
-	sub l
-	ld h, a
+	cp 1
+	jr z, .move_right
 
-	dec b
-	jr nz, .loop
+	; Move left (direction = -1)
+	dec hl
+	jr .loop
+
+.move_right
+	inc hl
+	jr .loop
+
+.done
+	pop de
 	pop bc
 	ret
 
 LoadBallIconGFX:
 	ld de, .gfx
-	ld hl, vTiles2 tile $7f
+	ld hl, vTiles2 tile $63
 	lb bc, BANK(LoadBallIconGFX), 4
 	jmp Get2bpp
 
 .gfx
 INCBIN "gfx/battle/balls.2bpp"
+
+LoadBallIconPalettes:
+; Load yellow ball palette into BG palette slots 2 and 3
+; Uses the yellow palette from battle_anims.pal
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wBGPals2)
+	ldh [rSVBK], a
+
+	; Load into slot 2 (enemy HP bar slot)
+	ld hl, BallIconPalette
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP
+	ld bc, 1 palettes
+	call CopyBytes
+
+	; Load into slot 3 (player HP bar slot)
+	ld hl, BallIconPalette
+	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP
+	ld bc, 1 palettes
+	call CopyBytes
+
+	pop af
+	ldh [rSVBK], a
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+BallIconPalette:
+; Yellow palette from battle_anims.pal (OBJ palette 3)
+if !DEF(MONOCHROME)
+	RGB 31, 31, 31  ; white
+	RGB 31, 31, 07  ; bright yellow
+	RGB 31, 16, 01  ; orange
+	RGB 00, 00, 00  ; black
+else
+	MONOCHROME_RGB_FOUR
+endc
 
 _ShowLinkBattleParticipants:
 	call ClearBGPalettes
