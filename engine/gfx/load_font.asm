@@ -75,6 +75,7 @@ _LoadFrame::
 
 LoadBattleFontsHPBar:
 	call _LoadFontsBattleExtra
+	ret
 
 LoadSummaryStatusIcon:
 	push de
