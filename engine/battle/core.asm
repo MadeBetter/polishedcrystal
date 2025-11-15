@@ -2755,9 +2755,25 @@ SlideEnemyPicOut:
 SlideBattlePicOut:
 	ldh [hMapObjectIndexBuffer], a
 	ld c, a
+
+	; Check if we need to slide color layer (player slide during initial intro)
+	ld a, [wPlayerBackpicVisible]
+	ld d, a  ; Store in d register for the loop
+
 .loop
 	push bc
+	push de  ; Preserve color layer flag
 	push hl
+
+	; Slide color layer OAM if needed (before BG tiles)
+	ld a, d
+	and a
+	jr z, .skip_color_layer_slide
+	ldh a, [hMapObjectIndexBuffer]
+	cp 9  ; Only for player slide
+	call z, .SlideColorLayerFrame
+.skip_color_layer_slide
+
 	ld b, $7
 .loop2
 	push hl
@@ -2770,6 +2786,7 @@ SlideBattlePicOut:
 	ld c, 2
 	call DelayFrames
 	pop hl
+	pop de  ; Restore color layer flag
 	pop bc
 	dec c
 	jr nz, .loop
@@ -2780,6 +2797,27 @@ SlideBattlePicOut:
 	; Clear flag indicating player back pic is no longer visible
 	xor a
 	ld [wPlayerBackpicVisible], a
+	ret
+
+.SlideColorLayerFrame:
+	; Slide color layer OAM sprites left by 8 pixels (1 tile width)
+	; Only affects slots 0-22 (the Chris back pic color layer)
+	push bc
+	push hl
+	ld hl, wShadowOAM + 1  ; Start at X coordinate of first sprite (offset +1)
+	ld b, 23  ; 23 color layer sprites
+.color_slide_loop
+	ld a, [hl]  ; Get current X coordinate
+	sub 8       ; Move left by 8 pixels
+	ld [hl], a  ; Store new X coordinate
+	inc hl
+	inc hl
+	inc hl
+	inc hl      ; Move to next sprite (+4 bytes)
+	dec b
+	jr nz, .color_slide_loop
+	pop hl
+	pop bc
 	ret
 
 .DoFrame:
