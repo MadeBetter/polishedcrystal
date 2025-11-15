@@ -82,7 +82,8 @@ _LoadFrame::
 
 LoadBattleFontsHPBar:
 	call _LoadFontsBattleExtra
-	; fallthrough
+	ret
+	;b8c4d15d4 (Fixed bug where battle animations (like burn) would leave the last frame visible on screen until the next animation played. Reverted previous attempt to use ClearNormalSprites in animation cleanup, which was preventing proper sprite clearing.)
 
 LoadSummaryStatusIcon:
 	push de

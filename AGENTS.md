@@ -271,4 +271,298 @@ Adjust Chris back sprite color layer tile positions
 
 ---
 
-Last Updated: 2025-11-12
+# Ball Icon Display System - Background Tile Conversion Attempt
+
+## Objective
+
+Attempted to convert the ball icon UI (balls.png) from OAM sprites to background tiles to free up OAM slots and allow the Chris color layer to remain visible longer during battle transitions.
+
+## Background
+
+The original implementation uses OAM sprites for displaying party status balls:
+- **Location**: `engine/battle/trainer_huds.asm`
+- **Graphics**: `gfx/battle/balls.2bpp` (4 tiles: normal, status, faint, empty)
+- **OAM slots**: 6 sprites per party (player uses slots 0-23, enemy uses slots 24-47)
+- **Palette**: OBJ palette 3 (yellow/orange)
+
+## Technical Challenges Encountered
+
+### 1. VRAM Tileset Addressing Modes
+
+**Discovery**: The game uses $8800 tileset mode (signed addressing), not $8000 mode (unsigned).
+
+- In $8000 mode: tile $31 → VRAM address $8310
+- In $8800 mode: tile $31 → VRAM address $9310 (vTiles2 tile $31)
+
+**Initial problem**: Loaded graphics to `vTiles0 tile $31` but game expected `vTiles2 tile $31`
+
+**Solution attempted**: Changed load location from `vTiles0 tile $31` to `vTiles2 tile $7B`
+
+### 2. Tile Number Conflicts
+
+**Problem**: Player backpic uses tiles starting at $31, conflicting with ball graphics at tiles $31-$34.
+
+**Manifestation**: Mystery vertical ball icons appeared at column 2, rows 6-9 using tiles $31-$34 from the backpic data.
+
+**Solution attempted**: Moved ball tiles to $7B-$7E range to avoid conflict.
+
+### 3. Palette System Complexity
+
+**Challenge**: Multiple palette buffer systems:
+- `wBGPals1`: Staging buffer for palette data
+- `wBGPals2`: Display buffer (Bank 5 WRAM)
+- Both buffers needed for proper display
+
+**Initial problem**: Ball palette loaded to palette 3 got overwritten by `_CGB_BattleColors` function.
+
+**Solution attempted**: Load ball palette into both BG palettes 2 and 3 in wBGPals2 display buffer.
+
+### 4. Coordinate Conversion Issues
+
+**Challenge**: Converting from OAM sprite coordinates to tilemap coordinates:
+
+```
+OAM coordinates:
+- Hardware offsets: Y-16, X-8
+- Pixel-based positioning
+
+Tilemap coordinates:
+- No hardware offsets
+- Tile-based addressing (divide by 8)
+- wTilemap buffer: 20×18 tiles
+- VRAM tilemap: 32×32 tiles
+```
+
+**Initial problem**: First implementation caused text box scrambling with "random scrambled tiles that keep moving around."
+
+**Solution attempted**: Rewrote coordinate calculation with proper offset removal and register preservation.
+
+### 5. Memory Corruption via wBuffer1
+
+**Critical Issue**: Used `wBuffer1` to stage ball tile data.
+
+**Problem**: wBuffer1 is shared scratch memory used by multiple game systems:
+- Text rendering
+- Menu systems
+- Battle animations
+- Item selection
+
+**Manifestation**:
+- Blank battle menu area
+- Garbage text ("eaeao...")
+- Screen scrolling by itself
+- Move-learning screen appearing incorrectly
+- Corruption persisted even after completely disabling ball code with `ret`
+
+**Root cause**: Even disabled code changed function addresses in the compiled ROM, affecting jump tables and relative addressing throughout the battle system.
+
+### 6. ApplyTilemapInVBlank Timing
+
+**Problem**: Calling `ApplyTilemapInVBlank` during ball display interfered with other screen content.
+
+**Effect**: Battle interface elements would disappear or become scrambled.
+
+## Implementation Attempted (REVERTED)
+
+### Modified Files
+
+```
+engine/battle/trainer_huds.asm  - Ball display and palette loading
+engine/battle/core.asm          - Removed ClearSprites calls
+home/clear_sprites.asm          - (read for reference only)
+```
+
+### Code Changes Made
+
+**1. LoadBallPaletteIntoBGPal3 (REVERTED)**
+
+```asm
+LoadBallPaletteIntoBGPal3:
+; Load yellow ball palette into BG palettes 2 and 3
+    ldh a, [rSVBK]
+    push af
+    ld a, $5 ; Bank 5 for wBGPals2
+    ldh [rSVBK], a
+
+    ; Load into palette 3 (player HP bar slot)
+    ld hl, .BallPalette
+    ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP
+    ld bc, 1 palettes
+    call CopyBytes
+
+    ; Load into palette 2 (enemy HP bar slot)
+    ld hl, .BallPalette
+    ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP
+    ld bc, 1 palettes
+    call CopyBytes
+
+    pop af
+    ldh [rSVBK], a
+    ld a, TRUE
+    ldh [hCGBPalUpdate], a
+    ret
+
+.BallPalette:
+    RGB 31, 31, 31 ; white
+    RGB 31, 31, 07 ; yellow
+    RGB 31, 16, 01 ; orange
+    RGB 00, 00, 00 ; black
+```
+
+**2. LoadTrainerHudOAM Rewrite (REVERTED)**
+
+Original function created OAM sprites. Attempted replacement wrote background tiles to wTilemap and wAttrmap, then called `ApplyTilemapInVBlank`.
+
+**3. Tile Number Changes (REVERTED)**
+
+- Changed `StageBallTilesData` to use $7B-$7E instead of $31-$34
+- Changed `LoadBallIconGFX` to load to `vTiles2 tile $7B`
+
+**4. ClearSprites Removal (REVERTED)**
+
+Removed ClearSprites calls from `engine/battle/core.asm` to preserve color layer longer.
+
+## Debugging Process
+
+### Tools Used
+
+1. **SameBoy Emulator**
+   - Memory examination (`examine $address`)
+   - Breakpoint and watchpoint support
+   - Symbol map integration
+   - VRAM tilemap/tileset viewer
+
+2. **Debugging Commands**
+
+```
+examine $994b           ; Check tilemap tile ID
+examine $D94b          ; Check attrmap palette
+examine $dd18          ; Check wBGPals2 palette data
+examine $86f0          ; Check VRAM tile graphics
+```
+
+3. **VRAM Viewer**
+
+Critical for discovering $8800 vs $8000 tileset mode issue. Could toggle between modes to see where graphics actually loaded.
+
+### Lessons Learned
+
+1. **Always check tileset addressing mode** - Game Boy supports two modes, check which one the game uses
+2. **Shared memory is dangerous** - Never use wBuffer1/scratch memory for persistent data
+3. **Function address stability matters** - Even disabled code can break a ROM if it shifts function locations
+4. **VRAM timing is critical** - `ApplyTilemapInVBlank` can interfere with concurrent screen updates
+5. **Multiple palette buffers exist** - Check both staging and display buffers
+6. **Tile number conflicts are subtle** - Graphics may load correctly but display wrong tiles
+
+## Why We Reverted
+
+1. **Memory corruption persisted** even with all ball code disabled via `ret`
+2. **Function address changes** broke other battle system components
+3. **Shared wBuffer1 memory** caused unpredictable corruption across multiple game systems
+4. **Complex timing issues** with VRAM transfers difficult to debug
+5. **ApplyTilemapInVBlank conflicts** with battle interface rendering
+
+## Current Status
+
+**All changes reverted** to original working code via:
+
+```bash
+git checkout HEAD -- engine/battle/trainer_huds.asm engine/battle/core.asm home/clear_sprites.asm
+```
+
+ROM builds successfully and runs without corruption.
+
+## Alternative Approaches (Not Implemented)
+
+### Option 1: Keep Original OAM Sprite Approach
+
+**Pros**:
+- Already works reliably
+- No memory conflicts
+- Simpler timing
+
+**Cons**:
+- Uses 12 OAM slots (6 per party)
+- Conflicts with Chris color layer display
+
+### Option 2: Dedicated Memory Allocation
+
+**Idea**: Allocate dedicated WRAM space instead of using wBuffer1
+
+**Challenges**:
+- Requires finding or creating free WRAM space
+- May still have timing issues with ApplyTilemapInVBlank
+- Doesn't solve function address stability problem
+
+### Option 3: Direct VRAM Write Without Buffering
+
+**Idea**: Write tiles directly to VRAM during VBlank without using wTilemap buffer
+
+**Challenges**:
+- More complex VBlank handling
+- Must carefully manage VRAM access timing
+- Risk of LCD artifacts if timing incorrect
+
+## Key Technical Insights
+
+### VRAM Addressing Modes
+
+```
+$8000 mode (LCDC bit 4 = 1):
+  Unsigned: tiles $00-$FF
+  Tile $00 → $8000
+  Tile $31 → $8310
+  Tile $FF → $8FF0
+
+$8800 mode (LCDC bit 4 = 0):
+  Signed: tiles $80-$FF, then $00-$7F
+  Tile $00 → $9000
+  Tile $31 → $9310 (vTiles2 tile $31)
+  Tile $7B → $97B0 (vTiles2 tile $7B)
+```
+
+### Palette Buffer System
+
+```
+wBGPals1 (Staging):
+  - Where game code typically writes
+  - 8 palettes × 4 colors × 2 bytes = 64 bytes
+
+wBGPals2 (Display - Bank 5):
+  - Copied to hardware during VBlank
+  - Must match wBGPals1 for colors to appear
+  - Requires WRAM bank switching (rSVBK = 5)
+```
+
+### OAM Sprite Structure
+
+```
+Each sprite: 4 bytes
+  Byte 0: Y position (+ 16 offset)
+  Byte 1: X position (+ 8 offset)
+  Byte 2: Tile number
+  Byte 3: Attributes (palette, flip, priority)
+```
+
+## Pending Tasks
+
+1. **Fix color layer cleared during opponent slide-out** - ClearSprites still called too early
+2. **Investigate alternative ball display method** - If OAM slot conflict remains an issue
+
+## References
+
+### VRAM Documentation
+- Pan Docs: VRAM Tile Data (https://gbdev.io/pandocs/Tile_Data.html)
+- Pan Docs: VRAM Tile Maps (https://gbdev.io/pandocs/Tile_Maps.html)
+
+### Palette System
+- Pan Docs: Palettes (https://gbdev.io/pandocs/Palettes.html)
+- RGBDS: RGB color macro (https://rgbds.gbdev.io/docs/v0.8.0/rgbasm.5#RGB_and_RGB8)
+
+### Assembly Programming
+- RGBDS: Instruction set (https://rgbds.gbdev.io/docs/gbz80.7)
+- Game Boy CPU Manual: http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf
+
+---
+
+Last Updated: 2025-11-14

@@ -81,6 +81,7 @@ DoBattle:
 	inc a
 	ld [wPlayerSwitchTarget], a
 	call SlidePlayerPicOut
+	call ClearSprites  ; Clear color layer after player slides out
 	call SetPlayerTurn
 	call SendInUserPkmn
 	ld a, [wLinkMode]
@@ -1406,7 +1407,9 @@ endr
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	call ClearSprites
+	ld a, (OAM_COUNT - 35) * 4  ; Clear only sprites 35-39, protect Chris color layer (slots 0-34)
+	ldh [hUsedOAMIndex], a
+	call ClearNormalSprites
 
 	ld a, [wBattleMode]
 	dec a
@@ -1419,7 +1422,9 @@ endr
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	call ClearSprites
+	ld a, (OAM_COUNT - 35) * 4  ; Clear only sprites 35-39, protect Chris color layer (slots 0-34)
+	ldh [hUsedOAMIndex], a
+	call ClearNormalSprites
 
 .send_out_player_mon
 	call SendOutPlayerMon
@@ -8026,7 +8031,9 @@ BattleIntro:
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	call ClearSprites
+	ld a, (OAM_COUNT - 35) * 4  ; Clear only sprites 35-39, protect Chris color layer (slots 0-34)
+	ldh [hUsedOAMIndex], a
+	call ClearNormalSprites
 	; Clear ball icon tilemap positions to prevent visual glitch
 	hlcoord 11, 10
 	lb bc, 1, 6  ; 1 row, 6 columns (the 6 ball positions)
@@ -8767,7 +8774,9 @@ InitBattleDisplay:
 
 	pop af
 	ldh [rVBK], a
+	; fallthrough to create OAM sprites
 
+.CreateColorLayerOAM:
 	; Create color layer OAM sprites (overlaying the background tiles)
 	; Start at slot 12 to avoid being overwritten by enemy Pokemon (slots 0-11)
 	ld hl, wShadowOAM + 12 * 4
