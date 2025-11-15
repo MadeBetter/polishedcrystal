@@ -1407,7 +1407,7 @@ endr
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	ld a, (OAM_COUNT - 35) * 4  ; Clear only sprites 35-39, protect Chris color layer (slots 0-34)
+	ld a, 23 * 4  ; Clear only sprites 23-39, protect Chris color layer (slots 0-22)
 	ldh [hUsedOAMIndex], a
 	call ClearNormalSprites
 
@@ -1422,7 +1422,7 @@ endr
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	ld a, (OAM_COUNT - 35) * 4  ; Clear only sprites 35-39, protect Chris color layer (slots 0-34)
+	ld a, 23 * 4  ; Clear only sprites 23-39, protect Chris color layer (slots 0-22)
 	ldh [hUsedOAMIndex], a
 	call ClearNormalSprites
 
@@ -2808,6 +2808,13 @@ SlideBattlePicOut:
 	pop bc
 	dec c
 	jr nz, .loop
+	; Clear flag only for player slide (a=9), not enemy slide (a=8)
+	ldh a, [hMapObjectIndexBuffer]
+	cp 9
+	ret nz  ; Return if enemy slide, don't clear flag
+	; Clear flag indicating player back pic is no longer visible
+	xor a
+	ld [wPlayerBackpicVisible], a
 	ret
 
 .DoFrame:
@@ -4580,7 +4587,7 @@ BattleMenuPKMN_Loop:
 	xor a
 	ldh [hBGMapMode], a
 	call MenuBox
-	call UpdateSprites
+	call UpdateSprites_PreserveColorLayer
 	call PlaceVerticalMenuItems
 	call ApplyTilemapInVBlank
 	call CopyMenuData2
@@ -7988,6 +7995,9 @@ BattleIntro:
 	farcall FindFirstAliveMonAndStartBattle
 	call DisableSpriteUpdates
 	farcall ClearBattleRAM
+	; Initialize back pic visibility flag to FALSE at battle start
+	xor a
+	ld [wPlayerBackpicVisible], a
 	call InitEnemy
 	call BackUpBGMap2
 	ld a, CGB_BATTLE_GRAYSCALE
@@ -8031,7 +8041,7 @@ BattleIntro:
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	ld a, (OAM_COUNT - 35) * 4  ; Clear only sprites 35-39, protect Chris color layer (slots 0-34)
+	ld a, 23 * 4  ; Clear only sprites 23-39, protect Chris color layer (slots 0-22)
 	ldh [hUsedOAMIndex], a
 	call ClearNormalSprites
 	; Clear ball icon tilemap positions to prevent visual glitch
@@ -8158,6 +8168,7 @@ ExitBattle:
 	xor a
 	ld [wLowHealthAlarm], a
 	ld [wBattleMode], a
+	ld [wPlayerBackpicVisible], a  ; Clear flag at battle end
 	ld [wBattleType], a
 	ld [wAttackMissed], a
 	ld [wTempWildMonSpecies], a
@@ -8743,6 +8754,9 @@ InitBattleDisplay:
 	call SetDefaultBGPAndOBP
 	xor a
 	ldh [hSCX], a
+	; Set flag indicating player back pic is now visible (for color layer preservation)
+	ld a, TRUE
+	ld [wPlayerBackpicVisible], a
 	ret
 
 .LoadChrisColorLayerSprites:
@@ -8778,8 +8792,8 @@ InitBattleDisplay:
 
 .CreateColorLayerOAM:
 	; Create color layer OAM sprites (overlaying the background tiles)
-	; Start at slot 12 to avoid being overwritten by enemy Pokemon (slots 0-11)
-	ld hl, wShadowOAM + 12 * 4
+	; Uses slots 0-22 (23 sprites total for 6×6 grid, minus 13 hidden tiles)
+	ld hl, wShadowOAM + 0 * 4
 	ld a, $55  ; Start tile for color layer
 	ldh [hMapObjectIndexBuffer], a
 	ld b, $6   ; 6 rows
