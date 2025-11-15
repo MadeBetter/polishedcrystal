@@ -157,7 +157,7 @@ PlaceWholeStringInBoxAtOnce::
 SetUpTextbox::
 	push hl
 	call SpeechTextbox
-	call UpdateSprites
+	call UpdateSprites_PreserveColorLayer
 	call ApplyTilemap
 	pop hl
 	ret

@@ -636,6 +636,11 @@ wBattleMode::
 ; 2: trainer battle
 	db
 
+wPlayerBackpicVisible::
+; TRUE if player's back pic is currently visible on screen during battle
+; Used to preserve color layer OAM sprites (slots 0-22)
+	db
+
 wBT_TrainerTextIndex::
 wTempWildMonSpecies:: db
 
