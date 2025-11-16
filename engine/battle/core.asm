@@ -8893,7 +8893,7 @@ InitBattleDisplay:
 	ld [hli], a  ; Tile index
 	inc a
 	ldh [hMapObjectIndexBuffer], a
-	ld a, $0  ; Use OBJ palette 0 (enemy colors)
+	ld a, $3  ; Use OBJ palette 3 (custom Chris color palette)
 	ld [hli], a  ; Attributes
 	jr .next_position
 

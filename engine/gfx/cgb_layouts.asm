@@ -90,6 +90,9 @@ endc
 BattleObjectPals:
 INCLUDE "gfx/battle_anims/battle_anims.pal"
 
+ChrisColorLayerPalette:
+INCLUDE "gfx/player/chris_color.pal"
+
 GetDefaultBattlePalette:
 	ld a, BANK(wTempBattleMonSpecies)
 	call StackCallInWRAMBankA
@@ -318,6 +321,12 @@ _CGB_FinishBattleScreenLayout:
 	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
 	ld c, 6 palettes
 	call LoadPalettes
+
+	; Load custom Chris color layer palette into OBJ palette 3
+	ld hl, ChrisColorLayerPalette
+	ld de, wOBPals1 palette 3
+	call LoadOnePalette
+
 	pop bc
 
 	ld a, b
