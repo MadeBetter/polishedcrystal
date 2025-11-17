@@ -54,7 +54,8 @@ rept 2
 	ld hl, DarkGrayPalette
 	call LoadOnePalette
 endr
-	jmp _CGB_FinishBattleScreenLayout
+	pop bc
+	ret
 
 if !DEF(MONOCHROME)
 WhitePalette:
