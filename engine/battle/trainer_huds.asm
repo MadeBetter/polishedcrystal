@@ -48,13 +48,13 @@ StageBallTilesData:
 	push bc
 	ld a, b
 	cp c
-	ld b, $66 ; <BALL_EMPTY>, empty slot
+	ld b, $5e ; <BALL_EMPTY>, empty slot
 	jr nc, .load
 
 	assert MON_HP == MON_STATUS + 2
 	inc hl
 	inc hl ; points to w(OT)PartyMon1HP
-	dec b ; $65, <BALL_FAINT>, fainted
+	dec b ; $5d, <BALL_FAINT>, fainted
 	ld a, [hli]
 	and a
 	jr nz, .got_hp
@@ -66,11 +66,11 @@ StageBallTilesData:
 	dec hl
 	jr z, .load
 
-	dec b ; $64, <BALL_STATUS>, statused
+	dec b ; $5c, <BALL_STATUS>, statused
 	ld a, [hl]
 	and a
 	jr nz, .load
-	dec b ; $63, <BALL_NORMAL>, normal
+	dec b ; $5b, <BALL_NORMAL>, normal
 
 .load
 	ld a, b
@@ -208,7 +208,7 @@ LoadTrainerHudOAM:
 
 LoadBallIconGFX:
 	ld de, .gfx
-	ld hl, vTiles2 tile $63
+	ld hl, vTiles2 tile $5b
 	lb bc, BANK(LoadBallIconGFX), 4
 	jmp Get2bpp
 
