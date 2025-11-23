@@ -8823,12 +8823,13 @@ InitBattleDisplay:
 	jp z, .skip_sprite
 
 	; Create sprite for this tile
-	; Y position (tile 15: +1px down)
+	; Y position (tile 15: +2px down)
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
 	cp 15
 	ld a, d
 	jr nz, .no_y_adjust
+	inc a
 	inc a
 .no_y_adjust
 	ld [hli], a  ; Y position
