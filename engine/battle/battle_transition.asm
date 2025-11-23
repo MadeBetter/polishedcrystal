@@ -660,7 +660,7 @@ StartTrainerBattle_LoadPokeBallGraphics:
 	ldh [rWBK], a
 	farcall ClearSavedObjPals
 	farcall CheckForUsedObjPals
-	farcall _UpdateSprites
+	call UpdateSprites_PreserveColorLayer
 	ld a, $1
 	ldh [hCGBPalUpdate], a
 	call DelayFrame
