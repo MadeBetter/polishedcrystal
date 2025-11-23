@@ -23,6 +23,7 @@ EnemySwitch_TrainerHud:
 	ld a, $e4
 	ldh [rOBP0], a
 	call LoadBallIconGFX
+	call LoadEnemyBallIconPalette
 	; fallthrough
 
 ShowOTTrainerMonsRemaining:
@@ -232,6 +233,26 @@ LoadBallIconPalettes:
 	; Load into slot 3 (player HP bar slot)
 	ld hl, BallIconPalette
 	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP
+	ld bc, 1 palettes
+	call CopyBytes
+
+	pop af
+	ldh [rSVBK], a
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+LoadEnemyBallIconPalette:
+; Load yellow ball palette into BG palette slot 2 only (enemy HP bar slot)
+; Called once after enemy Pokemon faints to restore ball icon colors
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wBGPals2)
+	ldh [rSVBK], a
+
+	; Load into slot 2 (enemy HP bar slot)
+	ld hl, BallIconPalette
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP
 	ld bc, 1 palettes
 	call CopyBytes
 
