@@ -94,6 +94,9 @@ INCLUDE "gfx/battle_anims/battle_anims.pal"
 ChrisColorLayerPalette:
 INCLUDE "gfx/player/chris_color.pal"
 
+KrisColorLayerPalette:
+INCLUDE "gfx/player/kris_color.pal"
+
 GetDefaultBattlePalette:
 	ld a, BANK(wTempBattleMonSpecies)
 	call StackCallInWRAMBankA
@@ -323,8 +326,15 @@ _CGB_FinishBattleScreenLayout:
 	ld c, 6 palettes
 	call LoadPalettes
 
-	; Load custom Chris color layer palette into OBJ palette 3
+	; Load custom color layer palette into OBJ palette 3 (gender-based)
+	ld a, [wPlayerGender]
+	and a  ; PLAYER_MALE
+	jr nz, .load_kris_palette
 	ld hl, ChrisColorLayerPalette
+	jr .load_color_palette
+.load_kris_palette:
+	ld hl, KrisColorLayerPalette
+.load_color_palette:
 	ld de, wOBPals1 palette 3
 	call LoadOnePalette
 

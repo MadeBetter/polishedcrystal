@@ -8740,7 +8740,7 @@ InitBattleDisplay:
 	predef PlaceGraphic
 	call ApplyTilemapInVBlank
 	call HideSprites
-	call .LoadChrisColorLayerSprites  ; Restore color layer sprites after HideSprites
+	call .LoadColorLayerSprites  ; Restore color layer sprites after HideSprites
 	ld a, CGB_BATTLE_COLORS
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
@@ -8750,6 +8750,15 @@ InitBattleDisplay:
 	ld a, TRUE
 	ld [wPlayerBackpicVisible], a
 	ret
+
+.LoadColorLayerSprites:
+	; Dispatcher: Load color layer based on player gender
+	ld a, [wPlayerGender]
+	and a  ; PLAYER_MALE
+	jp z, .LoadChrisColorLayerSprites
+	cp PLAYER_FEMALE
+	jp z, .LoadKrisColorLayerSprites
+	ret  ; No color layer for PLAYER_ENBY
 
 .LoadChrisColorLayerSprites:
 	; Only for Chris (male player)
@@ -8920,6 +8929,199 @@ InitBattleDisplay:
 	ld d, a  ; Increment Y (move down)
 	dec b
 	jp nz, .color_outer
+	ret
+
+.LoadKrisColorLayerSprites:
+	; Only for Kris (female player)
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	ret z
+	ld a, [wPlayerGender]
+	cp PLAYER_FEMALE
+	ret nz
+
+	; Load kris_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
+	; Ensure we're writing to VRAM bank 0
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	; Load compressed color layer graphics
+	ld hl, KrisBackpicColor
+	ld de, vTiles0 tile $55
+	lb bc, BANK("Trainer Backpics"), 6 * 6
+	call DecompressRequest2bpp
+
+.wait_kris_decompress:
+	call DelayFrame
+	ldh a, [hRequested2bpp]
+	and a
+	jr nz, .wait_kris_decompress
+
+	pop af
+	ldh [rVBK], a
+	; fallthrough
+
+.CreateKrisColorLayerOAM:
+	; Create OAM sprites for Kris color layer
+	; Skip tiles: 0, 1, 4, 5, 6, 11, 16, 17, 24, 25, 27, 28, 29, 30, 31, 32, 34
+	; Position adjustments:
+	;   tile 10: Y -1px (move up)
+	;   tile 22: Y +1px (move down)
+	;   tile 33: X -1px (move left)
+	;   tile 35: X -4px (move left)
+
+	ld hl, wShadowOAM + 0 * 4
+	ld a, $55  ; Starting tile ID
+	ldh [hMapObjectIndexBuffer], a
+	ld b, $6  ; 6 rows
+	ld d, 8 * 8  ; Starting Y position (64px)
+.kris_color_outer:
+	ld c, $6  ; 6 columns
+	ld e, 3 * 8  ; Starting X position (24px)
+.kris_color_inner:
+	; Get current tile index (0-35)
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+
+	; Skip tile 0
+	cp 0
+	jp z, .kris_skip_sprite
+	; Skip tile 1
+	cp 1
+	jp z, .kris_skip_sprite
+	; Skip tile 4
+	cp 4
+	jp z, .kris_skip_sprite
+	; Skip tile 5
+	cp 5
+	jp z, .kris_skip_sprite
+	; Skip tile 6
+	cp 6
+	jp z, .kris_skip_sprite
+	; Skip tile 11
+	cp 11
+	jp z, .kris_skip_sprite
+	; Skip tile 16
+	cp 16
+	jp z, .kris_skip_sprite
+	; Skip tile 17
+	cp 17
+	jp z, .kris_skip_sprite
+	; Skip tile 24
+	cp 24
+	jp z, .kris_skip_sprite
+	; Skip tile 25
+	cp 25
+	jp z, .kris_skip_sprite
+	; Skip tile 27
+	cp 27
+	jp z, .kris_skip_sprite
+	; Skip tile 28
+	cp 28
+	jp z, .kris_skip_sprite
+	; Skip tile 29
+	cp 29
+	jp z, .kris_skip_sprite
+	; Skip tile 30
+	cp 30
+	jp z, .kris_skip_sprite
+	; Skip tile 31
+	cp 31
+	jp z, .kris_skip_sprite
+	; Skip tile 32
+	cp 32
+	jp z, .kris_skip_sprite
+	; Skip tile 34
+	cp 34
+	jp z, .kris_skip_sprite
+
+	; Y position with adjustments
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+	cp 10
+	ld a, d
+	jr nz, .kris_check_tile22_y
+	; tile 10: move up by 1px
+	dec a
+	jr .kris_y_done
+.kris_check_tile22_y:
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+	cp 22
+	ld a, d
+	jr nz, .kris_y_done
+	; tile 22: move down by 1px
+	inc a
+.kris_y_done:
+	ld [hli], a  ; Write Y position
+
+	; X position with adjustments
+	push de
+	push bc
+
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+	ld b, a  ; Save tile index in b
+	ld a, e  ; Get X position
+
+	; Check tile 33: move left by 1px
+	ld c, a  ; Save X in c
+	ld a, b  ; Get tile index
+	cp 33
+	ld a, c  ; Restore X
+	jr nz, .kris_check_tile35
+	dec a
+	jr .kris_x_done
+
+.kris_check_tile35:
+	; Check tile 35: move left by 4px
+	ld c, a  ; Save X in c
+	ld a, b  ; Get tile index
+	cp 35
+	ld a, c  ; Restore X
+	jr nz, .kris_x_done
+	sub 4
+
+.kris_x_done:
+	pop bc
+	pop de
+	ld [hli], a  ; Write X position
+
+	; Write tile ID
+	ldh a, [hMapObjectIndexBuffer]
+	ld [hli], a
+
+	; Increment tile ID
+	inc a
+	ldh [hMapObjectIndexBuffer], a
+
+	; Write attributes (palette 3)
+	ld a, $3
+	ld [hli], a
+	jr .kris_next_position
+
+.kris_skip_sprite:
+	; Skip this sprite but increment tile ID
+	ldh a, [hMapObjectIndexBuffer]
+	inc a
+	ldh [hMapObjectIndexBuffer], a
+
+.kris_next_position:
+	; Move to next column
+	ld a, e
+	add $8
+	ld e, a
+	dec c
+	jp nz, .kris_color_inner
+
+	; Move to next row
+	ld a, d
+	add $8
+	ld d, a
+	dec b
+	jp nz, .kris_color_outer
 	ret
 
 .BlankBGMap:
