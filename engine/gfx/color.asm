@@ -601,7 +601,12 @@ GetPlayerOrMonPalettePointer:
 	cp BATTLETYPE_TUTORIAL
 	ret z
 
-	; hl = TrainerPalettes + [wPlayerGender] * 2 colors
+	; Check if we're in battle
+	ld a, [wBattleMode]
+	and a
+	jr nz, .in_battle
+
+	; Outside battle: use gender-specific palettes (carrie.pal/cal.pal)
 	ld a, [wPlayerGender]
 	assert PLAYER_MALE == CHRIS - 1
 	assert PLAYER_FEMALE == KRIS - 1
@@ -614,6 +619,11 @@ GetPlayerOrMonPalettePointer:
 	adc HIGH(TrainerPalettes)
 	sub l
 	ld h, a
+	ret
+
+.in_battle:
+	; In battle: use skin.pal for all players
+	ld hl, SkinPalette
 	ret
 
 GetFrontpicPalettePointer:
