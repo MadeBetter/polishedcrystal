@@ -15,10 +15,12 @@ This project involved adjusting individual tile positions in the color layer and
 ### Key Files Modified
 
 ```
-engine/battle/core.asm          - Battle system and sprite loading code
-gfx/player/chris_back_color.png - Color layer graphics (48x48px, 8-bit grayscale)
-gfx/player/chris_back_color.2bpp - Compiled 2bpp graphics
-gfx/player/chris_back_color.2bpp.lz - Compressed graphics
+engine/battle/core.asm               - Battle system and sprite loading code
+gfx/player/chris_back_skin.png       - Base/skin layer graphics (48x48px)
+gfx/player/chris_back_skin.2bpp.lz   - Compressed base layer
+gfx/player/chris_back_color.png      - Color layer graphics (48x48px, 8-bit grayscale)
+gfx/player/chris_back_color.2bpp     - Compiled 2bpp graphics
+gfx/player/chris_back_color.2bpp.lz  - Compressed graphics
 ```
 
 ### Graphics Pipeline
