@@ -8758,7 +8758,9 @@ InitBattleDisplay:
 	jp z, .LoadChrisColorLayerSprites
 	cp PLAYER_FEMALE
 	jp z, .LoadKrisColorLayerSprites
-	ret  ; No color layer for PLAYER_ENBY
+	cp PLAYER_ENBY
+	jp z, .LoadCrysColorLayerSprites
+	ret
 
 .LoadChrisColorLayerSprites:
 	; Only for Chris (male player)
@@ -9122,6 +9124,228 @@ InitBattleDisplay:
 	ld d, a
 	dec b
 	jp nz, .kris_color_outer
+	ret
+
+.LoadCrysColorLayerSprites:
+	; Only for Crys (enby player)
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	ret z
+	ld a, [wPlayerGender]
+	cp PLAYER_ENBY
+	ret nz
+
+	; Load crys_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld hl, CrysBackpicColor
+	ld de, vTiles0 tile $55
+	lb bc, BANK("Trainer Backpics"), 6 * 6
+	call DecompressRequest2bpp
+
+.wait_crys_decompress:
+	call DelayFrame
+	ldh a, [hRequested2bpp]
+	and a
+	jr nz, .wait_crys_decompress
+
+	pop af
+	ldh [rVBK], a
+	; fallthrough
+
+.CreateCrysColorLayerOAM:
+	; Create OAM sprites for Crys color layer
+	; Skip tiles: 0, 1, 4, 5, 6, 11, 12, 16, 17, 18, 21, 22, 23, 24, 25, 26, 28, 29, 35
+	; Position adjustments: tiles 2,3,7,8,9,10,13,14,15,19,20 (Y-1,X-1), tile 27 (X-1), tile 34 (Y-2,X+3)
+
+	ld hl, wShadowOAM + 0 * 4
+	ld a, $55
+	ldh [hMapObjectIndexBuffer], a
+	ld b, $6
+	ld d, 8 * 8
+.crys_color_outer:
+	ld c, $6
+	ld e, 3 * 8
+.crys_color_inner:
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+
+	; Skip tiles: 0, 1, 4, 5, 6, 11, 12, 16, 17, 18, 21, 22, 23, 24, 25, 26, 28, 29, 35
+	cp 0
+	jp z, .crys_skip_sprite
+	cp 1
+	jp z, .crys_skip_sprite
+	cp 4
+	jp z, .crys_skip_sprite
+	cp 5
+	jp z, .crys_skip_sprite
+	cp 6
+	jp z, .crys_skip_sprite
+	cp 11
+	jp z, .crys_skip_sprite
+	cp 12
+	jp z, .crys_skip_sprite
+	cp 16
+	jp z, .crys_skip_sprite
+	cp 17
+	jp z, .crys_skip_sprite
+	cp 18
+	jp z, .crys_skip_sprite
+	cp 21
+	jp z, .crys_skip_sprite
+	cp 22
+	jp z, .crys_skip_sprite
+	cp 23
+	jp z, .crys_skip_sprite
+	cp 24
+	jp z, .crys_skip_sprite
+	cp 25
+	jp z, .crys_skip_sprite
+	cp 26
+	jp z, .crys_skip_sprite
+	cp 28
+	jp z, .crys_skip_sprite
+	cp 29
+	jp z, .crys_skip_sprite
+	cp 35
+	jp z, .crys_skip_sprite
+
+	; Y position with adjustments
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+
+	; Check for tiles 2, 3, 7, 8, 9, 10, 13, 14, 15, 19, 20 (Y-1)
+	cp 2
+	jr z, .crys_y_minus_1
+	cp 3
+	jr z, .crys_y_minus_1
+	cp 7
+	jr z, .crys_y_minus_1
+	cp 8
+	jr z, .crys_y_minus_1
+	cp 9
+	jr z, .crys_y_minus_1
+	cp 10
+	jr z, .crys_y_minus_1
+	cp 13
+	jr z, .crys_y_minus_1
+	cp 14
+	jr z, .crys_y_minus_1
+	cp 15
+	jr z, .crys_y_minus_1
+	cp 19
+	jr z, .crys_y_minus_1
+	cp 20
+	jr z, .crys_y_minus_1
+
+	; Check for tile 34 (Y-2)
+	cp 34
+	jr z, .crys_y_minus_2
+
+	; Default Y position
+	ld a, d
+	jr .crys_y_done
+
+.crys_y_minus_1:
+	ld a, d
+	dec a
+	jr .crys_y_done
+
+.crys_y_minus_2:
+	ld a, d
+	sub 2
+
+.crys_y_done:
+	ld [hli], a
+
+	; X position with adjustments
+	push de
+	push bc
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+	ld b, a
+	ld a, e
+
+	; Check for tiles 2, 3, 7, 8, 9, 10, 13, 14, 15, 19, 20 (X-1)
+	ld c, a
+	ld a, b
+	cp 2
+	jr z, .crys_x_minus_1
+	cp 3
+	jr z, .crys_x_minus_1
+	cp 7
+	jr z, .crys_x_minus_1
+	cp 8
+	jr z, .crys_x_minus_1
+	cp 9
+	jr z, .crys_x_minus_1
+	cp 10
+	jr z, .crys_x_minus_1
+	cp 13
+	jr z, .crys_x_minus_1
+	cp 14
+	jr z, .crys_x_minus_1
+	cp 15
+	jr z, .crys_x_minus_1
+	cp 19
+	jr z, .crys_x_minus_1
+	cp 20
+	jr z, .crys_x_minus_1
+
+	; Check for tile 27 (X-1)
+	cp 27
+	jr z, .crys_x_minus_1
+
+	; Check for tile 34 (X+3)
+	cp 34
+	jr z, .crys_x_plus_3
+
+	; Default X position
+	ld a, c
+	jr .crys_x_done
+
+.crys_x_minus_1:
+	ld a, c
+	dec a
+	jr .crys_x_done
+
+.crys_x_plus_3:
+	ld a, c
+	add 3
+
+.crys_x_done:
+	pop bc
+	pop de
+	ld [hli], a
+
+	ldh a, [hMapObjectIndexBuffer]
+	ld [hli], a
+	inc a
+	ldh [hMapObjectIndexBuffer], a
+	ld a, $3
+	ld [hli], a
+	jr .crys_next_position
+
+.crys_skip_sprite:
+	ldh a, [hMapObjectIndexBuffer]
+	inc a
+	ldh [hMapObjectIndexBuffer], a
+
+.crys_next_position:
+	ld a, e
+	add $8
+	ld e, a
+	dec c
+	jp nz, .crys_color_inner
+
+	ld a, d
+	add $8
+	ld d, a
+	dec b
+	jp nz, .crys_color_outer
 	ret
 
 .BlankBGMap:
