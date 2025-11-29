@@ -8909,7 +8909,7 @@ InitBattleDisplay:
 	ld [hli], a  ; Tile index
 	inc a
 	ldh [hMapObjectIndexBuffer], a
-	ld a, $3  ; Use OBJ palette 3 (custom Chris color palette)
+	ld a, $4  ; Use OBJ palette 4 (custom Chris color palette)
 	ld [hli], a  ; Attributes
 	jr .next_position
 
@@ -9099,8 +9099,8 @@ InitBattleDisplay:
 	inc a
 	ldh [hMapObjectIndexBuffer], a
 
-	; Write attributes (palette 3)
-	ld a, $3
+	; Write attributes (palette 4)
+	ld a, $4
 	ld [hli], a
 	jr .kris_next_position
 
@@ -9325,7 +9325,7 @@ InitBattleDisplay:
 	ld [hli], a
 	inc a
 	ldh [hMapObjectIndexBuffer], a
-	ld a, $3
+	ld a, $4
 	ld [hli], a
 	jr .crys_next_position
 

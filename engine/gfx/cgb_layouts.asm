@@ -329,7 +329,7 @@ _CGB_FinishBattleScreenLayout:
 	ld c, 6 palettes
 	call LoadPalettes
 
-	; Load custom color layer palette into OBJ palette 3 (gender-based)
+	; Load custom color layer palette into OBJ palette 4 (gender-based)
 	ld a, [wPlayerGender]
 	and a  ; PLAYER_MALE
 	jr z, .load_chris_palette
@@ -344,7 +344,7 @@ _CGB_FinishBattleScreenLayout:
 .load_kris_palette:
 	ld hl, KrisColorLayerPalette
 .load_color_palette:
-	ld de, wOBPals1 palette 3
+	ld de, wOBPals1 palette 4
 	call LoadOnePalette
 
 	pop bc
