@@ -223,7 +223,7 @@ gfx/paintings/%.2bpp: RGBGFXFLAGS += -Z
 
 gfx/player/chris_back_skin.2bpp: RGBGFXFLAGS += -Z
 gfx/player/kris_back_skin.2bpp: RGBGFXFLAGS += -Z
-gfx/player/crys_back.2bpp: RGBGFXFLAGS += -Z
+gfx/player/crys_back_skin.2bpp: RGBGFXFLAGS += -Z
 
 gfx/pokedex/%.bin: gfx/pokedex/%.tilemap gfx/pokedex/%.attrmap ; $Qcat $^ > $@
 gfx/pokedex/pokedex.2bpp: gfx/pokedex/pokedex0.2bpp gfx/pokedex/pokedex1.2bpp gfx/pokedex/area.2bpp ; $Qcat $^ > $@
