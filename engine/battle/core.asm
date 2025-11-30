@@ -9158,8 +9158,14 @@ InitBattleDisplay:
 
 .CreateCrysColorLayerOAM:
 	; Create OAM sprites for Crys color layer
-	; Skip tiles: 0, 1, 4, 5, 6, 11, 12, 16, 17, 18, 21, 22, 23, 24, 25, 26, 28, 29, 35
-	; Position adjustments: tiles 2,3,7,8,9,10,13,14,15,19,20 (Y-1,X-1), tile 27 (X-1), tile 34 (Y-2,X+3)
+	; Skip tiles: 0, 1, 4, 5, 6, 10, 11, 12, 16, 17, 18, 21, 22, 23, 24, 25, 26, 28, 29, 35
+	; Position adjustments:
+	;   - Tiles 2, 3: X-1
+	;   - Tile 34: Y-1, X+3
+	; Palette assignments:
+	;   - Tiles 27, 30, 31, 32, 33: OBJ palette 5
+	;   - Tile 34: OBJ palette 6
+	;   - All other non-skipped tiles: OBJ palette 4
 
 	ld hl, wShadowOAM + 0 * 4
 	ld a, $55
@@ -9173,7 +9179,7 @@ InitBattleDisplay:
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
 
-	; Skip tiles: 0, 1, 4, 5, 6, 11, 12, 16, 17, 18, 21, 22, 23, 24, 25, 26, 28, 29, 35
+	; Skip tiles: 0, 1, 4, 5, 6, 10, 11, 12, 16, 17, 18, 21, 22, 23, 24, 25, 26, 28, 29, 35
 	cp 0
 	jp z, .crys_skip_sprite
 	cp 1
@@ -9183,6 +9189,8 @@ InitBattleDisplay:
 	cp 5
 	jp z, .crys_skip_sprite
 	cp 6
+	jp z, .crys_skip_sprite
+	cp 10
 	jp z, .crys_skip_sprite
 	cp 11
 	jp z, .crys_skip_sprite
@@ -9213,52 +9221,14 @@ InitBattleDisplay:
 	cp 35
 	jp z, .crys_skip_sprite
 
-	; Y position with adjustments
+	; Y position (tile 34: Y-1)
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
-
-	; Check for tiles 2, 3, 7, 8, 9, 10, 13, 14, 15, 19, 20 (Y-1)
-	cp 2
-	jr z, .crys_y_minus_1
-	cp 3
-	jr z, .crys_y_minus_1
-	cp 7
-	jr z, .crys_y_minus_1
-	cp 8
-	jr z, .crys_y_minus_1
-	cp 9
-	jr z, .crys_y_minus_1
-	cp 10
-	jr z, .crys_y_minus_1
-	cp 13
-	jr z, .crys_y_minus_1
-	cp 14
-	jr z, .crys_y_minus_1
-	cp 15
-	jr z, .crys_y_minus_1
-	cp 19
-	jr z, .crys_y_minus_1
-	cp 20
-	jr z, .crys_y_minus_1
-
-	; Check for tile 34 (Y-2)
 	cp 34
-	jr z, .crys_y_minus_2
-
-	; Default Y position
 	ld a, d
-	jr .crys_y_done
-
-.crys_y_minus_1:
-	ld a, d
+	jr nz, .crys_no_y_adjust
 	dec a
-	jr .crys_y_done
-
-.crys_y_minus_2:
-	ld a, d
-	sub 2
-
-.crys_y_done:
+.crys_no_y_adjust:
 	ld [hli], a
 
 	; X position with adjustments
@@ -9269,54 +9239,29 @@ InitBattleDisplay:
 	ld b, a
 	ld a, e
 
-	; Check for tiles 2, 3, 7, 8, 9, 10, 13, 14, 15, 19, 20 (X-1)
+	; Check tiles 2, 3: X-1
 	ld c, a
 	ld a, b
 	cp 2
 	jr z, .crys_x_minus_1
 	cp 3
 	jr z, .crys_x_minus_1
-	cp 7
-	jr z, .crys_x_minus_1
-	cp 8
-	jr z, .crys_x_minus_1
-	cp 9
-	jr z, .crys_x_minus_1
-	cp 10
-	jr z, .crys_x_minus_1
-	cp 13
-	jr z, .crys_x_minus_1
-	cp 14
-	jr z, .crys_x_minus_1
-	cp 15
-	jr z, .crys_x_minus_1
-	cp 19
-	jr z, .crys_x_minus_1
-	cp 20
-	jr z, .crys_x_minus_1
 
-	; Check for tile 27 (X-1)
-	cp 27
-	jr z, .crys_x_minus_1
-
-	; Check for tile 34 (X+3)
+	; Check tile 34: X+3
 	cp 34
-	jr z, .crys_x_plus_3
-
-	; Default X position
 	ld a, c
-	jr .crys_x_done
+	jr nz, .crys_x_no_adjust
+	add 3
+	jr .crys_x_adjust_done
 
 .crys_x_minus_1:
 	ld a, c
 	dec a
-	jr .crys_x_done
+	jr .crys_x_adjust_done
 
-.crys_x_plus_3:
+.crys_x_no_adjust:
 	ld a, c
-	add 3
-
-.crys_x_done:
+.crys_x_adjust_done:
 	pop bc
 	pop de
 	ld [hli], a
@@ -9325,7 +9270,39 @@ InitBattleDisplay:
 	ld [hli], a
 	inc a
 	ldh [hMapObjectIndexBuffer], a
+
+	; Palette assignment
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55 + 1
+
+	; Check tiles 27, 30, 31, 32, 33: palette 5
+	cp 27
+	jr z, .crys_palette_5
+	cp 30
+	jr z, .crys_palette_5
+	cp 31
+	jr z, .crys_palette_5
+	cp 32
+	jr z, .crys_palette_5
+	cp 33
+	jr z, .crys_palette_5
+
+	; Check tile 34: palette 6
+	cp 34
+	jr z, .crys_palette_6
+
+	; Default: palette 4
 	ld a, $4
+	jr .crys_palette_done
+
+.crys_palette_5:
+	ld a, $5
+	jr .crys_palette_done
+
+.crys_palette_6:
+	ld a, $6
+
+.crys_palette_done:
 	ld [hli], a
 	jr .crys_next_position
 

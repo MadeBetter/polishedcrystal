@@ -100,6 +100,18 @@ INCLUDE "gfx/player/kris_color.pal"
 CrysColorLayerPalette:
 INCLUDE "gfx/player/crys_color.pal"
 
+ChrisColor2Palette:
+INCLUDE "gfx/player/chris_color2.pal"
+
+KrisColor2Palette:
+INCLUDE "gfx/player/kris_color2.pal"
+
+CrysColor2Palette:
+INCLUDE "gfx/player/crys_color2.pal"
+
+PokeballColorPalette:
+INCLUDE "gfx/player/pokeball_color.pal"
+
 GetDefaultBattlePalette:
 	ld a, BANK(wTempBattleMonSpecies)
 	call StackCallInWRAMBankA
@@ -345,6 +357,29 @@ _CGB_FinishBattleScreenLayout:
 	ld hl, KrisColorLayerPalette
 .load_color_palette:
 	ld de, wOBPals1 palette 4
+	call LoadOnePalette
+
+	; Load custom color layer 2 palette into OBJ palette 5 (gender-based)
+	ld a, [wPlayerGender]
+	and a  ; PLAYER_MALE
+	jr z, .load_chris_palette2
+	cp PLAYER_FEMALE
+	jr z, .load_kris_palette2
+	; PLAYER_ENBY
+	ld hl, CrysColor2Palette
+	jr .load_color_palette2
+.load_chris_palette2:
+	ld hl, ChrisColor2Palette
+	jr .load_color_palette2
+.load_kris_palette2:
+	ld hl, KrisColor2Palette
+.load_color_palette2:
+	ld de, wOBPals1 palette 5
+	call LoadOnePalette
+
+	; Load pokeball color palette into OBJ palette 6
+	ld hl, PokeballColorPalette
+	ld de, wOBPals1 palette 6
 	call LoadOnePalette
 
 	pop bc
