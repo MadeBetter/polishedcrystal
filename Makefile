@@ -162,6 +162,8 @@ $(ROM_NAME).patch: $(ROM_NAME)_vc.gbc $(ROM_NAME).$(EXTENSION) vc.patch.template
 .$(EXTENSION): tools/bankends
 $(ROM_NAME).$(EXTENSION): $(crystal_obj) layout.link
 	$Q$(RGBLINK) $(RGBLINKFLAGS) -l layout.link -o $@ $(filter %.o,$^)
+	$Q# Pad ROM to 4MB for MBC30
+	$Qtruncate -s 4194304 $@
 	$Q$(RGBFIX) $(RGBFIXFLAGS) $@
 	$Qtools/bankends -q $(ROM_NAME).map >&2
 
