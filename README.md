@@ -20,6 +20,42 @@ The previous official version was [v3.1.1](https://github.com/Rangi42/polishedcr
 
 *If you have any questions about playing or patching, [read the FAQ](FAQ.md)!*
 
+## MBC30 Cartridge Type
+
+**Important:** This ROM now uses the **MBC30 mapper** (4MB ROM size) instead of the original MBC3 (2MB). This change was made to accommodate expanded content and future features.
+
+### What This Means for Players
+
+**Emulator Compatibility:**
+- ✅ **Recommended Emulators** (Full MBC30 Support):
+  - **BGB** (best for development and testing)
+  - **mGBA**
+  - **SameBoy**
+  - **RetroArch** (with SameBoy core)
+- ⚠️ **Partial Support:**
+  - Gambatte (may have issues with extended banks)
+  - GearBoy
+- ❌ **Not Compatible:**
+  - Visual Boy Advance (VBA)
+  - Game Boy Color Virtual Console
+
+**Flash Cart Compatibility:**
+- ✅ **EverDrive GB X7** (with recent firmware)
+- ✅ **BennVenn carts** (with MBC30 support)
+- ✅ **Custom MBC30 flash carts**
+- ⚠️ **EverDrive GB** (older models) may require firmware update
+
+### Technical Details
+
+- **ROM Size:** 4MB (256 banks × 16KB)
+- **Banks Used:** Currently ~100 banks, with 32 pre-allocated for expansion (banks 128-159)
+- **Backward Compatibility:** Banks 0-127 work identically to the original MBC3 implementation
+- **RTC Support:** Real-Time Clock functionality is preserved
+
+The MBC30 mapper was used in the Japanese version of Pokémon Crystal, making this a fitting choice for this enhanced version of the game.
+
+=======
+
 ## What’s New in v3.2.2
 
 Below is a brief summary of the major changes and additions. A more detailed changelog will be released soon.

@@ -56,7 +56,8 @@ rept 2
 	ld hl, DarkGrayPalette
 	call LoadOnePalette
 endr
-	jmp _CGB_FinishBattleScreenLayout
+	pop bc
+	ret
 
 if !DEF(MONOCHROME)
 WhitePalette:
@@ -89,6 +90,27 @@ endc
 
 BattleObjectPals:
 INCLUDE "gfx/battle_anims/battle_anims.pal"
+
+ChrisColorLayerPalette:
+INCLUDE "gfx/player/chris_color.pal"
+
+KrisColorLayerPalette:
+INCLUDE "gfx/player/kris_color.pal"
+
+CrysColorLayerPalette:
+INCLUDE "gfx/player/crys_color.pal"
+
+ChrisColor2Palette:
+INCLUDE "gfx/player/chris_color2.pal"
+
+KrisColor2Palette:
+INCLUDE "gfx/player/kris_color2.pal"
+
+CrysColor2Palette:
+INCLUDE "gfx/player/crys_color2.pal"
+
+PokeballColorPalette:
+INCLUDE "gfx/player/pokeball_color.pal"
 
 GetDefaultBattlePalette:
 	ld a, BANK(wTempBattleMonSpecies)
@@ -305,10 +327,61 @@ _CGB_FinishBattleScreenLayout:
 	ld a, PAL_BATTLE_BG_TEXT
 	rst ByteFill
 
+	; Load enemy palette into OBJ palette 0 for Chris color layer
+	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
+	call SetBattlePal_Enemy
+
+	; Load player/skin palette into OBJ palette 1 for Chris base layer
+	ld de, wOBPals1 palette PAL_BATTLE_OB_PLAYER
+	call SetBattlePal_Player
+
+	; Load standard battle animation palettes (gray, yellow, red, etc.)
 	ld hl, BattleObjectPals
 	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
 	ld c, 6 palettes
 	call LoadPalettes
+
+	; Load custom color layer palette into OBJ palette 4 (gender-based)
+	ld a, [wPlayerGender]
+	and a  ; PLAYER_MALE
+	jr z, .load_chris_palette
+	cp PLAYER_FEMALE
+	jr z, .load_kris_palette
+	; PLAYER_ENBY
+	ld hl, CrysColorLayerPalette
+	jr .load_color_palette
+.load_chris_palette:
+	ld hl, ChrisColorLayerPalette
+	jr .load_color_palette
+.load_kris_palette:
+	ld hl, KrisColorLayerPalette
+.load_color_palette:
+	ld de, wOBPals1 palette 4
+	call LoadOnePalette
+
+	; Load custom color layer 2 palette into OBJ palette 5 (gender-based)
+	ld a, [wPlayerGender]
+	and a  ; PLAYER_MALE
+	jr z, .load_chris_palette2
+	cp PLAYER_FEMALE
+	jr z, .load_kris_palette2
+	; PLAYER_ENBY
+	ld hl, CrysColor2Palette
+	jr .load_color_palette2
+.load_chris_palette2:
+	ld hl, ChrisColor2Palette
+	jr .load_color_palette2
+.load_kris_palette2:
+	ld hl, KrisColor2Palette
+.load_color_palette2:
+	ld de, wOBPals1 palette 5
+	call LoadOnePalette
+
+	; Load pokeball color palette into OBJ palette 6
+	ld hl, PokeballColorPalette
+	ld de, wOBPals1 palette 6
+	call LoadOnePalette
+
 	pop bc
 
 	ld a, b

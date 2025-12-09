@@ -33,7 +33,7 @@ SaveRTC:
 	jr z, .no_rtc
 	; pulse the RTC to get its value
 	call LatchClock
-	; set the MBC3 register to the RTC day high byte & status flags
+	; set the MBC30 register to the RTC day high byte & status flags
 	ld hl, rRTCREG
 	ld a, $c
 	; read the value from the hardware

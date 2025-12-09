@@ -91,9 +91,12 @@ CrysCardPic::  INCBIN "gfx/trainer_card/crys_card.2bpp.lz"
 
 SECTION "Trainer Backpics", ROMX
 
-ChrisBackpic:: INCBIN "gfx/player/chris_back.2bpp.lz"
-KrisBackpic::  INCBIN "gfx/player/kris_back.2bpp.lz"
-CrysBackpic::  INCBIN "gfx/player/crys_back.2bpp.lz"
+ChrisBackpic:: INCBIN "gfx/player/chris_back_skin.2bpp.lz"
+ChrisBackpicColor:: INCBIN "gfx/player/chris_back_color.2bpp.lz"
+KrisBackpic::  INCBIN "gfx/player/kris_back_skin.2bpp.lz"
+KrisBackpicColor:: INCBIN "gfx/player/kris_back_color.2bpp.lz"
+CrysBackpic::  INCBIN "gfx/player/crys_back_skin.2bpp.lz"
+CrysBackpicColor:: INCBIN "gfx/player/crys_back_color.2bpp.lz"
 LyraBackpic::  INCBIN "gfx/battle/lyra_back.2bpp.lz"
 
 

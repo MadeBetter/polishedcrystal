@@ -135,14 +135,8 @@ RunBattleAnimScript:
 	bit 3, a
 	ret nz
 
-	; clear oam
-	ld hl, wShadowOAM
-	ld c, wShadowOAMEnd - wShadowOAM
-	xor a
-.loop2
-	ld [hli], a
-	dec c
-	jr nz, .loop2
+	; Clear OAM sprites, preserving color layer if player back pic is visible
+	call ClearOAMSprites_PreserveColorLayer
 	ret
 
 BattleAnimClearHUD:
@@ -1318,7 +1312,13 @@ BattleAnim_SetOBPals:
 	ret
 
 BattleAnim_UpdateOAM_All:
-	xor a
+	; Check if player back pic is visible (color layer present)
+	ld a, [wPlayerBackpicVisible]
+	and a
+	ld a, 23 * 4  ; Start after color layer (slot 23) if visible
+	jr nz, .got_start
+	xor a  ; Start from slot 0 if no color layer
+.got_start
 	ld [wBattleAnimOAMPointerLo], a
 	ld hl, wActiveAnimObjects
 	ld e, NUM_ANIM_OBJECTS

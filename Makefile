@@ -118,7 +118,7 @@ clean: tidy
 	find gfx -type f \( -name "* *.asm" -o -name "* *.tilemap" -o -name "* *.vram*p" \) -delete
 	find data/tilesets -type f -name "* *.bin" -delete
 	find . -type f \( -name "* [0-9]" -o -name "* [0-9].*" \) -delete
-		$(MAKE) clean -C tools/
+	$(MAKE) clean -C tools/
 
 tidy:
 	$(RM) $(crystal_obj) $(crystal_vc_obj) $(wildcard $(NAME)-*.gbc) $(wildcard $(NAME)-*.pocket) $(wildcard $(NAME)-*.bsp) \
@@ -162,6 +162,8 @@ $(ROM_NAME).patch: $(ROM_NAME)_vc.gbc $(ROM_NAME).$(EXTENSION) vc.patch.template
 .$(EXTENSION): tools/bankends
 $(ROM_NAME).$(EXTENSION): $(crystal_obj) layout.link
 	$Q$(RGBLINK) $(RGBLINKFLAGS) -l layout.link -o $@ $(filter %.o,$^)
+	$Q# Pad ROM to 4MB for MBC30
+	$Qtruncate -s 4194304 $@
 	$Q$(RGBFIX) $(RGBFIXFLAGS) $@
 	$Qtools/bankends -q $(ROM_NAME).map >&2
 
@@ -221,9 +223,9 @@ gfx/pack/pack_top_left.2bpp: gfx/pack/pack_top.2bpp gfx/pack/pack_left.2bpp ; $Q
 
 gfx/paintings/%.2bpp: RGBGFXFLAGS += -Z
 
-gfx/player/chris_back.2bpp: RGBGFXFLAGS += -Z
-gfx/player/kris_back.2bpp: RGBGFXFLAGS += -Z
-gfx/player/crys_back.2bpp: RGBGFXFLAGS += -Z
+gfx/player/chris_back_skin.2bpp: RGBGFXFLAGS += -Z
+gfx/player/kris_back_skin.2bpp: RGBGFXFLAGS += -Z
+gfx/player/crys_back_skin.2bpp: RGBGFXFLAGS += -Z
 
 gfx/pokedex/%.bin: gfx/pokedex/%.tilemap gfx/pokedex/%.attrmap ; $Qcat $^ > $@
 gfx/pokedex/pokedex.2bpp: gfx/pokedex/pokedex0.2bpp gfx/pokedex/pokedex1.2bpp gfx/pokedex/area.2bpp ; $Qcat $^ > $@

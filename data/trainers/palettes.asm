@@ -1,3 +1,9 @@
+; Skin palette used for all players in battle (not part of TrainerPalettes table)
+if !DEF(MONOCHROME)
+SkinPalette:
+INCLUDE "gfx/trainers/skin.pal"
+endc
+
 TrainerPalettes:
 ; entries correspond to trainer classes
 	table_width COLOR_SIZE * 2

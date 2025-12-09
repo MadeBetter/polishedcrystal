@@ -840,7 +840,7 @@ BattleTextbox::
 ; Open a textbox and print text at hl.
 	push hl
 	call SpeechTextbox
-	call UpdateSprites
+	call UpdateSprites_PreserveColorLayer
 	call ApplyTilemap
 	pop hl
 	jmp PrintTextboxText
