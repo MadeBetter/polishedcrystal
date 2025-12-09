@@ -4,7 +4,8 @@
 
 #include "parsemap.h"
 
-#define BANKS 128
+// MBC30 supports 256 banks (4MB) vs MBC3's 128 banks (2MB)
+#define BANKS 256
 #define BANKSIZE 0x4000
 #define ROMSIZE (BANKS * BANKSIZE)
 
