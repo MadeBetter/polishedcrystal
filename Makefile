@@ -111,10 +111,14 @@ tools:
 clean: tidy
 	find gfx maps data/tilesets -name '*.lz' -delete
 	find gfx \( -name '*.[12]bpp' -o -name '*.2bpp.vram[012]' -o -name '*.2bpp.vram[012]p' \) -delete
+	find gfx/tilesets -name "*.2bpp *.vram[012]" -delete
 	find gfx/pokemon -mindepth 1 \( -name 'bitmask.asm' -o -name 'frames.asm' \
 		-o -name 'front.animated.tilemap' -o -name 'front.dimensions' \) -delete
 	find data/tilesets -name '*_collision.bin' -delete
-	$(MAKE) clean -C tools/
+	find gfx -type f \( -name "* *.asm" -o -name "* *.tilemap" -o -name "* *.vram*p" \) -delete
+	find data/tilesets -type f -name "* *.bin" -delete
+	find . -type f \( -name "* [0-9]" -o -name "* [0-9].*" \) -delete
+		$(MAKE) clean -C tools/
 
 tidy:
 	$(RM) $(crystal_obj) $(crystal_vc_obj) $(wildcard $(NAME)-*.gbc) $(wildcard $(NAME)-*.pocket) $(wildcard $(NAME)-*.bsp) \
