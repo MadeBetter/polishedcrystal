@@ -118,6 +118,7 @@ clean: tidy
 	find gfx -type f \( -name "* *.asm" -o -name "* *.tilemap" -o -name "* *.vram*p" \) -delete
 	find data/tilesets -type f -name "* *.bin" -delete
 	find . -type f \( -name "* [0-9]" -o -name "* [0-9].*" \) -delete
+
 	$(MAKE) clean -C tools/
 
 tidy:
