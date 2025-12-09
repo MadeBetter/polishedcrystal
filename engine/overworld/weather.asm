@@ -922,8 +922,6 @@ Lightning:
 	ret nz
 	bit OW_WEATHER_LIGHTNING_DISABLED_F, [hl]
 	ret nz
-	ld a, 1
-	ld [wPalWhiteState], a
 	call SetWhitePals
 	farcall ApplyPals
 	ld de, SFX_THUNDER_OW

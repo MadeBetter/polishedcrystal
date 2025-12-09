@@ -1393,22 +1393,6 @@ wPrevWeather:: db
 wCurWeather:: db
 wPrevOvercastIndex:: db
 
-wPalStateIndex:: db
-wPalWhiteState:: db
-
-wPalStates::
-wPrevPalStates::
-wPrevPalWeatherState:: db
-wPrevPalDarknessState:: db
-wPrevPalOvercastIndexState:: db
-wPrevPalTimeOfDayPalState:: db
-
-wCurPalStates::
-wCurPalWeatherState:: db
-wCurPalDarknessState:: db
-wCurPalOvercastIndexState:: db
-wCurPalTimeOfDayPalState:: db
-
 
 SECTION "Options", WRAM0
 

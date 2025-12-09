@@ -86,7 +86,6 @@ MapSetupScript_BadWarp:
 	db -1 ; end
 
 MapSetupScript_Connection:
-	mapsetup SavePrevPalStates
 	mapsetup SuspendMapAnims
 	mapsetup EnterMapConnection
 	mapsetup LoadMapAttributes_Connection
@@ -102,9 +101,8 @@ MapSetupScript_Connection:
 	mapsetup LoadMapObjects_Connection
 	mapsetup FadeToMapMusic
 	mapsetup LoadMapPalettes
-	mapsetup MapConnOWFadePalettesInit
-	mapsetup ClearSavedObjPals
 	mapsetup EnableDynPalUpdatesNoApply
+	mapsetup MapConnOWFadePalettesInit
 	mapsetup InitMapNameSign
 	mapsetup LoadWildMonData
 	mapsetup UpdateRoamMons
