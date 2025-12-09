@@ -617,6 +617,9 @@ GetPlayerOrMonPalettePointer:
 GetFrontpicPalettePointer:
 	and a
 	jr nz, GetMonNormalOrShinyPalettePointer
+	ld a, [wTrainerPal]
+	and a
+	jr nz, GetTrainerPalettePointer
 	ld a, [wTrainerClass]
 
 GetTrainerPalettePointer:
@@ -759,8 +762,12 @@ LoadTempMonPalette:
 	jr _FinishLoadNicknamedMonPalette
 
 LoadTrainerPalette:
+	ld a, [wTrainerPal]
+	and a
+	jr nz, .use_custom_pal
 	; a = class
 	ld a, [wTrainerClass]
+.use_custom_pal
 	; hl = palette
 	call GetTrainerPalettePointer
 	; load palette in BG 7
