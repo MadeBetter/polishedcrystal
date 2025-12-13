@@ -131,9 +131,6 @@ INCLUDE "gfx/player/crys_color3.pal"
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
 
-PokeballColorPalette:
-INCLUDE "gfx/player/pokeball_color.pal"
-
 GetDefaultBattlePalette:
 	ld a, BANK(wTempBattleMonSpecies)
 	call StackCallInWRAMBankA
@@ -375,10 +372,6 @@ _CGB_BattleIntroColors:
 	ld bc, 6 * SCREEN_WIDTH
 	ld a, PAL_BATTLE_BG_TEXT
 	rst ByteFill
-
-	; Part 6: Load additional OBJ Palettes
-	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
-	call SetBattlePal_Enemy
 
 	; Skip OBJ palette 1 - already loaded with player color
 
