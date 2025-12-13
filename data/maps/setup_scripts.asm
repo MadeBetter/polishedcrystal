@@ -215,6 +215,5 @@ MapSetupScript_Submenu:
 	mapsetup LoadConnectionBlockData
 	mapsetup DisableLCD
 	mapsetup LoadMapTilesetGFX
-	mapsetup ClearSavedObjPals
 	mapsetup EnableLCD
 	db -1 ; end
