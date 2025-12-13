@@ -1349,9 +1349,22 @@ endr
 	bit SWITCH_FORCED, a
 	call z, UserSentOutText
 
+	; Check if player back pic is still visible (intro colors active)
+	ld a, [wPlayerBackpicVisible]
+	and a
+	jr z, .use_normal_colors ; Player slid off, use normal colors
+
+	; Player still visible, use intro colors (updates enemy Pokemon palette)
+	ld a, CGB_BATTLE_INTRO_COLORS
+	call GetCGBLayout
+	call SetDefaultBGPAndOBP
+	jr .palette_done
+
+.use_normal_colors
 	ld a, CGB_BATTLE_COLORS
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
+.palette_done
 
 .wild
 	; For enemy, we need to mark as seen and set base exp unless link/BT
@@ -6487,9 +6500,24 @@ FinishBattleAnim:
 	push de
 	push bc
 	push af
+
+	; Check if player back pic is still visible (intro colors active)
+	ld a, [wPlayerBackpicVisible]
+	and a
+	jr z, .use_normal_colors ; Player slid off, use normal colors
+
+	; Player still visible, use intro colors (updates enemy Pokemon palette)
+	ld a, CGB_BATTLE_INTRO_COLORS
+	call GetCGBLayout
+	call SetDefaultBGPAndOBP
+	jr .done
+
+.use_normal_colors
 	ld a, CGB_BATTLE_COLORS
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
+
+.done
 	call DelayFrame
 	jmp PopAFBCDEHL
 
@@ -8755,7 +8783,7 @@ InitBattleDisplay:
 	call ApplyTilemapInVBlank
 	call HideSprites
 	call .LoadColorLayerSprites  ; Restore color layer sprites after HideSprites
-	ld a, CGB_BATTLE_COLORS
+	ld a, CGB_BATTLE_INTRO_COLORS
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
 	xor a
@@ -8923,7 +8951,7 @@ InitBattleDisplay:
 	ld [hli], a  ; Tile index
 	inc a
 	ldh [hMapObjectIndexBuffer], a
-	ld a, $4  ; Use OBJ palette 4 (custom Chris color palette)
+	ld a, $1  ; Use OBJ palette 1 (custom Chris color palette)
 	ld [hli], a  ; Attributes
 	jr .next_position
 
@@ -9113,8 +9141,8 @@ InitBattleDisplay:
 	inc a
 	ldh [hMapObjectIndexBuffer], a
 
-	; Write attributes (palette 4)
-	ld a, $4
+	; Write attributes (palette 1)
+	ld a, $1
 	ld [hli], a
 	jr .kris_next_position
 
@@ -9301,20 +9329,20 @@ InitBattleDisplay:
 	cp 33
 	jr z, .crys_palette_5
 
-	; Check tile 34: palette 6
+	; Check tile 34: palette 5
 	cp 34
-	jr z, .crys_palette_6
+	jr z, .crys_palette_5_alt
 
-	; Default: palette 4
-	ld a, $4
+	; Default: palette 1
+	ld a, $1
 	jr .crys_palette_done
 
 .crys_palette_5:
-	ld a, $5
+	ld a, $4
 	jr .crys_palette_done
 
-.crys_palette_6:
-	ld a, $6
+.crys_palette_5_alt:
+	ld a, $5
 
 .crys_palette_done:
 	ld [hli], a

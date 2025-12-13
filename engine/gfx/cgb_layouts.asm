@@ -13,6 +13,7 @@ LoadCGBLayout::
 	table_width 2
 	dw _CGB_BattleGrayscale
 	dw _CGB_BattleColors
+	dw _CGB_BattleIntroColors
 	dw _CGB_PokegearPals
 	dw _CGB_StatsScreenHPPals
 	dw _CGB_Pokedex
@@ -109,6 +110,27 @@ INCLUDE "gfx/player/kris_color2.pal"
 CrysColor2Palette:
 INCLUDE "gfx/player/crys_color2.pal"
 
+ChrisBGColorPalette:
+INCLUDE "gfx/player/chris_bg_color.pal"
+
+KrisBGColorPalette:
+INCLUDE "gfx/player/kris_bg_color.pal"
+
+CrysBGColorPalette:
+INCLUDE "gfx/player/crys_bg_color.pal"
+
+ChrisColor3Palette:
+INCLUDE "gfx/player/chris_color3.pal"
+
+KrisColor3Palette:
+INCLUDE "gfx/player/kris_color3.pal"
+
+CrysColor3Palette:
+INCLUDE "gfx/player/crys_color3.pal"
+
+TrainerSkinPalette:
+INCLUDE "gfx/trainers/skin.pal"
+
 PokeballColorPalette:
 INCLUDE "gfx/player/pokeball_color.pal"
 
@@ -118,25 +140,25 @@ GetDefaultBattlePalette:
 .Function:
 	ld a, h
 	and a ; PAL_BATTLE_BG_PLAYER
-	jr z, SetBattlePal_Player
+	jp z, SetBattlePal_Player
 	dec a ; PAL_BATTLE_BG_ENEMY
-	jr z, SetBattlePal_Enemy
+	jp z, SetBattlePal_Enemy
 	dec a ; PAL_BATTLE_BG_ENEMY_HP
-	jr z, SetBattlePal_EnemyHP
+	jp z, SetBattlePal_EnemyHP
 	dec a ; PAL_BATTLE_BG_PLAYER_HP
-	jr z, SetBattlePal_PlayerHP
+	jp z, SetBattlePal_PlayerHP
 	dec a ; PAL_BATTLE_BG_EXP_GENDER
-	jr z, SetBattlePal_ExpGender
+	jp z, SetBattlePal_ExpGender
 	dec a ; PAL_BATTLE_BG_STATUS
-	jr z, SetBattlePal_Status
+	jp z, SetBattlePal_Status
 	dec a ; PAL_BATTLE_BG_TYPE_CAT
-	jr z, SetBattlePal_Player ; type+cat uses player pal normally.
+	jp z, SetBattlePal_Player ; type+cat uses player pal normally.
 	dec a ; PAL_BATTLE_BG_TEXT
-	jr z, SetBattlePal_Text
+	jp z, SetBattlePal_Text
 	dec a ; PAL_BATTLE_OB_ENEMY
-	jr z, SetBattlePal_Enemy
+	jp z, SetBattlePal_Enemy
 	dec a ; PAL_BATTLE_OB_PLAYER
-	jr z, SetBattlePal_Player
+	jp z, SetBattlePal_Player
 
 	; At this point, a is 1-6. Load a battle object pal.
 	ld hl, BattleObjectPals - 1 palettes
@@ -153,6 +175,44 @@ GetEnemyMonDVs:
 	ld hl, wOTPartyMon1DVs
 	ld a, [wCurOTMon]
 	jmp GetPartyLocation
+
+SetBattlePal_PlayerBG:
+	ld a, [wPlayerGender]
+	and a  ; PLAYER_MALE
+	jr z, .chris_bg
+	cp PLAYER_FEMALE
+	jr z, .kris_bg
+	; PLAYER_ENBY
+	ld hl, CrysBGColorPalette
+	jr .load_bg
+.chris_bg:
+	ld hl, ChrisBGColorPalette
+	jr .load_bg
+.kris_bg:
+	ld hl, KrisBGColorPalette
+.load_bg:
+	jmp LoadOnePalette
+
+SetBattlePal_PlayerSkin:
+	ld hl, TrainerSkinPalette
+	jmp LoadPalette_White_Col1_Col2_Black
+
+SetBattlePal_PlayerColor:
+	ld a, [wPlayerGender]
+	and a  ; PLAYER_MALE
+	jr z, .chris_color
+	cp PLAYER_FEMALE
+	jr z, .kris_color
+	; PLAYER_ENBY
+	ld hl, CrysColorLayerPalette
+	jr .load_color
+.chris_color:
+	ld hl, ChrisColorLayerPalette
+	jr .load_color
+.kris_color:
+	ld hl, KrisColorLayerPalette
+.load_color:
+	jmp LoadOnePalette
 
 SetBattlePal_Player:
 	ld hl, wTempBattleMonSpecies
@@ -231,6 +291,142 @@ SetBattlePal_Status:
 SetBattlePal_Text:
 	ld hl, DarkGrayPalette
 	jmp LoadPalette_White_Col1_Col2_Black
+
+_CGB_BattleIntroColors:
+	push bc
+
+	; Part 1: Load BG Palettes
+	ld de, wBGPals1
+	call SetBattlePal_PlayerBG    ; BG 0 = Player BG color
+	call SetBattlePal_Enemy       ; BG 1 = Enemy Pokémon
+	call SetBattlePal_EnemyHP     ; BG 2 = Enemy HP bar
+	call SetBattlePal_PlayerHP    ; BG 3 = Player HP bar
+	call SetBattlePal_ExpGender   ; BG 4 = EXP/gender
+	call SetBattlePal_Status      ; BG 5 = Status icons
+	ld de, wBGPals1 palette PAL_BATTLE_BG_TYPE_CAT
+	call SetBattlePal_PlayerSkin  ; BG 6 = Player skin
+	call SetBattlePal_Text        ; BG 7 = Text box
+
+	; Part 2: Load OBJ Palettes (initial)
+	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
+	call SetBattlePal_Enemy       ; OBJ 0 = Enemy Pokémon
+	call SetBattlePal_PlayerColor ; OBJ 1 = Player color 1
+
+	; Part 3: Apply Palettes
+	ld a, CGB_BATTLE_INTRO_COLORS
+	ld [wMemCGBLayout], a
+	call ApplyPals
+
+	; Part 5: Set BG Tilemap Attributes
+	pop bc
+	push bc
+	hlcoord 0, 0, wAttrmap
+	ld bc, SCREEN_AREA
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	rst ByteFill
+
+	hlcoord 0, 4, wAttrmap
+	lb bc, 8, 10
+	ld a, PAL_BATTLE_BG_TYPE_CAT ; Use palette 6 (skin) for player background
+	call FillBoxWithByte
+
+	hlcoord 11, 0, wAttrmap
+	lb bc, 7, 9
+	ld a, PAL_BATTLE_BG_ENEMY
+	call FillBoxWithByte
+
+	hlcoord 0, 0, wAttrmap
+	lb bc, 4, 11
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	call FillBoxWithByte
+
+	hlcoord 10, 7, wAttrmap
+	lb bc, 5, 10
+	ld a, PAL_BATTLE_BG_PLAYER_HP
+	call FillBoxWithByte
+
+	hlcoord 12, 11, wAttrmap
+	lb bc, 1, 7
+	ld a, PAL_BATTLE_BG_EXP_GENDER
+	call FillBoxWithByte
+
+	ld a, PAL_BATTLE_BG_EXP_GENDER
+	ldcoord_a 0, 1, wAttrmap
+	ldcoord_a 1, 1, wAttrmap
+	ldcoord_a 8, 1, wAttrmap
+	ldcoord_a 18, 8, wAttrmap
+
+	hlcoord 12, 8, wAttrmap
+	lb bc, 1, 2
+	ld a, PAL_BATTLE_BG_STATUS
+	call FillBoxWithByte
+
+	hlcoord 2, 1, wAttrmap
+	lb bc, 1, 2
+	ld a, PAL_BATTLE_BG_STATUS
+	call FillBoxWithByte
+
+	hlcoord 1, 9, wAttrmap
+	lb bc, 1, 6
+	ld a, PAL_BATTLE_BG_TYPE_CAT
+	call FillBoxWithByte
+
+	hlcoord 0, 12, wAttrmap
+	ld bc, 6 * SCREEN_WIDTH
+	ld a, PAL_BATTLE_BG_TEXT
+	rst ByteFill
+
+	; Part 6: Load additional OBJ Palettes
+	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
+	call SetBattlePal_Enemy
+
+	; Skip OBJ palette 1 - already loaded with player color
+
+	; Load battle animation palettes (palettes 2-3)
+	ld hl, BattleObjectPals
+	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
+	ld c, 6 palettes
+	call LoadPalettes
+
+	; Load player color2 into OBJ palette 4
+	ld a, [wPlayerGender]
+	and a
+	jr z, .chris_color2
+	cp PLAYER_FEMALE
+	jr z, .kris_color2
+	ld hl, CrysColor2Palette
+	jr .load_color2
+.chris_color2:
+	ld hl, ChrisColor2Palette
+	jr .load_color2
+.kris_color2:
+	ld hl, KrisColor2Palette
+.load_color2:
+	ld de, wOBPals1 palette 4
+	call LoadOnePalette
+
+	; Load player color3 into OBJ palette 5
+	ld a, [wPlayerGender]
+	and a
+	jr z, .chris_color3
+	cp PLAYER_FEMALE
+	jr z, .kris_color3
+	ld hl, CrysColor3Palette
+	jr .load_color3
+.chris_color3:
+	ld hl, ChrisColor3Palette
+	jr .load_color3
+.kris_color3:
+	ld hl, KrisColor3Palette
+.load_color3:
+	ld de, wOBPals1 palette 5
+	call LoadOnePalette
+
+	; Skip pokeball palette (palette 6) - keep original behavior
+
+	pop bc
+	; Part 7: Skip ability overlay logic - not needed during intro
+	jmp ApplyAttrMap
 
 _CGB_BattleColors:
 	push bc
