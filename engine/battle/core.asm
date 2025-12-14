@@ -8851,16 +8851,20 @@ InitBattleDisplay:
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55  ; Get tile number 0-35
 
-	; Skip white tiles: 0, 1, 5, 6, 7, 11, 12, 18, 19, 21, 23, 24, 30
+	; Skip white tiles: 0, 1, 3, 5, 6, 7, 9, 11, 12, 18, 19, 21, 23, 24, 30, 31, 32
 	cp 0
 	jp z, .skip_sprite
 	cp 1
+	jp z, .skip_sprite
+	cp 3
 	jp z, .skip_sprite
 	cp 5
 	jp z, .skip_sprite
 	cp 6
 	jp z, .skip_sprite
 	cp 7
+	jp z, .skip_sprite
+	cp 9
 	jp z, .skip_sprite
 	cp 11
 	jp z, .skip_sprite
@@ -8878,81 +8882,173 @@ InitBattleDisplay:
 	jp z, .skip_sprite
 	cp 30
 	jp z, .skip_sprite
+	cp 31
+	jp z, .skip_sprite
+	cp 32
+	jp z, .skip_sprite
 
 	; Create sprite for this tile
-	; Y position (tile 15: +2px down)
+	; Get tile number first and save to hBattleTurn (temp variable, safe during intro)
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
-	cp 15
-	ld a, d
-	jr nz, .no_y_adjust
-	inc a
-	inc a
-.no_y_adjust
-	ld [hli], a  ; Y position
+	ldh [hBattleTurn], a  ; Save tile number in temp storage
 
-	; X position adjustments
 	push de ; Save D, E (Y, X positions)
 	push bc ; Save B, C (row/column counters)
 
-	ldh a, [hMapObjectIndexBuffer]
-	sub $55
-	ld b, a  ; Tile number in b
-	ld a, e  ; X position in a
+	; Y position adjustments
+	ld a, d  ; Base Y position
+	ld c, a  ; Save in c
+	ldh a, [hBattleTurn]  ; Get tile number
 
-	; Check tile 4: +1px right
-	ld c, a  ; Save X in c
-	ld a, b
 	cp 4
+	jr nz, .check_y_tile10
 	ld a, c
-	jr nz, .check_tile10
-	inc a
-	jr .x_adjust_done
-
-.check_tile10
-	; Check tile 10: +5px right
-	ld c, a
-	ld a, b
+	inc a  ; Tile 4: +1px Y
+	jr .y_adjust_done
+.check_y_tile10
 	cp 10
+	jr nz, .check_y_tile14
 	ld a, c
-	jr nz, .check_tile22
-	add 5
-	jr .x_adjust_done
-
-.check_tile22
-	; Check tile 22: +2px right
-	ld c, a
-	ld a, b
+	inc a  ; Tile 10: +1px Y
+	jr .y_adjust_done
+.check_y_tile14
+	cp 14
+	jr nz, .check_y_tile22
+	ld a, c
+	inc a
+	inc a  ; Tile 14: +2px Y
+	jr .y_adjust_done
+.check_y_tile22
 	cp 22
+	jr nz, .no_y_adjust
 	ld a, c
-	jr nz, .check_tile31_34
-	add 2
-	jr .x_adjust_done
-
-.check_tile31_34
-	; Check tiles 31-34: -1px left
-	ld c, a
-	ld a, b
-	cp 31
-	jr c, .x_restore
-	cp 35
-	jr nc, .x_restore
+	inc a  ; Tile 22: +1px Y
+	jr .y_adjust_done
+.no_y_adjust
 	ld a, c
-	dec a
-	jr .x_adjust_done
+.y_adjust_done
+	ld [hli], a  ; Write Y position
 
-.x_restore
+	; X position adjustments
+	ld a, e  ; Base X position
+	ld c, a  ; Save in c
+	ldh a, [hBattleTurn]  ; Get tile number
+
+	cp 2
+	jr nz, .check_x_tile4
+	ld a, c
+	inc a
+	inc a  ; Tile 2: +2px X
+	jr .x_adjust_done
+.check_x_tile4
+	cp 4
+	jr nz, .check_x_tile8
+	ld a, c
+	inc a  ; Tile 4: +1px X
+	jr .x_adjust_done
+.check_x_tile8
+	cp 8
+	jr nz, .check_x_tile10
+	ld a, c
+	inc a  ; Tile 8: +1px X
+	jr .x_adjust_done
+.check_x_tile10
+	cp 10
+	jr nz, .check_x_tile13
+	ld a, c
+	add 6  ; Tile 10: +6px X
+	jr .x_adjust_done
+.check_x_tile13
+	cp 13
+	jr nz, .check_x_tile14
+	ld a, c
+	inc a  ; Tile 13: +1px X
+	jr .x_adjust_done
+.check_x_tile14
+	cp 14
+	jr nz, .check_x_tile15
+	ld a, c
+	inc a  ; Tile 14: +1px X
+	jr .x_adjust_done
+.check_x_tile15
+	cp 15
+	jr nz, .check_x_tile22
+	ld a, c
+	inc a  ; Tile 15: +1px X
+	jr .x_adjust_done
+.check_x_tile22
+	cp 22
+	jr nz, .check_x_tile25_27
+	ld a, c
+	add 4  ; Tile 22: +4px X
+	jr .x_adjust_done
+.check_x_tile25_27
+	cp 25
+	jr c, .check_x_tile33
+	cp 28
+	jr nc, .check_x_tile33
+	ld a, c
+	inc a
+	inc a  ; Tiles 25, 26, 27: +2px X
+	jr .x_adjust_done
+.check_x_tile33
+	cp 33
+	jr nz, .no_x_adjust
+	ld a, c
+	inc a  ; Tile 33: +1px X
+	jr .x_adjust_done
+.no_x_adjust
 	ld a, c
 .x_adjust_done
 	pop bc ; Restore B, C
 	pop de ; Restore D, E
-	ld [hli], a  ; X position
+	ld [hli], a  ; Write X position
+
+	; Write tile index
 	ldh a, [hMapObjectIndexBuffer]
 	ld [hli], a  ; Tile index
 	inc a
 	ldh [hMapObjectIndexBuffer], a
-	ld a, $1  ; Use OBJ palette 1 (custom Chris color palette)
-	ld [hli], a  ; Attributes
+
+	; Palette assignments based on tile number
+	ldh a, [hBattleTurn]  ; Get tile number
+
+	; Check for palette 5 tiles (28, 29)
+	cp 28
+	jr z, .use_palette5
+	cp 29
+	jr z, .use_palette5
+
+	; Check for palette 4 tiles (20, 22, 25, 26, 27, 33, 34, 35)
+	cp 20
+	jr z, .use_palette4
+	cp 22
+	jr z, .use_palette4
+	cp 25
+	jr c, .check_palette1
+	cp 28
+	jr c, .use_palette4
+	cp 33
+	jr c, .check_palette1
+	cp 36
+	jr nc, .check_palette1
+	jr .use_palette4
+
+.check_palette1
+	; Default to palette 1 for remaining tiles (2, 4, 8, 10, 13, 14, 15, 16, 17)
+	ld a, $1
+	jr .write_palette
+
+.use_palette4
+	ld a, $4
+	jr .write_palette
+
+.use_palette5
+	ld a, $5
+
+.write_palette
+	ld [hli], a  ; Attributes (palette)
 	jr .next_position
 
 .skip_sprite

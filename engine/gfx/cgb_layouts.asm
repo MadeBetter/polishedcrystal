@@ -327,6 +327,25 @@ _CGB_BattleIntroColors:
 	ld a, PAL_BATTLE_BG_TYPE_CAT ; Use palette 6 (skin) for player background
 	call FillBoxWithByte
 
+	; Chris-specific: Set certain back sprite tiles to BG palette 0
+	push bc
+	ld a, [wPlayerGender]
+	and a ; PLAYER_MALE
+	jr nz, .skip_chris_bg_palette
+	; Set tiles 24, 25, 26, 30, 31, 32, 33, 34 to palette 0
+	; Player back sprite is at (2,6) so tile N is at (2 + N%6, 6 + N/6)
+	xor a ; PAL_BATTLE_BG_PLAYER
+	ldcoord_a 2, 10, wAttrmap ; Tile 24 (row 4, col 0)
+	ldcoord_a 3, 10, wAttrmap ; Tile 25 (row 4, col 1)
+	ldcoord_a 4, 10, wAttrmap ; Tile 26 (row 4, col 2)
+	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
+	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
+	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
+	ldcoord_a 5, 11, wAttrmap ; Tile 33 (row 5, col 3)
+	ldcoord_a 6, 11, wAttrmap ; Tile 34 (row 5, col 4)
+.skip_chris_bg_palette
+	pop bc
+
 	hlcoord 11, 0, wAttrmap
 	lb bc, 7, 9
 	ld a, PAL_BATTLE_BG_ENEMY
