@@ -327,12 +327,12 @@ _CGB_BattleIntroColors:
 	ld a, PAL_BATTLE_BG_TYPE_CAT ; Use palette 6 (skin) for player background
 	call FillBoxWithByte
 
-	; Chris-specific: Set certain back sprite tiles to BG palette 0
+	; Gender-specific: Set certain back sprite tiles to BG palette 0
 	push bc
 	ld a, [wPlayerGender]
 	and a ; PLAYER_MALE
-	jr nz, .skip_chris_bg_palette
-	; Set tiles 24, 25, 26, 30, 31, 32, 33, 34 to palette 0
+	jr nz, .check_crys_bg_palette
+	; Chris: Set tiles 24, 25, 26, 30, 31, 32, 33, 34 to palette 0
 	; Player back sprite is at (2,6) so tile N is at (2 + N%6, 6 + N/6)
 	xor a ; PAL_BATTLE_BG_PLAYER
 	ldcoord_a 2, 10, wAttrmap ; Tile 24 (row 4, col 0)
@@ -343,7 +343,18 @@ _CGB_BattleIntroColors:
 	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
 	ldcoord_a 5, 11, wAttrmap ; Tile 33 (row 5, col 3)
 	ldcoord_a 6, 11, wAttrmap ; Tile 34 (row 5, col 4)
-.skip_chris_bg_palette
+	jr .skip_gender_bg_palette
+.check_crys_bg_palette
+	cp PLAYER_ENBY
+	jr nz, .skip_gender_bg_palette
+	; Crys: Set tiles 27, 30, 31, 32, 33 to palette 0
+	xor a ; PAL_BATTLE_BG_PLAYER
+	ldcoord_a 5, 10, wAttrmap ; Tile 27 (row 4, col 3)
+	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
+	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
+	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
+	ldcoord_a 5, 11, wAttrmap ; Tile 33 (row 5, col 3)
+.skip_gender_bg_palette
 	pop bc
 
 	hlcoord 11, 0, wAttrmap
