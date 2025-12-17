@@ -9105,12 +9105,12 @@ InitBattleDisplay:
 
 .CreateKrisColorLayerOAM:
 	; Create OAM sprites for Kris color layer
-	; Skip tiles: 0, 1, 4, 5, 6, 11, 16, 17, 24, 25, 27, 28, 29, 30, 31, 32, 34
-	; Position adjustments:
-	;   tile 10: Y -1px (move up)
-	;   tile 22: Y +1px (move down)
-	;   tile 33: X -1px (move left)
-	;   tile 35: X -4px (move left)
+	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 27, 29, 30, 31, 32, 35
+	; Position adjustments: (many - see individual tile checks)
+	; Palette assignments:
+	;   - Tiles 1, 7, 8, 12, 26, 33: palette 1
+	;   - Tiles 9, 10, 13, 14, 15, 18, 19, 20, 21, 22, 23, 28: palette 4
+	;   - Tile 34: palette 5
 
 	ld hl, wShadowOAM + 0 * 4
 	ld a, $55  ; Starting tile ID
@@ -9121,124 +9121,248 @@ InitBattleDisplay:
 	ld c, $6  ; 6 columns
 	ld e, 3 * 8  ; Starting X position (24px)
 .kris_color_inner:
-	; Get current tile index (0-35)
+	; Get current tile index and save to hBattleTurn
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
+	ldh [hBattleTurn], a
 
-	; Skip tile 0
+	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 27, 29, 30, 31, 32, 35
 	cp 0
 	jp z, .kris_skip_sprite
-	; Skip tile 1
-	cp 1
+	cp 2
 	jp z, .kris_skip_sprite
-	; Skip tile 4
+	cp 3
+	jp z, .kris_skip_sprite
 	cp 4
 	jp z, .kris_skip_sprite
-	; Skip tile 5
 	cp 5
 	jp z, .kris_skip_sprite
-	; Skip tile 6
 	cp 6
 	jp z, .kris_skip_sprite
-	; Skip tile 11
 	cp 11
 	jp z, .kris_skip_sprite
-	; Skip tile 16
 	cp 16
 	jp z, .kris_skip_sprite
-	; Skip tile 17
 	cp 17
 	jp z, .kris_skip_sprite
-	; Skip tile 24
 	cp 24
 	jp z, .kris_skip_sprite
-	; Skip tile 25
-	cp 25
-	jp z, .kris_skip_sprite
-	; Skip tile 27
 	cp 27
 	jp z, .kris_skip_sprite
-	; Skip tile 28
-	cp 28
-	jp z, .kris_skip_sprite
-	; Skip tile 29
 	cp 29
 	jp z, .kris_skip_sprite
-	; Skip tile 30
 	cp 30
 	jp z, .kris_skip_sprite
-	; Skip tile 31
 	cp 31
 	jp z, .kris_skip_sprite
-	; Skip tile 32
 	cp 32
 	jp z, .kris_skip_sprite
-	; Skip tile 34
-	cp 34
+	cp 35
 	jp z, .kris_skip_sprite
 
-	; Y position with adjustments
-	ldh a, [hMapObjectIndexBuffer]
-	sub $55
-	cp 10
-	ld a, d
-	jr nz, .kris_check_tile22_y
-	; tile 10: move up by 1px
-	dec a
-	jr .kris_y_done
-.kris_check_tile22_y:
-	ldh a, [hMapObjectIndexBuffer]
-	sub $55
-	cp 22
-	ld a, d
-	jr nz, .kris_y_done
-	; tile 22: move down by 1px
-	inc a
-.kris_y_done:
-	ld [hli], a  ; Write Y position
-
-	; X position with adjustments
 	push de
 	push bc
 
-	ldh a, [hMapObjectIndexBuffer]
-	sub $55
-	ld b, a  ; Save tile index in b
-	ld a, e  ; Get X position
+	; Y position adjustments
+	ld a, d  ; Base Y
+	ld c, a
+	ldh a, [hBattleTurn]
 
-	; Check tile 33: move left by 1px
-	ld c, a  ; Save X in c
-	ld a, b  ; Get tile index
-	cp 33
-	ld a, c  ; Restore X
-	jr nz, .kris_check_tile35
+	cp 1
+	jr nz, .kris_check_y_tile8
+	ld a, c
+	add 3  ; Tile 1: Y+3
+	jr .kris_y_done
+.kris_check_y_tile8:
+	cp 8
+	jr nz, .kris_check_y_tile9
+	ld a, c
+	add 11  ; Tile 8: Y+11
+	jr .kris_y_done
+.kris_check_y_tile9:
+	cp 9
+	jr nz, .kris_check_y_tile10
+	ld a, c
+	add 3  ; Tile 9: Y+3
+	jr .kris_y_done
+.kris_check_y_tile10:
+	cp 10
+	jr nz, .kris_check_y_tile12
+	ld a, c
+	dec a  ; Tile 10: Y-1
+	jr .kris_y_done
+.kris_check_y_tile12:
+	cp 12
+	jr nz, .kris_check_y_tile14
+	ld a, c
+	inc a
+	inc a  ; Tile 12: Y+2
+	jr .kris_y_done
+.kris_check_y_tile14:
+	cp 14
+	jr nz, .kris_check_y_tile15
+	ld a, c
+	inc a
+	inc a  ; Tile 14: Y+2
+	jr .kris_y_done
+.kris_check_y_tile15:
+	cp 15
+	jr nz, .kris_check_y_tile18
+	ld a, c
+	add 3  ; Tile 15: Y+3
+	jr .kris_y_done
+.kris_check_y_tile18:
+	cp 18
+	jr nz, .kris_check_y_tile21
+	ld a, c
+	dec a  ; Tile 18: Y-1
+	jr .kris_y_done
+.kris_check_y_tile21:
+	cp 21
+	jr nz, .kris_check_y_tile23
+	ld a, c
+	add 3  ; Tile 21: Y+3
+	jr .kris_y_done
+.kris_check_y_tile23:
+	cp 23
+	jr nz, .kris_check_y_tile26
+	ld a, c
+	inc a  ; Tile 23: Y+1
+	jr .kris_y_done
+.kris_check_y_tile26:
+	cp 26
+	jr nz, .kris_no_y_adjust
+	ld a, c
+	dec a  ; Tile 26: Y-1
+	jr .kris_y_done
+.kris_no_y_adjust:
+	ld a, c
+.kris_y_done:
+	ld [hli], a  ; Write Y
+
+	; X position adjustments
+	ld a, e  ; Base X
+	ld c, a
+	ldh a, [hBattleTurn]
+
+	cp 1
+	jr nz, .kris_check_x_tile7
+	ld a, c
+	add 4  ; Tile 1: X+4
+	jr .kris_x_done
+.kris_check_x_tile7:
+	cp 7
+	jr nz, .kris_check_x_tile9
+	ld a, c
+	inc a  ; Tile 7: X+1
+	jr .kris_x_done
+.kris_check_x_tile9:
+	cp 9
+	jr nz, .kris_check_x_tile10
+	ld a, c
+	dec a  ; Tile 9: X-1
+	jr .kris_x_done
+.kris_check_x_tile10:
+	cp 10
+	jr nz, .kris_check_x_tile12
+	ld a, c
+	dec a
+	dec a  ; Tile 10: X-2
+	jr .kris_x_done
+.kris_check_x_tile12:
+	cp 12
+	jr nz, .kris_check_x_tile14
+	ld a, c
+	add 5  ; Tile 12: X+5
+	jr .kris_x_done
+.kris_check_x_tile14:
+	cp 14
+	jr nz, .kris_check_x_tile15
+	ld a, c
+	dec a  ; Tile 14: X-1
+	jr .kris_x_done
+.kris_check_x_tile15:
+	cp 15
+	jr nz, .kris_check_x_tile18
+	ld a, c
+	dec a  ; Tile 15: X-1
+	jr .kris_x_done
+.kris_check_x_tile18:
+	cp 18
+	jr nz, .kris_check_x_tile19_20
+	ld a, c
+	inc a
+	inc a  ; Tile 18: X+2
+	jr .kris_x_done
+.kris_check_x_tile19_20:
+	cp 19
+	jr z, .kris_x_minus_1
+	cp 20
+	jr z, .kris_x_minus_1
+	cp 21
+	jr z, .kris_x_minus_1
+	cp 22
+	jr z, .kris_x_minus_1
+	cp 23
+	jr z, .kris_x_minus_1
+	cp 28
+	jr z, .kris_x_minus_1
+	cp 34
+	jr nz, .kris_no_x_adjust
+	ld a, c
+	add 4  ; Tile 34: X+4
+	jr .kris_x_done
+.kris_x_minus_1:
+	; Tiles 19, 20, 21, 22, 23, 28: X-1
+	ld a, c
 	dec a
 	jr .kris_x_done
-
-.kris_check_tile35:
-	; Check tile 35: move left by 4px
-	ld c, a  ; Save X in c
-	ld a, b  ; Get tile index
-	cp 35
-	ld a, c  ; Restore X
-	jr nz, .kris_x_done
-	sub 4
-
+.kris_no_x_adjust:
+	ld a, c
 .kris_x_done:
 	pop bc
 	pop de
-	ld [hli], a  ; Write X position
+	ld [hli], a  ; Write X
 
 	; Write tile ID
 	ldh a, [hMapObjectIndexBuffer]
 	ld [hli], a
-
-	; Increment tile ID
 	inc a
 	ldh [hMapObjectIndexBuffer], a
 
-	; Write attributes (palette 1)
+	; Palette assignment
+	ldh a, [hBattleTurn]
+
+	; Check palette 1 tiles (1, 7, 8, 12, 26, 33)
+	cp 1
+	jr z, .kris_palette_1
+	cp 7
+	jr z, .kris_palette_1
+	cp 8
+	jr z, .kris_palette_1
+	cp 12
+	jr z, .kris_palette_1
+	cp 26
+	jr z, .kris_palette_1
+	cp 33
+	jr z, .kris_palette_1
+
+	; Check palette 5 tile (34)
+	cp 34
+	jr z, .kris_palette_5
+
+	; Default: palette 4 (tiles 9, 10, 13, 14, 15, 18, 19, 20, 21, 22, 23, 28)
+	ld a, $4
+	jr .kris_palette_done
+
+.kris_palette_1:
 	ld a, $1
+	jr .kris_palette_done
+
+.kris_palette_5:
+	ld a, $5
+
+.kris_palette_done:
 	ld [hli], a
 	jr .kris_next_position
 

@@ -331,7 +331,7 @@ _CGB_BattleIntroColors:
 	push bc
 	ld a, [wPlayerGender]
 	and a ; PLAYER_MALE
-	jr nz, .check_crys_bg_palette
+	jr nz, .check_kris_bg_palette
 	; Chris: Set tiles 24, 25, 26, 30, 31, 32, 33, 34 to palette 0
 	; Player back sprite is at (2,6) so tile N is at (2 + N%6, 6 + N/6)
 	xor a ; PAL_BATTLE_BG_PLAYER
@@ -343,6 +343,26 @@ _CGB_BattleIntroColors:
 	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
 	ldcoord_a 5, 11, wAttrmap ; Tile 33 (row 5, col 3)
 	ldcoord_a 6, 11, wAttrmap ; Tile 34 (row 5, col 4)
+	jr .skip_gender_bg_palette
+.check_kris_bg_palette
+	cp PLAYER_FEMALE
+	jr nz, .check_crys_bg_palette
+	; Kris: Set tiles 1, 2, 3, 7, 8, 9, 13, 14, 25, 26, 27, 30, 31, 32 to palette 0
+	xor a ; PAL_BATTLE_BG_PLAYER
+	ldcoord_a 3, 6, wAttrmap  ; Tile 1 (row 0, col 1)
+	ldcoord_a 4, 6, wAttrmap  ; Tile 2 (row 0, col 2)
+	ldcoord_a 5, 6, wAttrmap  ; Tile 3 (row 0, col 3)
+	ldcoord_a 3, 7, wAttrmap  ; Tile 7 (row 1, col 1)
+	ldcoord_a 4, 7, wAttrmap  ; Tile 8 (row 1, col 2)
+	ldcoord_a 5, 7, wAttrmap  ; Tile 9 (row 1, col 3)
+	ldcoord_a 3, 8, wAttrmap  ; Tile 13 (row 2, col 1)
+	ldcoord_a 4, 8, wAttrmap  ; Tile 14 (row 2, col 2)
+	ldcoord_a 3, 10, wAttrmap ; Tile 25 (row 4, col 1)
+	ldcoord_a 4, 10, wAttrmap ; Tile 26 (row 4, col 2)
+	ldcoord_a 5, 10, wAttrmap ; Tile 27 (row 4, col 3)
+	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
+	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
+	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
 	jr .skip_gender_bg_palette
 .check_crys_bg_palette
 	cp PLAYER_ENBY
