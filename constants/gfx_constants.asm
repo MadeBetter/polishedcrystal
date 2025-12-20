@@ -67,7 +67,7 @@ DEF NUM_FLYTO_ANIM_OAMS   EQU 4 + 8 ; 4 for flymon, 8 for leaves
 	const_def
 	const PREV_PALSTATE ; 0
 	const CURR_PALSTATE ; 1
-
+	
 rsreset
 DEF PALSTATE_WEATHER        rb
 DEF PALSTATE_DARKNESS       rb

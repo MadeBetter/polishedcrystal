@@ -173,6 +173,7 @@ CopySpritePal::
 .not_copy_bg
 	ld a, [wNeededPalIndex]
 	call LookupOBPalette
+
 .got_pal
 	pop de
 	push de ; push wOBPals1 palette *

@@ -1422,11 +1422,10 @@ wCurPalDarknessState:: db
 wCurPalOvercastIndexState:: db
 wCurPalTimeOfDayPalState:: db
 
-
 SECTION "Unused 2", WRAM0
 
 	ds 281 ; it's free real estate
-
+	
 
 SECTION "Options", WRAM0
 
