@@ -14,6 +14,7 @@ LoadCGBLayout::
 	dw _CGB_BattleGrayscale
 	dw _CGB_BattleColors
 	dw _CGB_BattleIntroColors
+	dw _CGB_BattleTutoColors
 	dw _CGB_PokegearPals
 	dw _CGB_StatsScreenHPPals
 	dw _CGB_Pokedex
@@ -128,6 +129,21 @@ INCLUDE "gfx/player/kris_color3.pal"
 CrysColor3Palette:
 INCLUDE "gfx/player/crys_color3.pal"
 
+LyraBGColorPalette:
+INCLUDE "gfx/battle/lyra_bg_color.pal"
+
+LyraColorPalette:
+INCLUDE "gfx/battle/lyra_color.pal"
+
+LyraColor2Palette:
+INCLUDE "gfx/battle/lyra_color2.pal"
+
+LyraColor3Palette:
+INCLUDE "gfx/battle/lyra_color3.pal"
+
+LyraColor4Palette:
+INCLUDE "gfx/battle/lyra_color4.pal"
+
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
 
@@ -209,6 +225,10 @@ SetBattlePal_PlayerColor:
 .kris_color:
 	ld hl, KrisColorLayerPalette
 .load_color:
+	jmp LoadOnePalette
+
+SetBattlePal_LyraBG:
+	ld hl, LyraBGColorPalette
 	jmp LoadOnePalette
 
 SetBattlePal_Player:
@@ -469,6 +489,127 @@ _CGB_BattleIntroColors:
 
 	pop bc
 	; Part 7: Skip ability overlay logic - not needed during intro
+	jmp ApplyAttrMap
+
+_CGB_BattleTutoColors:
+	push bc
+
+	; Part 1: Load BG Palettes
+	ld de, wBGPals1
+	call SetBattlePal_LyraBG      ; BG 0 = Lyra BG color
+	call SetBattlePal_Enemy       ; BG 1 = Enemy Pokémon
+	call SetBattlePal_EnemyHP     ; BG 2 = Enemy HP bar
+	call SetBattlePal_PlayerHP    ; BG 3 = Player HP bar
+	call SetBattlePal_ExpGender   ; BG 4 = EXP/gender
+	call SetBattlePal_Status      ; BG 5 = Status icons
+	ld de, wBGPals1 palette PAL_BATTLE_BG_TYPE_CAT
+	call SetBattlePal_PlayerSkin  ; BG 6 = Skin
+	call SetBattlePal_Text        ; BG 7 = Text box
+
+	; Part 2: Apply Palettes
+	ld a, CGB_BATTLE_TUTO_COLORS
+	ld [wMemCGBLayout], a
+	call ApplyPals
+
+	; Part 4: Set BG Tilemap Attributes
+	pop bc
+	push bc
+	hlcoord 0, 0, wAttrmap
+	ld bc, SCREEN_AREA
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	rst ByteFill
+
+	hlcoord 0, 4, wAttrmap
+	lb bc, 8, 10
+	ld a, PAL_BATTLE_BG_TYPE_CAT ; Use palette 6 (skin) for Lyra background
+	call FillBoxWithByte
+
+	; Lyra-specific: Set tiles 0,1,2,3,4,6,7,9,10,12,13,14,19,20,25,26,27,33 to palette 0
+	xor a ; PAL_BATTLE_BG_PLAYER
+	ldcoord_a 2, 6, wAttrmap   ; Tile 0
+	ldcoord_a 3, 6, wAttrmap   ; Tile 1
+	ldcoord_a 4, 6, wAttrmap   ; Tile 2
+	ldcoord_a 5, 6, wAttrmap   ; Tile 3
+	ldcoord_a 6, 6, wAttrmap   ; Tile 4
+	ldcoord_a 2, 7, wAttrmap   ; Tile 6
+	ldcoord_a 3, 7, wAttrmap   ; Tile 7
+	ldcoord_a 5, 7, wAttrmap   ; Tile 9
+	ldcoord_a 6, 7, wAttrmap   ; Tile 10
+	ldcoord_a 2, 8, wAttrmap   ; Tile 12
+	ldcoord_a 3, 8, wAttrmap   ; Tile 13
+	ldcoord_a 4, 8, wAttrmap   ; Tile 14
+	ldcoord_a 3, 9, wAttrmap   ; Tile 19
+	ldcoord_a 4, 9, wAttrmap   ; Tile 20
+	ldcoord_a 3, 10, wAttrmap  ; Tile 25
+	ldcoord_a 4, 10, wAttrmap  ; Tile 26
+	ldcoord_a 5, 10, wAttrmap  ; Tile 27
+	ldcoord_a 5, 11, wAttrmap  ; Tile 33
+
+	hlcoord 11, 0, wAttrmap
+	lb bc, 7, 9
+	ld a, PAL_BATTLE_BG_ENEMY
+	call FillBoxWithByte
+
+	hlcoord 0, 0, wAttrmap
+	lb bc, 4, 11
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	call FillBoxWithByte
+
+	hlcoord 10, 7, wAttrmap
+	lb bc, 5, 10
+	ld a, PAL_BATTLE_BG_PLAYER_HP
+	call FillBoxWithByte
+
+	hlcoord 12, 11, wAttrmap
+	lb bc, 1, 7
+	ld a, PAL_BATTLE_BG_EXP_GENDER
+	call FillBoxWithByte
+
+	ld a, PAL_BATTLE_BG_EXP_GENDER
+	ldcoord_a 0, 1, wAttrmap
+	ldcoord_a 1, 1, wAttrmap
+	ldcoord_a 8, 1, wAttrmap
+	ldcoord_a 18, 8, wAttrmap
+
+	hlcoord 12, 8, wAttrmap
+	lb bc, 1, 2
+	ld a, PAL_BATTLE_BG_STATUS
+	call FillBoxWithByte
+
+	hlcoord 2, 1, wAttrmap
+	lb bc, 1, 2
+	ld a, PAL_BATTLE_BG_STATUS
+	call FillBoxWithByte
+
+	hlcoord 0, 12, wAttrmap
+	ld bc, 6 * SCREEN_WIDTH
+	ld a, PAL_BATTLE_BG_TEXT
+	rst ByteFill
+
+	; Part 5: Load battle animation palettes (OBJ 2-3)
+	ld hl, BattleObjectPals
+	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
+	ld c, 6 palettes
+	call LoadPalettes
+
+	; Part 6: Load Lyra color layer palettes (OBJ 0, 1, 3, 6)
+	ld hl, LyraColorPalette
+	ld de, wOBPals1 palette 0
+	call LoadOnePalette
+
+	ld hl, LyraColor2Palette
+	ld de, wOBPals1 palette 1
+	call LoadOnePalette
+
+	ld hl, LyraColor3Palette
+	ld de, wOBPals1 palette 3
+	call LoadOnePalette
+
+	ld hl, LyraColor4Palette
+	ld de, wOBPals1 palette 6
+	call LoadOnePalette
+
+	pop bc
 	jmp ApplyAttrMap
 
 _CGB_BattleColors:

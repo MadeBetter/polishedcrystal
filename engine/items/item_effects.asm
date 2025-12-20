@@ -704,7 +704,7 @@ PokeBallEffect:
 	pop hl
 .print
 	call PrintText
-	call ClearSprites
+	call ClearOAMSprites_PreserveColorLayer
 	ld a, [wBattleType]
 	cp BATTLETYPE_TUTORIAL
 	ret z

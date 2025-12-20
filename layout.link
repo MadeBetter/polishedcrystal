@@ -39,7 +39,6 @@ ROMX $01
 
 ROMX $02
 	"bank2"
-	"Trainer Pic Pointers"
 
 ROMX $03
 	"bank3"
@@ -206,6 +205,12 @@ ROMX $48
 ROMX $49
 	"Psychic Inver"
 	"PsychicInverGroup"
+
+ROMX $4A
+	"Trainer Pic Pointers"
+
+ROMX $4B
+	"Lyra Color Layer"
 
 VRAM $0
 	"VRAM0"

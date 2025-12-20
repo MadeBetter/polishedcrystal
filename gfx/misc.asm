@@ -97,7 +97,8 @@ KrisBackpic::  INCBIN "gfx/player/kris_back_skin.2bpp.lz"
 KrisBackpicColor:: INCBIN "gfx/player/kris_back_color.2bpp.lz"
 CrysBackpic::  INCBIN "gfx/player/crys_back_skin.2bpp.lz"
 CrysBackpicColor:: INCBIN "gfx/player/crys_back_color.2bpp.lz"
-LyraBackpic::  INCBIN "gfx/battle/lyra_back.2bpp.lz"
+LyraBackpicSkin::  INCBIN "gfx/battle/lyra_back_skin.2bpp.lz"
+LyraBackpicColor:: INCBIN "gfx/battle/lyra_back_color.2bpp.lz"
 
 
 SECTION "Emote Graphics", ROMX

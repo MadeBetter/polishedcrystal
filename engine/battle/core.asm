@@ -1354,8 +1354,13 @@ endr
 	and a
 	jr z, .use_normal_colors ; Player slid off, use normal colors
 
-	; Player still visible, use intro colors (updates enemy Pokemon palette)
+	; Player still visible, check if tutorial
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	ld a, CGB_BATTLE_TUTO_COLORS
+	jr z, .got_intro_layout
 	ld a, CGB_BATTLE_INTRO_COLORS
+.got_intro_layout
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
 	jr .palette_done
@@ -6506,8 +6511,13 @@ FinishBattleAnim:
 	and a
 	jr z, .use_normal_colors ; Player slid off, use normal colors
 
-	; Player still visible, use intro colors (updates enemy Pokemon palette)
+	; Player still visible, check if tutorial
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	ld a, CGB_BATTLE_TUTO_COLORS
+	jr z, .got_intro_layout
 	ld a, CGB_BATTLE_INTRO_COLORS
+.got_intro_layout
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
 	jr .done
@@ -8783,7 +8793,13 @@ InitBattleDisplay:
 	call ApplyTilemapInVBlank
 	call HideSprites
 	call .LoadColorLayerSprites  ; Restore color layer sprites after HideSprites
+	; Check if tutorial battle (use special Lyra colors)
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	ld a, CGB_BATTLE_TUTO_COLORS
+	jr z, .got_layout
 	ld a, CGB_BATTLE_INTRO_COLORS
+.got_layout
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
 	xor a
@@ -8794,6 +8810,11 @@ InitBattleDisplay:
 	ret
 
 .LoadColorLayerSprites:
+	; Check if tutorial battle first (Lyra takes priority)
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	jp z, .LoadLyraColorLayerSprites
+
 	; Dispatcher: Load color layer based on player gender
 	ld a, [wPlayerGender]
 	and a  ; PLAYER_MALE
@@ -8805,10 +8826,7 @@ InitBattleDisplay:
 	ret
 
 .LoadChrisColorLayerSprites:
-	; Only for Chris (male player)
-	ld a, [wBattleType]
-	cp BATTLETYPE_TUTORIAL
-	ret z
+	; Only for Chris (male player) - tutorial already handled by dispatcher
 	ld a, [wPlayerGender]
 	and a ; PLAYER_MALE
 	ret nz
@@ -9072,10 +9090,7 @@ InitBattleDisplay:
 	ret
 
 .LoadKrisColorLayerSprites:
-	; Only for Kris (female player)
-	ld a, [wBattleType]
-	cp BATTLETYPE_TUTORIAL
-	ret z
+	; Only for Kris (female player) - tutorial already handled by dispatcher
 	ld a, [wPlayerGender]
 	cp PLAYER_FEMALE
 	ret nz
@@ -9389,10 +9404,7 @@ InitBattleDisplay:
 	ret
 
 .LoadCrysColorLayerSprites:
-	; Only for Crys (enby player)
-	ld a, [wBattleType]
-	cp BATTLETYPE_TUTORIAL
-	ret z
+	; Only for Crys (enby player) - tutorial already handled by dispatcher
 	ld a, [wPlayerGender]
 	cp PLAYER_ENBY
 	ret nz
@@ -9607,6 +9619,11 @@ InitBattleDisplay:
 	jp nz, .crys_color_outer
 	ret
 
+.LoadLyraColorLayerSprites:
+	; Lyra functions moved to separate section to save space
+	farcall LoadLyraColorLayerSprites_Far
+	ret
+
 .BlankBGMap:
 	ldh a, [rWBK]
 	push af
@@ -9635,7 +9652,7 @@ GetTrainerBackpic:
 ; Load the player character's backpic (6x6) into VRAM starting from vTiles2 tile $31.
 
 ; Special exception for Lyra.
-	ld hl, LyraBackpic
+	ld hl, LyraBackpicSkin
 	ld a, [wBattleType]
 	cp BATTLETYPE_TUTORIAL
 	jr z, .Decompress
@@ -9914,3 +9931,260 @@ LoadWeatherIconSprite:
 	db $80 + 8, $14 + 0 ; 2: bottom-left
 	db $80 + 0, $14 + 8 ; 1: top-right
 	db $80 + 0, $14 + 0 ; 0: top-left
+
+SECTION "Lyra Color Layer", ROMX
+
+LoadLyraColorLayerSprites_Far::
+	; Only for Lyra (tutorial battle)
+	ld a, [wBattleType]
+	cp BATTLETYPE_TUTORIAL
+	ret nz
+
+	; Load lyra_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld hl, LyraBackpicColor
+	ld de, vTiles0 tile $55
+	lb bc, BANK("Trainer Backpics"), 6 * 6
+	call DecompressRequest2bpp
+
+.wait_lyra_decompress:
+	call DelayFrame
+	ldh a, [hRequested2bpp]
+	and a
+	jr nz, .wait_lyra_decompress
+
+	pop af
+	ldh [rVBK], a
+	; fallthrough
+
+CreateLyraColorLayerOAM:
+	; Create OAM sprites for Lyra color layer
+	; Skip tiles: 0,1,2,3,4,5,6,7,8,9,11,13,14,17,22,23,24,27,28,29
+	; Position adjustments:
+	;   - Tiles 10, 12: X-1
+	;   - Tiles 15, 16, 18: X+2
+	;   - Tiles 19, 20: X+1
+	;   - Tiles 21, 30: X+3
+	;   - Tiles 25, 26: X-2
+	;   - Tiles 31, 32: X-1, Y+1
+	;   - Tile 33: X+1, Y+2
+	; Palette assignments:
+	;   - Tiles 10, 12, 15, 16, 18, 19, 20, 21, 25, 26, 30: palette 1
+	;   - Tiles 31, 32: palette 4
+	;   - Tiles 33, 34, 35: palette 5
+
+	ld hl, wShadowOAM + 0 * 4
+	ld a, $55
+	ldh [hMapObjectIndexBuffer], a
+	ld b, $6
+	ld d, 8 * 8
+.lyra_color_outer:
+	ld c, $6
+	ld e, 3 * 8
+.lyra_color_inner:
+	; Get tile number and save to hBattleTurn
+	ldh a, [hMapObjectIndexBuffer]
+	sub $55
+	ldh [hBattleTurn], a
+
+	; Keep: 10,12,15,16,18-21,25,26,30-35
+	cp 36
+	jp nc, .lyra_skip_sprite
+	cp 30
+	jr nc, .not_skip
+	cp 25
+	jr z, .not_skip
+	cp 26
+	jr z, .not_skip
+	cp 18
+	jr c, .lyra_check_low
+	cp 22
+	jr c, .not_skip
+	jp .lyra_skip_sprite
+.lyra_check_low:
+	cp 10
+	jr z, .not_skip
+	cp 12
+	jr z, .not_skip
+	cp 15
+	jr z, .not_skip
+	cp 16
+	jp nz, .lyra_skip_sprite
+.not_skip:
+
+	push de
+	push bc
+
+	; Y position adjustments
+	; Tile 10: +1, Tile 16: +1, Tile 19: -1, Tile 20: +1, Tile 30: -1
+	ld a, d  ; Base Y
+	ld c, a
+	ldh a, [hBattleTurn]
+
+	cp 10
+	jr z, .lyra_y_plus_1
+	cp 16
+	jr z, .lyra_y_plus_1
+	cp 19
+	jr z, .lyra_y_minus_1
+	cp 20
+	jr z, .lyra_y_plus_1
+	cp 30
+	jr z, .lyra_y_minus_1
+
+	; No Y adjustment
+	ld a, c
+	jr .lyra_y_write
+.lyra_y_plus_1:
+	ld a, c
+	inc a
+	jr .lyra_y_write
+.lyra_y_minus_1:
+	ld a, c
+	dec a
+.lyra_y_write:
+	ld [hli], a
+
+	; X position adjustments
+	; Tile 10: -2, Tiles 15/16/19/20/21: -3, Tile 30: +3
+	; Tiles 31/32/33: -3, Tile 34: -9, Tile 35: -4
+	ld a, e  ; Base X
+	ld c, a
+	ldh a, [hBattleTurn]
+
+	cp 10
+	jr z, .lyra_x_minus_2
+	cp 15
+	jr z, .lyra_x_minus_3
+	cp 16
+	jr z, .lyra_x_minus_3
+	cp 19
+	jr z, .lyra_x_minus_3
+	cp 20
+	jr z, .lyra_x_minus_3
+	cp 21
+	jr z, .lyra_x_minus_3
+	cp 30
+	jr z, .lyra_x_plus_3
+	cp 31
+	jr z, .lyra_x_minus_3
+	cp 32
+	jr z, .lyra_x_minus_3
+	cp 33
+	jr z, .lyra_x_minus_3
+	cp 34
+	jr z, .lyra_x_minus_9
+	cp 35
+	jr z, .lyra_x_minus_4
+
+	; No X adjustment
+	ld a, c
+	jr .lyra_x_done
+.lyra_x_plus_3:
+	ld a, c
+	add 3
+	jr .lyra_x_done
+.lyra_x_minus_2:
+	ld a, c
+	sub 2
+	jr .lyra_x_done
+.lyra_x_minus_3:
+	ld a, c
+	sub 3
+	jr .lyra_x_done
+.lyra_x_minus_4:
+	ld a, c
+	sub 4
+	jr .lyra_x_done
+.lyra_x_minus_9:
+	ld a, c
+	sub 9
+.lyra_x_done:
+	pop bc
+	pop de
+	ld [hli], a  ; Write X
+
+	; Write tile index
+	ldh a, [hMapObjectIndexBuffer]
+	ld [hli], a
+	inc a
+	ldh [hMapObjectIndexBuffer], a
+
+	; Palette assignments
+	; Tile 10/25/26/31/32/33: pal0
+	; Tiles 12/15/16/18/19/20/21: pal1
+	; Tile 30/34: pal6
+	; Tile 35: pal3
+	ldh a, [hBattleTurn]
+
+	cp 10
+	jr z, .lyra_pal0
+	cp 12
+	jr z, .lyra_pal1
+	cp 15
+	jr z, .lyra_pal1
+	cp 16
+	jr z, .lyra_pal1
+	cp 18
+	jr z, .lyra_pal1
+	cp 19
+	jr z, .lyra_pal1
+	cp 20
+	jr z, .lyra_pal1
+	cp 21
+	jr z, .lyra_pal1
+	cp 25
+	jr z, .lyra_pal0
+	cp 26
+	jr z, .lyra_pal0
+	cp 30
+	jr z, .lyra_pal6
+	cp 31
+	jr z, .lyra_pal0
+	cp 32
+	jr z, .lyra_pal0
+	cp 33
+	jr z, .lyra_pal0
+	cp 34
+	jr z, .lyra_pal6
+	cp 35
+	jr z, .lyra_pal3
+
+	; Default: pal0
+.lyra_pal0:
+	ld a, $0
+	jr .lyra_pal_done
+.lyra_pal1:
+	ld a, $1
+	jr .lyra_pal_done
+.lyra_pal3:
+	ld a, $3
+	jr .lyra_pal_done
+.lyra_pal6:
+	ld a, $6
+.lyra_pal_done:
+	ld [hli], a
+	jr .lyra_next_position
+
+.lyra_skip_sprite:
+	ldh a, [hMapObjectIndexBuffer]
+	inc a
+	ldh [hMapObjectIndexBuffer], a
+
+.lyra_next_position:
+	ld a, e
+	add $8
+	ld e, a
+	dec c
+	jp nz, .lyra_color_inner
+
+	ld a, d
+	add $8
+	ld d, a
+	dec b
+	jp nz, .lyra_color_outer
+	ret

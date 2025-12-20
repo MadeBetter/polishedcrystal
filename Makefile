@@ -176,7 +176,7 @@ $(ROM_NAME)_vc.gbc: $(crystal_vc_obj) layout.link
 %.bsp: $(wildcard bsp/*.txt)
 	$Qcd bsp; ../tools/bspcomp patch.txt ../$@; cd ..
 
-gfx/battle/lyra_back.2bpp: RGBGFXFLAGS += -Z
+gfx/battle/lyra_back_skin.2bpp: RGBGFXFLAGS += -Z
 gfx/battle/substitute-back.2bpp: RGBGFXFLAGS += -Z
 gfx/battle/substitute-front.2bpp: RGBGFXFLAGS += -Z
 gfx/battle/ghost.2bpp: RGBGFXFLAGS += -Z

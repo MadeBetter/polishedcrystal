@@ -9,6 +9,8 @@ _ReturnToBattle_UseBall:
 
 .gettutorialbackpic
 	farcall GetTrainerBackpic
+	; Reload color layer OAM sprites for Lyra
+	farcall CreateLyraColorLayerOAM
 .continue
 	farcall GetMonFrontpic
 	farcall _LoadBattleFontsHPBar
