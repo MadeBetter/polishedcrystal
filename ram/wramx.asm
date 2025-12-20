@@ -1772,8 +1772,10 @@ wColorVaryShiny:: db
 
 wPalFadeDelayFrames:: db
 wPalFadeDelay:: db
+wPalFadeTotalSteps:: db
+wPalFadeStepValue:: db
 
-	ds 99 ; unused
+	ds 97 ; unused
 
 	align 8
 wLYOverridesBackup:: ds SCREEN_HEIGHT_PX
