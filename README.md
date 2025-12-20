@@ -12,9 +12,9 @@ I've had vague plans to make a Pokémon game for years. I'm very impressed by th
 
 ## Download and Play
 
-The **current official release** is **v3.2.2** (the “Polished Crystal” release). It's fully playable from start to finish and includes major overhauls to gameplay, mechanics, and quality of life. A more detailed changelog is forthcoming, but you can find the major highlights below.
+The **current official release** is **v3.2.3** (the “Polished Crystal” release). It's fully playable from start to finish and includes major overhauls to gameplay, mechanics, and quality of life. A more detailed changelog is forthcoming, but you can find the major highlights below.
 
-- **[Download v3.2.2 here](https://github.com/Rangi42/polishedcrystal/releases/tag/v3.2.2)**
+- **[Download v3.2.3 here](https://github.com/Rangi42/polishedcrystal/releases/tag/v3.2.3)**
 
 The previous official version was [v3.1.1](https://github.com/Rangi42/polishedcrystal/releases/tag/v3.1.1) (February 1, 2025).
 
@@ -54,9 +54,7 @@ The previous official version was [v3.1.1](https://github.com/Rangi42/polishedcr
 
 The MBC30 mapper was used in the Japanese version of Pokémon Crystal, making this a fitting choice for this enhanced version of the game.
 
-=======
-
-## What’s New in v3.2.2
+## What’s New in v3.2.3
 
 Below is a brief summary of the major changes and additions. A more detailed changelog will be released soon.
 
