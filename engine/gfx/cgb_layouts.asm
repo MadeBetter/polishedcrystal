@@ -144,6 +144,9 @@ INCLUDE "gfx/battle/lyra_color3.pal"
 LyraColor4Palette:
 INCLUDE "gfx/battle/lyra_color4.pal"
 
+LyraColor5Palette:
+INCLUDE "gfx/battle/lyra_color5.pal"
+
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
 
@@ -592,7 +595,7 @@ _CGB_BattleTutoColors:
 	ld c, 6 palettes
 	call LoadPalettes
 
-	; Part 6: Load Lyra color layer palettes (OBJ 0, 1, 3, 6)
+	; Part 6: Load Lyra color layer palettes (OBJ 0, 1, 3, 6, 7)
 	ld hl, LyraColorPalette
 	ld de, wOBPals1 palette 0
 	call LoadOnePalette
@@ -607,6 +610,10 @@ _CGB_BattleTutoColors:
 
 	ld hl, LyraColor4Palette
 	ld de, wOBPals1 palette 6
+	call LoadOnePalette
+
+	ld hl, LyraColor5Palette
+	ld de, wOBPals1 palette 7
 	call LoadOnePalette
 
 	pop bc

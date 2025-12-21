@@ -10020,13 +10020,13 @@ CreateLyraColorLayerOAM:
 	push bc
 
 	; Y position adjustments
-	; Tile 10: +1, Tile 16: +1, Tile 19: -1, Tile 20: +1, Tile 30: -1
+	; Tile 10: +2, Tile 16: +1, Tile 19: -1, Tile 20: +1, Tile 30: -1
 	ld a, d  ; Base Y
 	ld c, a
 	ldh a, [hBattleTurn]
 
 	cp 10
-	jr z, .lyra_y_plus_1
+	jr z, .lyra_y_plus_2
 	cp 16
 	jr z, .lyra_y_plus_1
 	cp 19
@@ -10043,6 +10043,11 @@ CreateLyraColorLayerOAM:
 	ld a, c
 	inc a
 	jr .lyra_y_write
+.lyra_y_plus_2:
+	ld a, c
+	inc a
+	inc a
+	jr .lyra_y_write
 .lyra_y_minus_1:
 	ld a, c
 	dec a
@@ -10050,14 +10055,14 @@ CreateLyraColorLayerOAM:
 	ld [hli], a
 
 	; X position adjustments
-	; Tile 10: -2, Tiles 15/16/19/20/21: -3, Tile 30: +3
+	; Tile 10: -4, Tiles 15/16/19/20/21: -3, Tile 30: +3
 	; Tiles 31/32/33: -3, Tile 34: -9, Tile 35: -4
 	ld a, e  ; Base X
 	ld c, a
 	ldh a, [hBattleTurn]
 
 	cp 10
-	jr z, .lyra_x_minus_2
+	jr z, .lyra_x_minus_4
 	cp 15
 	jr z, .lyra_x_minus_3
 	cp 16
@@ -10116,7 +10121,8 @@ CreateLyraColorLayerOAM:
 
 	; Palette assignments
 	; Tile 10/25/26/31/32/33: pal0
-	; Tiles 12/15/16/18/19/20/21: pal1
+	; Tiles 15/16: pal1
+	; Tiles 12/18/19/20/21: pal7
 	; Tile 30/34: pal6
 	; Tile 35: pal3
 	ldh a, [hBattleTurn]
@@ -10124,19 +10130,19 @@ CreateLyraColorLayerOAM:
 	cp 10
 	jr z, .lyra_pal0
 	cp 12
-	jr z, .lyra_pal1
+	jr z, .lyra_pal7
 	cp 15
 	jr z, .lyra_pal1
 	cp 16
 	jr z, .lyra_pal1
 	cp 18
-	jr z, .lyra_pal1
+	jr z, .lyra_pal7
 	cp 19
-	jr z, .lyra_pal1
+	jr z, .lyra_pal7
 	cp 20
-	jr z, .lyra_pal1
+	jr z, .lyra_pal7
 	cp 21
-	jr z, .lyra_pal1
+	jr z, .lyra_pal7
 	cp 25
 	jr z, .lyra_pal0
 	cp 26
@@ -10166,6 +10172,9 @@ CreateLyraColorLayerOAM:
 	jr .lyra_pal_done
 .lyra_pal6:
 	ld a, $6
+	jr .lyra_pal_done
+.lyra_pal7:
+	ld a, $7
 .lyra_pal_done:
 	ld [hli], a
 	jr .lyra_next_position
