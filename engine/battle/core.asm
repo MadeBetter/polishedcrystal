@@ -8909,7 +8909,7 @@ InitBattleDisplay:
 	; Get tile number first and save to hBattleTurn (temp variable, safe during intro)
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
-	ldh [hBattleTurn], a  ; Save tile number in temp storage
+	ldh [hTmpd], a  ; Save tile number in temp storage
 
 	push de ; Save D, E (Y, X positions)
 	push bc ; Save B, C (row/column counters)
@@ -8917,7 +8917,7 @@ InitBattleDisplay:
 	; Y position adjustments
 	ld a, d  ; Base Y position
 	ld c, a  ; Save in c
-	ldh a, [hBattleTurn]  ; Get tile number
+	ldh a, [hTmpd]  ; Get tile number
 
 	cp 4
 	jr nz, .check_y_tile10
@@ -8951,7 +8951,7 @@ InitBattleDisplay:
 	; X position adjustments
 	ld a, e  ; Base X position
 	ld c, a  ; Save in c
-	ldh a, [hBattleTurn]  ; Get tile number
+	ldh a, [hTmpd]  ; Get tile number
 
 	cp 2
 	jr nz, .check_x_tile4
@@ -9030,7 +9030,7 @@ InitBattleDisplay:
 	ldh [hMapObjectIndexBuffer], a
 
 	; Palette assignments based on tile number
-	ldh a, [hBattleTurn]  ; Get tile number
+	ldh a, [hTmpd]  ; Get tile number
 
 	; Check for palette 5 tiles (28, 29)
 	cp 28
@@ -9136,10 +9136,10 @@ InitBattleDisplay:
 	ld c, $6  ; 6 columns
 	ld e, 3 * 8  ; Starting X position (24px)
 .kris_color_inner:
-	; Get current tile index and save to hBattleTurn
+	; Get current tile index and save to hTmpd
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
-	ldh [hBattleTurn], a
+	ldh [hTmpd], a
 
 	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 27, 29, 30, 31, 32, 35
 	cp 0
@@ -9181,7 +9181,7 @@ InitBattleDisplay:
 	; Y position adjustments
 	ld a, d  ; Base Y
 	ld c, a
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	cp 1
 	jr nz, .kris_check_y_tile8
@@ -9258,7 +9258,7 @@ InitBattleDisplay:
 	; X position adjustments
 	ld a, e  ; Base X
 	ld c, a
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	cp 1
 	jr nz, .kris_check_x_tile7
@@ -9346,7 +9346,7 @@ InitBattleDisplay:
 	ldh [hMapObjectIndexBuffer], a
 
 	; Palette assignment
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	; Check palette 1 tiles (1, 7, 8, 12, 26, 33)
 	cp 1
@@ -9451,10 +9451,10 @@ InitBattleDisplay:
 	ld c, $6
 	ld e, 3 * 8
 .crys_color_inner:
-	; Get tile number and save to hBattleTurn
+	; Get tile number and save to hTmpd
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
-	ldh [hBattleTurn], a
+	ldh [hTmpd], a
 
 	; Skip tiles: 0, 1, 4, 5, 6, 10, 11, 12, 16, 17, 18, 22, 23, 24, 27, 28, 29, 30, 31, 32, 35
 	cp 0
@@ -9506,7 +9506,7 @@ InitBattleDisplay:
 	; Y position adjustments
 	ld a, d  ; Base Y
 	ld c, a
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	cp 25
 	jr z, .crys_y_plus_1
@@ -9531,7 +9531,7 @@ InitBattleDisplay:
 	; X position adjustments
 	ld a, e  ; Base X
 	ld c, a
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	cp 2
 	jr z, .crys_x_minus_1
@@ -9571,7 +9571,7 @@ InitBattleDisplay:
 	ldh [hMapObjectIndexBuffer], a
 
 	; Palette assignment
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	; Check palette 4 tiles (25, 26, 33)
 	cp 25
@@ -9986,10 +9986,10 @@ CreateLyraColorLayerOAM:
 	ld c, $6
 	ld e, 3 * 8
 .lyra_color_inner:
-	; Get tile number and save to hBattleTurn
+	; Get tile number and save to hTmpd
 	ldh a, [hMapObjectIndexBuffer]
 	sub $55
-	ldh [hBattleTurn], a
+	ldh [hTmpd], a
 
 	; Keep: 10,12,15,16,18-21,25,26,30-35
 	cp 36
@@ -10023,7 +10023,7 @@ CreateLyraColorLayerOAM:
 	; Tile 10: +2, Tile 16: +1, Tile 19: -1, Tile 20: +1, Tile 30: -1
 	ld a, d  ; Base Y
 	ld c, a
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	cp 10
 	jr z, .lyra_y_plus_2
@@ -10059,7 +10059,7 @@ CreateLyraColorLayerOAM:
 	; Tiles 31/32/33: -3, Tile 34: -9, Tile 35: -4
 	ld a, e  ; Base X
 	ld c, a
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	cp 10
 	jr z, .lyra_x_minus_4
@@ -10125,7 +10125,7 @@ CreateLyraColorLayerOAM:
 	; Tiles 12/18/19/20/21: pal7
 	; Tile 30/34: pal6
 	; Tile 35: pal3
-	ldh a, [hBattleTurn]
+	ldh a, [hTmpd]
 
 	cp 10
 	jr z, .lyra_pal0
