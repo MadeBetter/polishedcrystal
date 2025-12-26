@@ -54,7 +54,7 @@ rept 8
 	call LoadOnePalette
 endr
 	ld de, wOBPals1
-rept 2
+rept 7
 	ld hl, DarkGrayPalette
 	call LoadOnePalette
 endr
