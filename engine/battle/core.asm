@@ -2820,6 +2820,10 @@ SlideBattlePicOut:
 	ld b, 0  ; Update both tiles and attrs with default behavior
 	call SafeCopyTilemapAtOnce
 
+	; Add delay to slow down animation
+	ld c, 2
+	call DelayFrames
+
 	pop hl
 	pop de  ; Restore color layer flag
 	pop bc
