@@ -2807,17 +2807,18 @@ SlideBattlePicOut:
 	call .ShiftSpriteAttributes
 	pop hl
 
-	; Trigger VRAM updates for both tiles and attributes
-	call ApplyAttrAndTilemapInVBlank
-
-	; Slide color layer OAM after VRAM update (syncs with BG tiles)
+	; Slide color layer OAM BEFORE VRAM update (syncs in same VBlank)
 	ld a, [wPlayerBackpicVisible]
 	and a
-	jr z, .skip_color_layer_slide_after
+	jr z, .skip_color_layer_slide
 	ldh a, [hMapObjectIndexBuffer]
 	cp 9  ; Only for player slide
 	call z, .SlideColorLayerFrame
-.skip_color_layer_slide_after
+.skip_color_layer_slide
+
+	; Trigger single-VBlank update for tiles, attributes, and OAM
+	ld b, 0  ; Update both tiles and attrs with default behavior
+	call SafeCopyTilemapAtOnce
 
 	pop hl
 	pop de  ; Restore color layer flag
