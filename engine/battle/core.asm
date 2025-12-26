@@ -2792,15 +2792,6 @@ SlideBattlePicOut:
 	push de  ; Preserve color layer flag
 	push hl
 
-	; Slide color layer OAM if needed (before BG tiles)
-	ld a, d
-	and a
-	jr z, .skip_color_layer_slide
-	ldh a, [hMapObjectIndexBuffer]
-	cp 9  ; Only for player slide
-	call z, .SlideColorLayerFrame
-.skip_color_layer_slide
-
 	ld b, $7
 .loop2
 	push hl
@@ -2810,8 +2801,24 @@ SlideBattlePicOut:
 	add hl, de
 	dec b
 	jr nz, .loop2
-	ld c, 2
-	call DelayFrames
+
+	; Shift attribute map for the sprite region once per frame
+	push hl
+	call .ShiftSpriteAttributes
+	pop hl
+
+	; Trigger VRAM updates for both tiles and attributes
+	call ApplyAttrAndTilemapInVBlank
+
+	; Slide color layer OAM after VRAM update (syncs with BG tiles)
+	ld a, [wPlayerBackpicVisible]
+	and a
+	jr z, .skip_color_layer_slide_after
+	ldh a, [hMapObjectIndexBuffer]
+	cp 9  ; Only for player slide
+	call z, .SlideColorLayerFrame
+.skip_color_layer_slide_after
+
 	pop hl
 	pop de  ; Restore color layer flag
 	pop bc
@@ -2866,6 +2873,68 @@ SlideBattlePicOut:
 	inc hl
 	dec c
 	jr nz, .back
+	ret
+
+.ShiftSpriteAttributes:
+	; Shift attribute map for the sprite region (7 rows)
+	; Called once per animation frame to keep palettes synchronized with tiles
+	ldh a, [hMapObjectIndexBuffer]
+	ld c, a  ; Store shift direction (8=forward, 9=backward)
+
+	; Calculate starting position in wAttrmap
+	; Player sprite is at hlcoord 1, 5, so attributes start at same position
+	; Enemy sprite is at hlcoord 18, 0
+	cp $8
+	jr nz, .player_attrs
+.enemy_attrs
+	; Enemy sprite at column 18, row 0
+	ld hl, wAttrmap + 18
+	jr .do_shift
+.player_attrs
+	; Player sprite at column 1, row 5
+	ld hl, wAttrmap + SCREEN_WIDTH * 5 + 1
+	; fallthrough
+
+.do_shift
+	; Shift 7 rows of attributes
+	ld b, $7
+.attr_row_loop
+	push bc
+	push hl
+
+	; Shift this row of attributes
+	ld a, c
+	cp $8
+	jr nz, .shift_back
+.shift_forward
+	; Shift forward (enemy slide): copy from right to left
+	ld b, 8  ; 8 columns for enemy sprite
+.shift_forward_loop
+	ld a, [hli]
+	ld [hld], a
+	dec hl
+	dec b
+	jr nz, .shift_forward_loop
+	jr .next_row
+
+.shift_back
+	; Shift backward (player slide): copy from left to right
+	ld b, 9  ; 9 columns for player sprite
+.shift_back_loop
+	ld a, [hld]
+	ld [hli], a
+	inc hl
+	dec b
+	jr nz, .shift_back_loop
+	; fallthrough
+
+.next_row
+	pop hl
+	ld de, SCREEN_WIDTH
+	add hl, de
+	pop bc
+	dec b
+	jr nz, .attr_row_loop
 	ret
 
 FinalPkmnMusicAndAnimation:
