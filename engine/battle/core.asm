@@ -1354,14 +1354,10 @@ endr
 	and a
 	jr z, .use_normal_colors ; Player slid off, use normal colors
 
-	; Player still visible, check if tutorial
-	; TESTING PHASE 5B: Disable FIRST check only
-	; ld a, [wBattleType]
-	; cp BATTLETYPE_TUTORIAL
-	; ld a, CGB_BATTLE_TUTO_COLORS
-	; jr z, .got_intro_layout
+	; Player still visible - use normal intro colors
+	; Tutorial battles use CGB_BATTLE_TUTO_COLORS at battle start (line 8797)
+	; but use normal intro colors here to avoid state issues during turn flow
 	ld a, CGB_BATTLE_INTRO_COLORS
-.got_intro_layout
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
 	jr .palette_done
