@@ -209,9 +209,6 @@ ROMX $49
 ROMX $4A
 	"Trainer Pic Pointers"
 
-ROMX $4B
-	"Lyra Color Layer"
-
 VRAM $0
 	"VRAM0"
 
