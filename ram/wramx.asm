@@ -639,7 +639,7 @@ wBattleMode::
 
 wPlayerBackpicVisible::
 ; TRUE if player's back pic is currently visible on screen during battle
-; Used to preserve color layer OAM sprites (slots 0-22)
+; Used to preserve color layer OAM sprites (slots 0-18)
 	db
 
 wBT_TrainerTextIndex::

@@ -1315,7 +1315,7 @@ BattleAnim_UpdateOAM_All:
 	; Check if player back pic is visible (color layer present)
 	ld a, [wPlayerBackpicVisible]
 	and a
-	ld a, 23 * 4  ; Start after color layer (slot 23) if visible
+	ld a, 19 * 4  ; Start after color layer (slot 19) if visible
 	jr nz, .got_start
 	xor a  ; Start from slot 0 if no color layer
 .got_start

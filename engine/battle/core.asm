@@ -1413,7 +1413,7 @@ endr
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	ld a, 23 * 4  ; Clear only sprites 23-39, protect Chris color layer (slots 0-22)
+	ld a, 19 * 4  ; Clear only sprites 19-39, protect Chris color layer (slots 0-18)
 	ldh [hUsedOAMIndex], a
 	call ClearNormalSprites
 
@@ -1428,7 +1428,7 @@ endr
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	ld a, 23 * 4  ; Clear only sprites 23-39, protect Chris color layer (slots 0-22)
+	ld a, 19 * 4  ; Clear only sprites 19-39, protect Chris color layer (slots 0-18)
 	ldh [hUsedOAMIndex], a
 	call ClearNormalSprites
 
@@ -2840,11 +2840,11 @@ SlideBattlePicOut:
 
 .SlideColorLayerFrame:
 	; Slide color layer OAM sprites left by 8 pixels (1 tile width)
-	; Only affects slots 0-22 (the Chris back pic color layer)
+	; Only affects slots 0-18 (the Chris back pic color layer)
 	push bc
 	push hl
 	ld hl, wShadowOAM + 1  ; Start at X coordinate of first sprite (offset +1)
-	ld b, 23  ; 23 color layer sprites
+	ld b, 19  ; 19 color layer sprites
 .color_slide_loop
 	ld a, [hl]  ; Get current X coordinate
 	sub 8       ; Move left by 8 pixels
@@ -8156,7 +8156,7 @@ BattleIntro:
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	ld a, 23 * 4  ; Clear only sprites 23-39, protect Chris color layer (slots 0-22)
+	ld a, 19 * 4  ; Clear only sprites 19-39, protect Chris color layer (slots 0-18)
 	ldh [hUsedOAMIndex], a
 	call ClearNormalSprites
 	; Clear ball icon tilemap positions to prevent visual glitch
@@ -8926,7 +8926,7 @@ InitBattleDisplay:
 
 .CreateColorLayerOAM:
 	; Create color layer OAM sprites (overlaying the background tiles)
-	; Uses slots 0-22 (23 sprites total for 6×6 grid, minus 13 hidden tiles)
+	; Uses slots 0-18 (19 sprites total for 6×6 grid, minus 17 hidden tiles)
 	ld hl, wShadowOAM + 0 * 4
 	ld a, $55  ; Start tile for color layer
 	ldh [hMapObjectIndexBuffer], a
@@ -9191,7 +9191,7 @@ InitBattleDisplay:
 
 .CreateKrisColorLayerOAM:
 	; Create OAM sprites for Kris color layer
-	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 27, 29, 30, 31, 32, 35
+	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 25, 27, 29, 30, 31, 32, 35
 	; Position adjustments: (many - see individual tile checks)
 	; Palette assignments:
 	;   - Tiles 1, 7, 8, 12, 26, 33: palette 1
@@ -9212,7 +9212,7 @@ InitBattleDisplay:
 	sub $55
 	ldh [hBattleTurn], a
 
-	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 27, 29, 30, 31, 32, 35
+	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 25, 27, 29, 30, 31, 32, 35
 	cp 0
 	jp z, .kris_skip_sprite
 	cp 2
@@ -9232,6 +9232,8 @@ InitBattleDisplay:
 	cp 17
 	jp z, .kris_skip_sprite
 	cp 24
+	jp z, .kris_skip_sprite
+	cp 25
 	jp z, .kris_skip_sprite
 	cp 27
 	jp z, .kris_skip_sprite

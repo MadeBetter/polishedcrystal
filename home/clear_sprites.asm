@@ -8,7 +8,7 @@ ClearSprites::
 
 ClearNormalSprites::
 	ldh a, [hUsedOAMIndex]
-	ld l, a              ; l = start offset (e.g. 92 for slot 23)
+	ld l, a              ; l = start offset (e.g. 76 for slot 19)
 	; Calculate byte count: OAM_SIZE - hUsedOAMIndex
 	ld a, OAM_SIZE
 	sub l
@@ -81,7 +81,7 @@ RestoreSprites::
 	ret
 
 UpdateSprites_PreserveColorLayer::
-; Wrapper for _UpdateSprites that preserves color layer OAM (slots 0-22) during battle
+; Wrapper for _UpdateSprites that preserves color layer OAM (slots 0-18) during battle
 ; When player's back pic is visible, this skips OAM rebuild to avoid clearing color layer
 ; Otherwise calls _UpdateSprites normally for overworld sprite updates
 	ld a, [wPlayerBackpicVisible]
@@ -92,14 +92,14 @@ UpdateSprites_PreserveColorLayer::
 
 ClearOAMSprites_PreserveColorLayer::
 ; Clear OAM sprites while preserving color layer when player back pic is visible
-; - If back pic visible: clear only animation slots 23-39 (17 sprites)
+; - If back pic visible: clear only animation slots 19-39 (21 sprites)
 ; - Otherwise: clear all OAM sprites (slots 0-39)
 	ld a, [wPlayerBackpicVisible]
 	and a
 	jr z, .clear_all
-	; Clear only animation OAM slots (23-39)
-	ld hl, wShadowOAM + 23 * 4
-	ld bc, (OAM_COUNT - 23) * 4  ; 17 sprites * 4 bytes = 68 bytes
+	; Clear only animation OAM slots (19-39)
+	ld hl, wShadowOAM + 19 * 4
+	ld bc, (OAM_COUNT - 19) * 4  ; 21 sprites * 4 bytes = 84 bytes
 	xor a
 	rst ByteFill
 	ret
