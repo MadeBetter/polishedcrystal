@@ -89,7 +89,7 @@ SECTION "Rival2Pic", ROMX
 Rival2Pic: INCBIN "gfx/trainers/rival2.2bpp.lz"
 
 SECTION "Lyra1Pic", ROMX
-Lyra1Pic: INCBIN "gfx/trainers/lyra1.2bpp.lz"
+Lyra1Pic: INCBIN "gfx/trainers/lyra1_bg.2bpp.lz"
 
 SECTION "Lyra2Pic", ROMX
 Lyra2Pic: INCBIN "gfx/trainers/lyra2.2bpp.lz"
