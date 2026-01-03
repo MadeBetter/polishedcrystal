@@ -42,7 +42,7 @@ INCLUDE "gfx/trainers/rival1.pal"
 INCLUDE "gfx/trainers/rival1.pal"
 INCLUDE "gfx/trainers/rival2.pal"
 Lyra1Palette:
-INCLUDE "gfx/trainers/lyra1.pal"
+INCLUDE "gfx/trainers/lyra1/bg_color.pal"
 INCLUDE "gfx/trainers/lyra2.pal"
 INCLUDE "gfx/trainers/youngster.pal"
 INCLUDE "gfx/trainers/bug_catcher.pal"

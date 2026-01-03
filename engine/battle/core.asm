@@ -1354,10 +1354,10 @@ endr
 	and a
 	jr z, .use_normal_colors ; Player slid off, use normal colors
 
-	; Player still visible - use normal intro colors
+	; Player still visible - use normal player colors
 	; Tutorial battles use CGB_BATTLE_TUTO_COLORS at battle start (line 8797)
-	; but use normal intro colors here to avoid state issues during turn flow
-	ld a, CGB_BATTLE_INTRO_COLORS
+	; but use normal player colors here to avoid state issues during turn flow
+	ld a, CGB_BATTLE_PLAYER_COLORS
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
 	jr .palette_done
@@ -6587,7 +6587,7 @@ FinishBattleAnim:
 	cp BATTLETYPE_TUTORIAL
 	ld a, CGB_BATTLE_TUTO_COLORS
 	jr z, .got_intro_layout
-	ld a, CGB_BATTLE_INTRO_COLORS
+	ld a, CGB_BATTLE_PLAYER_COLORS
 .got_intro_layout
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
@@ -8869,7 +8869,7 @@ InitBattleDisplay:
 	cp BATTLETYPE_TUTORIAL
 	ld a, CGB_BATTLE_TUTO_COLORS
 	jr z, .got_layout
-	ld a, CGB_BATTLE_INTRO_COLORS
+	ld a, CGB_BATTLE_PLAYER_COLORS
 .got_layout
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP

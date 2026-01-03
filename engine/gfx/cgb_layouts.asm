@@ -13,6 +13,7 @@ LoadCGBLayout::
 	table_width 2
 	dw _CGB_BattleGrayscale
 	dw _CGB_BattleColors
+	dw _CGB_BattlePlayerColors
 	dw _CGB_BattleIntroColors
 	dw _CGB_BattleTutoColors
 	dw _CGB_PokegearPals
@@ -146,6 +147,21 @@ INCLUDE "gfx/battle/lyra_color4.pal"
 
 LyraColor5Palette:
 INCLUDE "gfx/battle/lyra_color5.pal"
+
+Lyra1BGColorPalette:
+INCLUDE "gfx/trainers/lyra1/bg_color.pal"
+
+Lyra1BGColor2Palette:
+INCLUDE "gfx/trainers/lyra1/bg_color2.pal"
+
+Lyra1OAMColorPalette:
+INCLUDE "gfx/trainers/lyra1/oam_color.pal"
+
+Lyra1OAMColor2Palette:
+INCLUDE "gfx/trainers/lyra1/oam_color2.pal"
+
+Lyra1OAMColor3Palette:
+INCLUDE "gfx/trainers/lyra1/oam_color3.pal"
 
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
@@ -312,7 +328,7 @@ SetBattlePal_Text:
 	ld hl, DarkGrayPalette
 	jmp LoadPalette_White_Col1_Col2_Black
 
-_CGB_BattleIntroColors:
+_CGB_BattlePlayerColors:
 	push bc
 
 	; Part 1: Load BG Palettes
@@ -333,7 +349,7 @@ _CGB_BattleIntroColors:
 	call SetBattlePal_PlayerColor ; OBJ 1 = Player color 1
 
 	; Part 3: Apply Palettes
-	ld a, CGB_BATTLE_INTRO_COLORS
+	ld a, CGB_BATTLE_PLAYER_COLORS
 	ld [wMemCGBLayout], a
 	call ApplyPals
 
@@ -351,54 +367,7 @@ _CGB_BattleIntroColors:
 	call FillBoxWithByte
 
 	; Gender-specific: Set certain back sprite tiles to BG palette 0
-	push bc
-	ld a, [wPlayerGender]
-	and a ; PLAYER_MALE
-	jr nz, .check_kris_bg_palette
-	; Chris: Set tiles 24, 25, 26, 30, 31, 32, 33, 34 to palette 0
-	; Player back sprite is at (2,6) so tile N is at (2 + N%6, 6 + N/6)
-	xor a ; PAL_BATTLE_BG_PLAYER
-	ldcoord_a 2, 10, wAttrmap ; Tile 24 (row 4, col 0)
-	ldcoord_a 3, 10, wAttrmap ; Tile 25 (row 4, col 1)
-	ldcoord_a 4, 10, wAttrmap ; Tile 26 (row 4, col 2)
-	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
-	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
-	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
-	ldcoord_a 5, 11, wAttrmap ; Tile 33 (row 5, col 3)
-	ldcoord_a 6, 11, wAttrmap ; Tile 34 (row 5, col 4)
-	jr .skip_gender_bg_palette
-.check_kris_bg_palette
-	cp PLAYER_FEMALE
-	jr nz, .check_crys_bg_palette
-	; Kris: Set tiles 1, 2, 3, 7, 8, 9, 13, 14, 25, 26, 27, 30, 31, 32 to palette 0
-	xor a ; PAL_BATTLE_BG_PLAYER
-	ldcoord_a 3, 6, wAttrmap  ; Tile 1 (row 0, col 1)
-	ldcoord_a 4, 6, wAttrmap  ; Tile 2 (row 0, col 2)
-	ldcoord_a 5, 6, wAttrmap  ; Tile 3 (row 0, col 3)
-	ldcoord_a 3, 7, wAttrmap  ; Tile 7 (row 1, col 1)
-	ldcoord_a 4, 7, wAttrmap  ; Tile 8 (row 1, col 2)
-	ldcoord_a 5, 7, wAttrmap  ; Tile 9 (row 1, col 3)
-	ldcoord_a 3, 8, wAttrmap  ; Tile 13 (row 2, col 1)
-	ldcoord_a 4, 8, wAttrmap  ; Tile 14 (row 2, col 2)
-	ldcoord_a 3, 10, wAttrmap ; Tile 25 (row 4, col 1)
-	ldcoord_a 4, 10, wAttrmap ; Tile 26 (row 4, col 2)
-	ldcoord_a 5, 10, wAttrmap ; Tile 27 (row 4, col 3)
-	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
-	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
-	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
-	jr .skip_gender_bg_palette
-.check_crys_bg_palette
-	cp PLAYER_ENBY
-	jr nz, .skip_gender_bg_palette
-	; Crys: Set tiles 27, 30, 31, 32, 33 to palette 0
-	xor a ; PAL_BATTLE_BG_PLAYER
-	ldcoord_a 5, 10, wAttrmap ; Tile 27 (row 4, col 3)
-	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
-	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
-	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
-	ldcoord_a 5, 11, wAttrmap ; Tile 33 (row 5, col 3)
-.skip_gender_bg_palette
-	pop bc
+	call SetPlayerGenderBGPalettes
 
 	hlcoord 11, 0, wAttrmap
 	lb bc, 7, 9
@@ -455,38 +424,123 @@ _CGB_BattleIntroColors:
 	call LoadPalettes
 
 	; Load player color2 into OBJ palette 4
-	ld a, [wPlayerGender]
-	and a
-	jr z, .chris_color2
-	cp PLAYER_FEMALE
-	jr z, .kris_color2
-	ld hl, CrysColor2Palette
-	jr .load_color2
-.chris_color2:
-	ld hl, ChrisColor2Palette
-	jr .load_color2
-.kris_color2:
-	ld hl, KrisColor2Palette
-.load_color2:
-	ld de, wOBPals1 palette 4
-	call LoadOnePalette
+	call LoadPlayerColor2Palette
 
 	; Load player color3 into OBJ palette 5
-	ld a, [wPlayerGender]
-	and a
-	jr z, .chris_color3
-	cp PLAYER_FEMALE
-	jr z, .kris_color3
-	ld hl, CrysColor3Palette
-	jr .load_color3
-.chris_color3:
-	ld hl, ChrisColor3Palette
-	jr .load_color3
-.kris_color3:
-	ld hl, KrisColor3Palette
-.load_color3:
-	ld de, wOBPals1 palette 5
-	call LoadOnePalette
+	call LoadPlayerColor3Palette
+
+	; Skip pokeball palette (palette 6) - keep original behavior
+
+	pop bc
+	; Part 7: Skip ability overlay logic - not needed during intro
+	jmp ApplyAttrMap
+
+_CGB_BattleIntroColors:
+	push bc
+
+	; Part 1: Load BG Palettes
+	ld de, wBGPals1
+	call SetBattlePal_PlayerBG    ; BG 0 = Player BG color
+	call SetEnemyBGColorPalette   ; BG 1 = Enemy trainer BG color (or Pokemon)
+	call SetBattlePal_EnemyHP     ; BG 2 = Enemy HP bar
+	call SetBattlePal_PlayerHP    ; BG 3 = Player HP bar
+	call SetBattlePal_ExpGender   ; BG 4 = EXP/gender
+	call SetEnemyBGColor2Palette  ; BG 5 = Enemy trainer BG color2 (or Status)
+	ld de, wBGPals1 palette PAL_BATTLE_BG_TYPE_CAT
+	call SetBattlePal_PlayerSkin  ; BG 6 = Player skin
+	call SetBattlePal_Text        ; BG 7 = Text box
+
+	; Part 2: Load OBJ Palettes (initial)
+	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
+	call SetEnemyOAMColorPalette  ; OBJ 0 = Enemy trainer OAM color (or Pokemon)
+	call SetBattlePal_PlayerColor ; OBJ 1 = Player color 1
+
+	; Load additional enemy trainer OAM color palettes
+	ld de, wOBPals1 palette 6
+	call SetEnemyOAMColor2Palette ; OBJ 6 = Enemy trainer OAM color2
+	ld de, wOBPals1 palette 7
+	call SetEnemyOAMColor3Palette ; OBJ 7 = Enemy trainer OAM color3
+
+	; Part 3: Apply Palettes
+	ld a, CGB_BATTLE_INTRO_COLORS
+	ld [wMemCGBLayout], a
+	call ApplyPals
+
+	; Part 5: Set BG Tilemap Attributes
+	pop bc
+	push bc
+	hlcoord 0, 0, wAttrmap
+	ld bc, SCREEN_AREA
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	rst ByteFill
+
+	hlcoord 0, 4, wAttrmap
+	lb bc, 8, 10
+	ld a, PAL_BATTLE_BG_TYPE_CAT ; Use palette 6 (skin) for player background
+	call FillBoxWithByte
+
+	; Gender-specific: Set certain back sprite tiles to BG palette 0
+	call SetPlayerGenderBGPalettes
+
+	hlcoord 11, 0, wAttrmap
+	lb bc, 7, 9
+	ld a, PAL_BATTLE_BG_ENEMY
+	call FillBoxWithByte
+
+	hlcoord 0, 0, wAttrmap
+	lb bc, 4, 11
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	call FillBoxWithByte
+
+	hlcoord 10, 7, wAttrmap
+	lb bc, 5, 10
+	ld a, PAL_BATTLE_BG_PLAYER_HP
+	call FillBoxWithByte
+
+	hlcoord 12, 11, wAttrmap
+	lb bc, 1, 7
+	ld a, PAL_BATTLE_BG_EXP_GENDER
+	call FillBoxWithByte
+
+	ld a, PAL_BATTLE_BG_EXP_GENDER
+	ldcoord_a 0, 1, wAttrmap
+	ldcoord_a 1, 1, wAttrmap
+	ldcoord_a 8, 1, wAttrmap
+	ldcoord_a 18, 8, wAttrmap
+
+	hlcoord 12, 8, wAttrmap
+	lb bc, 1, 2
+	ld a, PAL_BATTLE_BG_STATUS
+	call FillBoxWithByte
+
+	hlcoord 2, 1, wAttrmap
+	lb bc, 1, 2
+	ld a, PAL_BATTLE_BG_STATUS
+	call FillBoxWithByte
+
+	hlcoord 1, 9, wAttrmap
+	lb bc, 1, 6
+	ld a, PAL_BATTLE_BG_TYPE_CAT
+	call FillBoxWithByte
+
+	hlcoord 0, 12, wAttrmap
+	ld bc, 6 * SCREEN_WIDTH
+	ld a, PAL_BATTLE_BG_TEXT
+	rst ByteFill
+
+	; Skip OBJ palette 1 - already loaded with player color
+
+	; Load battle animation palettes (palettes 2-3)
+	ld hl, BattleObjectPals
+	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
+	ld c, 6 palettes
+	call LoadPalettes
+
+	; Load player color2 into OBJ palette 4
+	call LoadPlayerColor2Palette
+
+	; Load player color3 into OBJ palette 5
+	call LoadPlayerColor3Palette
 
 	; Skip pokeball palette (palette 6) - keep original behavior
 
@@ -1904,7 +1958,7 @@ _CGB_JudgeSystem:
 	ld bc, 11
 	rst ByteFill
 
-	jr _CGB_FinishLayout
+	jp _CGB_FinishLayout
 
 .FillStat:
 ; Use palette 2 for normal, 3 for lowered, 4 for raised
@@ -1927,6 +1981,173 @@ _CGB_JudgeSystem:
 
 .SparkleAndBottleCapPalette:
 INCLUDE "gfx/stats/judge_ob.pal"
+
+; Helper function: Set gender-specific BG palette assignments for player back sprite
+SetPlayerGenderBGPalettes:
+	push bc
+	ld a, [wPlayerGender]
+	and a ; PLAYER_MALE
+	jr nz, .check_kris_bg_palette
+	; Chris: Set tiles 24, 25, 26, 30, 31, 32, 33, 34 to palette 0
+	; Player back sprite is at (2,6) so tile N is at (2 + N%6, 6 + N/6)
+	xor a ; PAL_BATTLE_BG_PLAYER
+	ldcoord_a 2, 10, wAttrmap ; Tile 24 (row 4, col 0)
+	ldcoord_a 3, 10, wAttrmap ; Tile 25 (row 4, col 1)
+	ldcoord_a 4, 10, wAttrmap ; Tile 26 (row 4, col 2)
+	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
+	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
+	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
+	ldcoord_a 5, 11, wAttrmap ; Tile 33 (row 5, col 3)
+	ldcoord_a 6, 11, wAttrmap ; Tile 34 (row 5, col 4)
+	jr .skip_gender_bg_palette
+.check_kris_bg_palette
+	cp PLAYER_FEMALE
+	jr nz, .check_crys_bg_palette
+	; Kris: Set tiles 1, 2, 3, 7, 8, 9, 13, 14, 25, 26, 27, 30, 31, 32 to palette 0
+	xor a ; PAL_BATTLE_BG_PLAYER
+	ldcoord_a 3, 6, wAttrmap  ; Tile 1 (row 0, col 1)
+	ldcoord_a 4, 6, wAttrmap  ; Tile 2 (row 0, col 2)
+	ldcoord_a 5, 6, wAttrmap  ; Tile 3 (row 0, col 3)
+	ldcoord_a 3, 7, wAttrmap  ; Tile 7 (row 1, col 1)
+	ldcoord_a 4, 7, wAttrmap  ; Tile 8 (row 1, col 2)
+	ldcoord_a 5, 7, wAttrmap  ; Tile 9 (row 1, col 3)
+	ldcoord_a 3, 8, wAttrmap  ; Tile 13 (row 2, col 1)
+	ldcoord_a 4, 8, wAttrmap  ; Tile 14 (row 2, col 2)
+	ldcoord_a 3, 10, wAttrmap ; Tile 25 (row 4, col 1)
+	ldcoord_a 4, 10, wAttrmap ; Tile 26 (row 4, col 2)
+	ldcoord_a 5, 10, wAttrmap ; Tile 27 (row 4, col 3)
+	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
+	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
+	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
+	jr .skip_gender_bg_palette
+.check_crys_bg_palette
+	cp PLAYER_ENBY
+	jr nz, .skip_gender_bg_palette
+	; Crys: Set tiles 27, 30, 31, 32, 33 to palette 0
+	xor a ; PAL_BATTLE_BG_PLAYER
+	ldcoord_a 5, 10, wAttrmap ; Tile 27 (row 4, col 3)
+	ldcoord_a 2, 11, wAttrmap ; Tile 30 (row 5, col 0)
+	ldcoord_a 3, 11, wAttrmap ; Tile 31 (row 5, col 1)
+	ldcoord_a 4, 11, wAttrmap ; Tile 32 (row 5, col 2)
+	ldcoord_a 5, 11, wAttrmap ; Tile 33 (row 5, col 3)
+.skip_gender_bg_palette
+	pop bc
+	ret
+
+; Helper function: Load player color2 palette into OBJ palette 4
+LoadPlayerColor2Palette:
+	ld a, [wPlayerGender]
+	and a
+	jr z, .chris_color2
+	cp PLAYER_FEMALE
+	jr z, .kris_color2
+	ld hl, CrysColor2Palette
+	jr .load_color2
+.chris_color2:
+	ld hl, ChrisColor2Palette
+	jr .load_color2
+.kris_color2:
+	ld hl, KrisColor2Palette
+.load_color2:
+	ld de, wOBPals1 palette 4
+	call LoadOnePalette
+	ret
+
+; Helper function: Load player color3 palette into OBJ palette 5
+LoadPlayerColor3Palette:
+	ld a, [wPlayerGender]
+	and a
+	jr z, .chris_color3
+	cp PLAYER_FEMALE
+	jr z, .kris_color3
+	ld hl, CrysColor3Palette
+	jr .load_color3
+.chris_color3:
+	ld hl, ChrisColor3Palette
+	jr .load_color3
+.kris_color3:
+	ld hl, KrisColor3Palette
+.load_color3:
+	ld de, wOBPals1 palette 5
+	call LoadOnePalette
+	ret
+
+; Helper function: Load enemy trainer background color palette
+; Loaded into BG palette slot 1 (passed in DE)
+SetEnemyBGColorPalette:
+	ld a, [wOtherTrainerClass]
+	cp LYRA1
+	jr z, .lyra1
+	; Add more trainers here as needed
+
+	; Default: use enemy Pokemon palette
+	jp SetBattlePal_Enemy
+
+.lyra1:
+	ld hl, Lyra1BGColorPalette
+	jmp LoadOnePalette
+
+; Helper function: Load enemy trainer background color2 palette
+; Loaded into BG palette slot 5 (passed in DE)
+SetEnemyBGColor2Palette:
+	ld a, [wOtherTrainerClass]
+	cp LYRA1
+	jr z, .lyra1
+	; Add more trainers here as needed
+
+	; Default: use status palette
+	jp SetBattlePal_Status
+
+.lyra1:
+	ld hl, Lyra1BGColor2Palette
+	jmp LoadOnePalette
+
+; Helper function: Load enemy trainer OAM color palette
+; Loaded into OBJ palette slot 0 (passed in DE)
+SetEnemyOAMColorPalette:
+	ld a, [wOtherTrainerClass]
+	cp LYRA1
+	jr z, .lyra1
+	; Add more trainers here as needed
+
+	; Default: use enemy Pokemon palette
+	jp SetBattlePal_Enemy
+
+.lyra1:
+	ld hl, Lyra1OAMColorPalette
+	jmp LoadOnePalette
+
+; Helper function: Load enemy trainer OAM color2 palette
+; Loaded into OBJ palette slot 6 (passed in DE)
+SetEnemyOAMColor2Palette:
+	ld a, [wOtherTrainerClass]
+	cp LYRA1
+	jr z, .lyra1
+	; Add more trainers here as needed
+
+	; Default: use gray palette
+	ld hl, BattleObjectPals + 4 palettes
+	jmp LoadOnePalette
+
+.lyra1:
+	ld hl, Lyra1OAMColor2Palette
+	jmp LoadOnePalette
+
+; Helper function: Load enemy trainer OAM color3 palette
+; Loaded into OBJ palette slot 7 (passed in DE)
+SetEnemyOAMColor3Palette:
+	ld a, [wOtherTrainerClass]
+	cp LYRA1
+	jr z, .lyra1
+	; Add more trainers here as needed
+
+	; Default: use gray palette
+	ld hl, BattleObjectPals + 5 palettes
+	jmp LoadOnePalette
+
+.lyra1:
+	ld hl, Lyra1OAMColor3Palette
+	jmp LoadOnePalette
 
 _CGB_FinishLayout:
 	call ApplyAttrMap
