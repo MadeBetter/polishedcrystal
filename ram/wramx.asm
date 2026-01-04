@@ -642,6 +642,12 @@ wPlayerBackpicVisible::
 ; Used to preserve color layer OAM sprites (slots 0-18)
 	db
 
+wTrainerSpriteVisible::
+; TRUE if enemy trainer sprite is currently visible on screen during battle
+; FALSE if enemy Pokemon is visible or trainer has slid off screen
+; Used to determine which palettes to load (trainer color layers vs Pokemon)
+	db
+
 wBT_TrainerTextIndex::
 wTempWildMonSpecies:: db
 

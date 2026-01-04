@@ -1354,7 +1354,18 @@ endr
 	and a
 	jr z, .use_normal_colors ; Player slid off, use normal colors
 
-	; Player still visible - use normal player colors
+	; Player still visible - check if trainer sprite is also visible
+	ld a, [wTrainerSpriteVisible]
+	and a
+	jr z, .use_player_colors ; No trainer sprite, use player colors
+
+	; Both player and trainer visible - use intro colors
+	ld a, CGB_BATTLE_INTRO_COLORS
+	call GetCGBLayout
+	call SetDefaultBGPAndOBP
+	jr .palette_done
+
+.use_player_colors
 	; Tutorial battles use CGB_BATTLE_TUTO_COLORS at battle start (line 8797)
 	; but use normal player colors here to avoid state issues during turn flow
 	ld a, CGB_BATTLE_PLAYER_COLORS
@@ -2829,11 +2840,25 @@ SlideBattlePicOut:
 	pop bc
 	dec c
 	jr nz, .loop
-	; Clear flag only for player slide (a=9), not enemy slide (a=8)
+	; Clear flags when sprites slide off
 	ldh a, [hMapObjectIndexBuffer]
 	cp 9
-	ret nz  ; Return if enemy slide, don't clear flag
-	; Clear flag indicating player back pic is no longer visible
+	jr z, .player_slide
+
+	; Enemy slide (a=8): Clear trainer flag if it's a trainer sprite
+	cp 8
+	ret nz  ; Return if not enemy slide
+	ld a, [wTempEnemyMonSpecies]
+	and a  ; Check if == 0 (trainer sprite)
+	ret nz  ; Return if it's a Pokemon sprite
+	; Clear flag indicating enemy trainer sprite is no longer visible
+	xor a
+	ld [wTrainerSpriteVisible], a
+	call FinishBattleAnim  ; Refresh palette to match new visibility state
+	ret
+
+.player_slide
+	; Player slide: Clear player back pic flag
 	xor a
 	ld [wPlayerBackpicVisible], a
 	ret
@@ -2983,6 +3008,10 @@ FinalPkmnMusicAndAnimation:
 	call EmptyBattleTextbox
 	call ApplyTilemapInVBlank
 	call SlideEnemyPicOut
+	; Clear trainer sprite visibility flag and refresh palette
+	xor a
+	ld [wTrainerSpriteVisible], a
+	call FinishBattleAnim
 	ld c, 10
 	call DelayFrames
 	jmp FinalPkmnSlideInEnemyMonFrontpic
@@ -6429,6 +6458,9 @@ FinalPkmnSlideInEnemyMonFrontpic:
 BattleWinSlideInEnemyTrainerFrontpic:
 	xor a
 	ld [wTempEnemyMonSpecies], a
+	; Set flag indicating enemy trainer sprite is about to slide in
+	ld a, TRUE
+	ld [wTrainerSpriteVisible], a
 	call FinishBattleAnim
 	ld a, [wOtherTrainerClass]
 	ld [wTrainerClass], a
@@ -6587,6 +6619,14 @@ FinishBattleAnim:
 	cp BATTLETYPE_TUTORIAL
 	ld a, CGB_BATTLE_TUTO_COLORS
 	jr z, .got_intro_layout
+
+	; Not tutorial - check if trainer sprite is visible
+	ld a, [wTrainerSpriteVisible]
+	and a
+	ld a, CGB_BATTLE_INTRO_COLORS
+	jr nz, .got_intro_layout
+
+	; No trainer sprite - use player colors
 	ld a, CGB_BATTLE_PLAYER_COLORS
 .got_intro_layout
 	call GetCGBLayout
@@ -6594,7 +6634,15 @@ FinishBattleAnim:
 	jr .done
 
 .use_normal_colors
+	; Check if enemy trainer sprite is visible
+	ld a, [wTrainerSpriteVisible]
+	and a
+	ld a, CGB_BATTLE_ENEMY_COLORS
+	jr nz, .got_layout
+
+	; No trainer sprite - use normal colors
 	ld a, CGB_BATTLE_COLORS
+.got_layout
 	call GetCGBLayout
 	call SetDefaultBGPAndOBP
 
@@ -8113,6 +8161,7 @@ BattleIntro:
 	; Initialize back pic visibility flag to FALSE at battle start
 	xor a
 	ld [wPlayerBackpicVisible], a
+	ld [wTrainerSpriteVisible], a  ; Also initialize trainer sprite flag
 	call InitEnemy
 	call BackUpBGMap2
 	ld a, CGB_BATTLE_GRAYSCALE
@@ -8219,7 +8268,10 @@ InitEnemy:
 ; trainer
 	ld [wTrainerClass], a
 	xor a
-	ld [wTempEnemyMonSpecies], a
+	ld [wTempEnemyMonSpecies], a  ; Set to 0 for trainers
+	; Set flag indicating enemy trainer sprite is visible
+	ld a, TRUE
+	ld [wTrainerSpriteVisible], a
 	farcall GetTrainerAttributes
 	farcall ReadTrainerParty
 	farcall ComputeTrainerReward
@@ -8284,6 +8336,7 @@ ExitBattle:
 	ld [wLowHealthAlarm], a
 	ld [wBattleMode], a
 	ld [wPlayerBackpicVisible], a  ; Clear flag at battle end
+	ld [wTrainerSpriteVisible], a  ; Clear enemy trainer flag at battle end
 	ld [wBattleType], a
 	ld [wAttackMissed], a
 	ld [wTempWildMonSpecies], a
@@ -8869,6 +8922,14 @@ InitBattleDisplay:
 	cp BATTLETYPE_TUTORIAL
 	ld a, CGB_BATTLE_TUTO_COLORS
 	jr z, .got_layout
+
+	; Not tutorial - check if trainer sprite is visible
+	ld a, [wTrainerSpriteVisible]
+	and a
+	ld a, CGB_BATTLE_INTRO_COLORS
+	jr nz, .got_layout
+
+	; No trainer sprite - use player colors
 	ld a, CGB_BATTLE_PLAYER_COLORS
 .got_layout
 	call GetCGBLayout

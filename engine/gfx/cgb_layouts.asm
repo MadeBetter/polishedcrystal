@@ -15,6 +15,7 @@ LoadCGBLayout::
 	dw _CGB_BattleColors
 	dw _CGB_BattlePlayerColors
 	dw _CGB_BattleIntroColors
+	dw _CGB_BattleEnemyColors
 	dw _CGB_BattleTutoColors
 	dw _CGB_PokegearPals
 	dw _CGB_StatsScreenHPPals
@@ -369,59 +370,7 @@ _CGB_BattlePlayerColors:
 	; Gender-specific: Set certain back sprite tiles to BG palette 0
 	call SetPlayerGenderBGPalettes
 
-	hlcoord 11, 0, wAttrmap
-	lb bc, 7, 9
-	ld a, PAL_BATTLE_BG_ENEMY
-	call FillBoxWithByte
-
-	hlcoord 0, 0, wAttrmap
-	lb bc, 4, 11
-	ld a, PAL_BATTLE_BG_ENEMY_HP
-	call FillBoxWithByte
-
-	hlcoord 10, 7, wAttrmap
-	lb bc, 5, 10
-	ld a, PAL_BATTLE_BG_PLAYER_HP
-	call FillBoxWithByte
-
-	hlcoord 12, 11, wAttrmap
-	lb bc, 1, 7
-	ld a, PAL_BATTLE_BG_EXP_GENDER
-	call FillBoxWithByte
-
-	ld a, PAL_BATTLE_BG_EXP_GENDER
-	ldcoord_a 0, 1, wAttrmap
-	ldcoord_a 1, 1, wAttrmap
-	ldcoord_a 8, 1, wAttrmap
-	ldcoord_a 18, 8, wAttrmap
-
-	hlcoord 12, 8, wAttrmap
-	lb bc, 1, 2
-	ld a, PAL_BATTLE_BG_STATUS
-	call FillBoxWithByte
-
-	hlcoord 2, 1, wAttrmap
-	lb bc, 1, 2
-	ld a, PAL_BATTLE_BG_STATUS
-	call FillBoxWithByte
-
-	hlcoord 1, 9, wAttrmap
-	lb bc, 1, 6
-	ld a, PAL_BATTLE_BG_TYPE_CAT
-	call FillBoxWithByte
-
-	hlcoord 0, 12, wAttrmap
-	ld bc, 6 * SCREEN_WIDTH
-	ld a, PAL_BATTLE_BG_TEXT
-	rst ByteFill
-
-	; Skip OBJ palette 1 - already loaded with player color
-
-	; Load battle animation palettes (palettes 2-3)
-	ld hl, BattleObjectPals
-	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
-	ld c, 6 palettes
-	call LoadPalettes
+	call SetBattleCommonTilemapAndPalettes
 
 	; Load player color2 into OBJ palette 4
 	call LoadPlayerColor2Palette
@@ -441,11 +390,11 @@ _CGB_BattleIntroColors:
 	; Part 1: Load BG Palettes
 	ld de, wBGPals1
 	call SetBattlePal_PlayerBG    ; BG 0 = Player BG color
-	call SetEnemyBGColorPalette   ; BG 1 = Enemy trainer BG color (or Pokemon)
+	call SetBattlePal_EnemyBG     ; BG 1 = Enemy trainer BG color (or Pokemon)
 	call SetBattlePal_EnemyHP     ; BG 2 = Enemy HP bar
 	call SetBattlePal_PlayerHP    ; BG 3 = Player HP bar
 	call SetBattlePal_ExpGender   ; BG 4 = EXP/gender
-	call SetEnemyBGColor2Palette  ; BG 5 = Enemy trainer BG color2 (or Status)
+	call SetBattlePal2_EnemyBG    ; BG 5 = Enemy trainer BG color2 (or Status)
 	ld de, wBGPals1 palette PAL_BATTLE_BG_TYPE_CAT
 	call SetBattlePal_PlayerSkin  ; BG 6 = Player skin
 	call SetBattlePal_Text        ; BG 7 = Text box
@@ -454,12 +403,6 @@ _CGB_BattleIntroColors:
 	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
 	call SetEnemyOAMColorPalette  ; OBJ 0 = Enemy trainer OAM color (or Pokemon)
 	call SetBattlePal_PlayerColor ; OBJ 1 = Player color 1
-
-	; Load additional enemy trainer OAM color palettes
-	ld de, wOBPals1 palette 6
-	call SetEnemyOAMColor2Palette ; OBJ 6 = Enemy trainer OAM color2
-	ld de, wOBPals1 palette 7
-	call SetEnemyOAMColor3Palette ; OBJ 7 = Enemy trainer OAM color3
 
 	; Part 3: Apply Palettes
 	ld a, CGB_BATTLE_INTRO_COLORS
@@ -482,59 +425,7 @@ _CGB_BattleIntroColors:
 	; Gender-specific: Set certain back sprite tiles to BG palette 0
 	call SetPlayerGenderBGPalettes
 
-	hlcoord 11, 0, wAttrmap
-	lb bc, 7, 9
-	ld a, PAL_BATTLE_BG_ENEMY
-	call FillBoxWithByte
-
-	hlcoord 0, 0, wAttrmap
-	lb bc, 4, 11
-	ld a, PAL_BATTLE_BG_ENEMY_HP
-	call FillBoxWithByte
-
-	hlcoord 10, 7, wAttrmap
-	lb bc, 5, 10
-	ld a, PAL_BATTLE_BG_PLAYER_HP
-	call FillBoxWithByte
-
-	hlcoord 12, 11, wAttrmap
-	lb bc, 1, 7
-	ld a, PAL_BATTLE_BG_EXP_GENDER
-	call FillBoxWithByte
-
-	ld a, PAL_BATTLE_BG_EXP_GENDER
-	ldcoord_a 0, 1, wAttrmap
-	ldcoord_a 1, 1, wAttrmap
-	ldcoord_a 8, 1, wAttrmap
-	ldcoord_a 18, 8, wAttrmap
-
-	hlcoord 12, 8, wAttrmap
-	lb bc, 1, 2
-	ld a, PAL_BATTLE_BG_STATUS
-	call FillBoxWithByte
-
-	hlcoord 2, 1, wAttrmap
-	lb bc, 1, 2
-	ld a, PAL_BATTLE_BG_STATUS
-	call FillBoxWithByte
-
-	hlcoord 1, 9, wAttrmap
-	lb bc, 1, 6
-	ld a, PAL_BATTLE_BG_TYPE_CAT
-	call FillBoxWithByte
-
-	hlcoord 0, 12, wAttrmap
-	ld bc, 6 * SCREEN_WIDTH
-	ld a, PAL_BATTLE_BG_TEXT
-	rst ByteFill
-
-	; Skip OBJ palette 1 - already loaded with player color
-
-	; Load battle animation palettes (palettes 2-3)
-	ld hl, BattleObjectPals
-	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
-	ld c, 6 palettes
-	call LoadPalettes
+	call SetBattleCommonTilemapAndPalettes
 
 	; Load player color2 into OBJ palette 4
 	call LoadPlayerColor2Palette
@@ -542,10 +433,69 @@ _CGB_BattleIntroColors:
 	; Load player color3 into OBJ palette 5
 	call LoadPlayerColor3Palette
 
-	; Skip pokeball palette (palette 6) - keep original behavior
+	; Load enemy color2 into OBJ palette 6
+	ld de, wOBPals1 palette 6
+	call SetEnemyOAMColor2Palette ;
+
+	; Load enemy color3 into OBJ palette 7
+	ld de, wOBPals1 palette 7
+	call SetEnemyOAMColor3Palette ;
 
 	pop bc
 	; Part 7: Skip ability overlay logic - not needed during intro
+	jmp ApplyAttrMap
+
+_CGB_BattleEnemyColors:
+	push bc
+
+	; Part 1: Load BG Palettes
+	ld de, wBGPals1
+	call SetBattlePal_Player
+	call SetBattlePal_EnemyBG
+	call SetBattlePal_EnemyHP
+	call SetBattlePal_PlayerHP
+	call SetBattlePal_ExpGender   ; BG 4
+	call SetBattlePal2_EnemyBG    ; BG 5
+	ld de, wBGPals1 palette PAL_BATTLE_BG_TYPE_CAT
+	call SetBattlePal_PlayerSkin  ; BG 6
+	call SetBattlePal_Text    ; BG 7
+
+	; Part 2: Load OBJ Palettes (initial)
+	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
+	call SetEnemyOAMColorPalette  ; OBJ 0
+	call SetBattlePal_Player ; OBJ 1
+
+	; Part 3: Apply Palettes
+	ld a, CGB_BATTLE_ENEMY_COLORS
+	ld [wMemCGBLayout], a
+	call ApplyPals
+
+	; Part 4: Set BG Tilemap Attributes
+	pop bc
+	push bc
+	hlcoord 0, 0, wAttrmap
+	ld bc, SCREEN_AREA
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	rst ByteFill
+
+	call SetBattleCommonTilemapAndPalettes
+
+	; Override player background area to palette 0 (overrides palette 6 from SetBattleCommonTilemapAndPalettes)
+	hlcoord 0, 4, wAttrmap
+	lb bc, 8, 10
+	ld a, PAL_BATTLE_BG_PLAYER ; Use palette 0 for pokemon bg tiles
+	call FillBoxWithByte
+
+	; Load enemy color2 into OBJ palette 6
+	ld de, wOBPals1 palette 6
+	call SetEnemyOAMColor2Palette ;
+
+	; Load enemy color3 into OBJ palette 7
+	ld de, wOBPals1 palette 7
+	call SetEnemyOAMColor3Palette ;
+
+	pop bc
+	; Part 7: Skip ability overlay logic - not needed when Enemy is on Screen
 	jmp ApplyAttrMap
 
 _CGB_BattleTutoColors:
@@ -722,56 +672,7 @@ _CGB_FinishBattleScreenLayout:
 	xor a ; PAL_BATTLE_BG_PLAYER
 	call FillBoxWithByte
 
-	hlcoord 11, 0, wAttrmap
-	lb bc, 7, 9
-	ld a, PAL_BATTLE_BG_ENEMY
-	call FillBoxWithByte
-
-	hlcoord 0, 0, wAttrmap
-	lb bc, 4, 11
-	ld a, PAL_BATTLE_BG_ENEMY_HP
-	call FillBoxWithByte
-
-	hlcoord 10, 7, wAttrmap
-	lb bc, 5, 10
-	ld a, PAL_BATTLE_BG_PLAYER_HP
-	call FillBoxWithByte
-
-	hlcoord 12, 11, wAttrmap
-	lb bc, 1, 7
-	ld a, PAL_BATTLE_BG_EXP_GENDER
-	call FillBoxWithByte
-
-	ld a, PAL_BATTLE_BG_EXP_GENDER
-	ldcoord_a 0, 1, wAttrmap
-	ldcoord_a 1, 1, wAttrmap
-	ldcoord_a 8, 1, wAttrmap
-	ldcoord_a 18, 8, wAttrmap
-
-	hlcoord 12, 8, wAttrmap
-	lb bc, 1, 2
-	ld a, PAL_BATTLE_BG_STATUS
-	call FillBoxWithByte
-
-	hlcoord 2, 1, wAttrmap
-	lb bc, 1, 2
-	ld a, PAL_BATTLE_BG_STATUS
-	call FillBoxWithByte
-
-	hlcoord 1, 9, wAttrmap
-	lb bc, 1, 6
-	ld a, PAL_BATTLE_BG_TYPE_CAT
-	call FillBoxWithByte
-
-	hlcoord 0, 12, wAttrmap
-	ld bc, 6 * SCREEN_WIDTH
-	ld a, PAL_BATTLE_BG_TEXT
-	rst ByteFill
-
-	ld hl, BattleObjectPals
-	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
-	ld c, 6 palettes
-	call LoadPalettes
+	call SetBattleCommonTilemapAndPalettes
 	pop bc
 
 	ld a, b
@@ -2072,9 +1973,65 @@ LoadPlayerColor3Palette:
 	call LoadOnePalette
 	ret
 
+SetBattleCommonTilemapAndPalettes:
+; Common tilemap attribute setup for battle screens
+; Sets up enemy area, HP bars, status icons, text area
+; and loads battle animation object palettes
+	hlcoord 11, 0, wAttrmap
+	lb bc, 7, 9
+	ld a, PAL_BATTLE_BG_ENEMY
+	call FillBoxWithByte
+
+	hlcoord 0, 0, wAttrmap
+	lb bc, 4, 11
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	call FillBoxWithByte
+
+	hlcoord 10, 7, wAttrmap
+	lb bc, 5, 10
+	ld a, PAL_BATTLE_BG_PLAYER_HP
+	call FillBoxWithByte
+
+	hlcoord 12, 11, wAttrmap
+	lb bc, 1, 7
+	ld a, PAL_BATTLE_BG_EXP_GENDER
+	call FillBoxWithByte
+
+	ld a, PAL_BATTLE_BG_EXP_GENDER
+	ldcoord_a 0, 1, wAttrmap
+	ldcoord_a 1, 1, wAttrmap
+	ldcoord_a 8, 1, wAttrmap
+	ldcoord_a 18, 8, wAttrmap
+
+	hlcoord 12, 8, wAttrmap
+	lb bc, 1, 2
+	ld a, PAL_BATTLE_BG_STATUS
+	call FillBoxWithByte
+
+	hlcoord 2, 1, wAttrmap
+	lb bc, 1, 2
+	ld a, PAL_BATTLE_BG_STATUS
+	call FillBoxWithByte
+
+	hlcoord 1, 9, wAttrmap
+	lb bc, 1, 6
+	ld a, PAL_BATTLE_BG_TYPE_CAT
+	call FillBoxWithByte
+
+	hlcoord 0, 12, wAttrmap
+	ld bc, 6 * SCREEN_WIDTH
+	ld a, PAL_BATTLE_BG_TEXT
+	rst ByteFill
+
+	ld hl, BattleObjectPals
+	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
+	ld c, 6 palettes
+	call LoadPalettes
+	ret
+
 ; Helper function: Load enemy trainer background color palette
 ; Loaded into BG palette slot 1 (passed in DE)
-SetEnemyBGColorPalette:
+SetBattlePal_EnemyBG:
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
 	jr z, .lyra1
@@ -2085,11 +2042,11 @@ SetEnemyBGColorPalette:
 
 .lyra1:
 	ld hl, Lyra1BGColorPalette
-	jmp LoadOnePalette
+	jmp LoadPalette_White_Col1_Col2_Black
 
 ; Helper function: Load enemy trainer background color2 palette
 ; Loaded into BG palette slot 5 (passed in DE)
-SetEnemyBGColor2Palette:
+SetBattlePal2_EnemyBG:
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
 	jr z, .lyra1
