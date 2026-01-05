@@ -328,6 +328,7 @@ INCLUDE "engine/overworld/variables.asm"
 INCLUDE "data/text/battle.asm"
 INCLUDE "engine/battle/final_text.asm"
 INCLUDE "engine/battle/abilities.asm"
+INCLUDE "engine/battle/trainer_bg_palettes.asm"
 INCLUDE "engine/battle/text.asm"
 
 

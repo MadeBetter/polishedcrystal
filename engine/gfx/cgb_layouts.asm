@@ -427,6 +427,9 @@ _CGB_BattleIntroColors:
 
 	call SetBattleCommonTilemapAndPalettes
 
+	; Set trainer-specific BG tile palette assignments
+	farcall SetTrainerBGPalettes_Far
+
 	; Load player color2 into OBJ palette 4
 	call LoadPlayerColor2Palette
 
@@ -485,6 +488,9 @@ _CGB_BattleEnemyColors:
 	lb bc, 8, 10
 	ld a, PAL_BATTLE_BG_PLAYER ; Use palette 0 for pokemon bg tiles
 	call FillBoxWithByte
+
+	; Set trainer-specific BG tile palette assignments
+	farcall SetTrainerBGPalettes_Far
 
 	; Load enemy color2 into OBJ palette 6
 	ld de, wOBPals1 palette 6
