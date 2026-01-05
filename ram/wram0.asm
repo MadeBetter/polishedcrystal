@@ -567,6 +567,8 @@ wAlreadyExecuted:: db
 wAlreadySawWeather:: db
 
 wWhichMonFaintedFirst:: db
+wEnemyTrainerPicCoordY:: db
+wEnemyTrainerPicCoordX:: db
 
 ; exists so you can't counter on switch
 wLastPlayerCounterMove:: db
@@ -996,7 +998,7 @@ wSummaryMoveSwap:: db
 
 ; Used to align window buffer for DMA copying
 ; Feel free to use or move data, an assert will fail if the memory becomes misaligned
-ds 13
+ds 11
 assert @ % 16 == 0
 
 wSummaryScreenWindowBuffer:: ds 32 * 10

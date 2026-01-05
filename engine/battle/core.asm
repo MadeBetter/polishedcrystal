@@ -6456,6 +6456,10 @@ FinalPkmnSlideInEnemyMonFrontpic:
 	jmp PopBCDEHL
 
 BattleWinSlideInEnemyTrainerFrontpic:
+	ld a, 0
+	ld [wEnemyTrainerPicCoordY], a
+	ld a, 14
+	ld [wEnemyTrainerPicCoordX], a
 	xor a
 	ld [wTempEnemyMonSpecies], a
 	; Set flag indicating enemy trainer sprite is about to slide in
@@ -8282,6 +8286,10 @@ InitEnemy:
 	dec a
 	ld [wEnemyItemState], a
 	hlcoord 12, 0
+	ld a, 0
+	ld [wEnemyTrainerPicCoordY], a
+	ld a, 12
+	ld [wEnemyTrainerPicCoordX], a
 	lb bc, 7, 7
 	predef PlaceGraphic
 	ld a, -1
