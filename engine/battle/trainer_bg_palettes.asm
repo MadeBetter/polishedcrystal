@@ -14,7 +14,8 @@ SetTrainerBGPalettes_Far::
 
 SetLyra1BGPalettes:
 	; Set Lyra1 trainer background tile palettes
-	; Special tiles: 16,17,18,22,23,25,30,31,32 use palette 06 (PAL_BATTLE_BG_TYPE_CAT)
+	; Palette 06 tiles: 9, 10, 16, 17, 18, 22, 23, 30, 31, 32
+	; Palette 05 tiles: 25, 26, 33
 
 	; Get sprite coordinates from WRAM and compute address in hl
 	ld a, [wEnemyTrainerPicCoordY]
@@ -47,10 +48,19 @@ SetLyra1BGPalettes:
 	call FillBoxWithByte
 	pop hl
 
-	; Now override specific tiles to palette 06
+	; Now override specific tiles to palette 06 (PAL_BATTLE_BG_TYPE_CAT)
 	ld a, PAL_BATTLE_BG_TYPE_CAT
 
-	; Calculate addresses relative to base coordinate in hl
+	; Row 1: tiles 9, 10
+	push hl
+	ld de, (1 * SCREEN_WIDTH) + 2
+	add hl, de
+	ld [hl], a ; Tile 9
+	inc hl
+	ld [hl], a ; Tile 10
+	pop hl
+
+	; Row 2: tiles 16, 17, 18
 	push hl
 	ld de, (2 * SCREEN_WIDTH) + 2
 	add hl, de
@@ -61,17 +71,16 @@ SetLyra1BGPalettes:
 	ld [hl], a ; Tile 18
 	pop hl
 
+	; Row 3: tiles 22, 23
 	push hl
 	ld de, (3 * SCREEN_WIDTH) + 1
 	add hl, de
 	ld [hl], a ; Tile 22
 	inc hl
 	ld [hl], a ; Tile 23
-	inc hl
-	inc hl
-	ld [hl], a ; Tile 25
 	pop hl
 
+	; Row 4: tiles 30, 31, 32
 	push hl
 	ld de, (4 * SCREEN_WIDTH) + 2
 	add hl, de
@@ -80,6 +89,25 @@ SetLyra1BGPalettes:
 	ld [hl], a ; Tile 31
 	inc hl
 	ld [hl], a ; Tile 32
+	pop hl
+
+	; Now override specific tiles to palette 05 (PAL_BATTLE_BG_STATUS)
+	ld a, PAL_BATTLE_BG_STATUS
+
+	; Row 3: tiles 25, 26
+	push hl
+	ld de, (3 * SCREEN_WIDTH) + 4
+	add hl, de
+	ld [hl], a ; Tile 25
+	inc hl
+	ld [hl], a ; Tile 26
+	pop hl
+
+	; Row 4: tile 33
+	push hl
+	ld de, (4 * SCREEN_WIDTH) + 5
+	add hl, de
+	ld [hl], a ; Tile 33
 	pop hl
 
 	ret
