@@ -164,6 +164,9 @@ INCLUDE "gfx/trainers/lyra1/oam_color2.pal"
 Lyra1OAMColor3Palette:
 INCLUDE "gfx/trainers/lyra1/oam_color3.pal"
 
+Lyra1OAMColor4Palette:
+INCLUDE "gfx/trainers/lyra1/oam_color4.pal"
+
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
 
@@ -390,7 +393,7 @@ _CGB_BattleIntroColors:
 	; Part 1: Load BG Palettes
 	ld de, wBGPals1
 	call SetBattlePal_PlayerBG    ; BG 0 = Player BG color
-	call SetBattlePal_EnemyBG     ; BG 1 = Enemy trainer BG color (or Pokemon)
+	call SetBattlePal_EnemyBG     ; BG 1 = Enemy trainer BG color
 	call SetBattlePal_EnemyHP     ; BG 2 = Enemy HP bar
 	call SetBattlePal_PlayerHP    ; BG 3 = Player HP bar
 	call SetBattlePal_ExpGender   ; BG 4 = EXP/gender
@@ -401,7 +404,7 @@ _CGB_BattleIntroColors:
 
 	; Part 2: Load OBJ Palettes (initial)
 	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
-	call SetEnemyOAMColorPalette  ; OBJ 0 = Enemy trainer OAM color (or Pokemon)
+	call SetEnemyOAMColorPalette  ; OBJ 0 = Enemy trainer OAM color
 	call SetBattlePal_PlayerColor ; OBJ 1 = Player color 1
 
 	; Part 3: Apply Palettes
@@ -430,19 +433,23 @@ _CGB_BattleIntroColors:
 	; Set trainer-specific BG tile palette assignments
 	farcall SetTrainerBGPalettes_Far
 
+	; Load enemy color2 into OBJ palette 2
+	ld de, wOBPals1 palette 2
+	call SetEnemyOAMColor2Palette
+
 	; Load player color2 into OBJ palette 4
 	call LoadPlayerColor2Palette
 
 	; Load player color3 into OBJ palette 5
 	call LoadPlayerColor3Palette
 
-	; Load enemy color2 into OBJ palette 6
+	; Load enemy color3 into OBJ palette 6
 	ld de, wOBPals1 palette 6
-	call SetEnemyOAMColor2Palette ;
+	call SetEnemyOAMColor3Palette
 
-	; Load enemy color3 into OBJ palette 7
+	; Load enemy color4 into OBJ palette 7
 	ld de, wOBPals1 palette 7
-	call SetEnemyOAMColor3Palette ;
+	call SetEnemyOAMColor4Palette
 
 	pop bc
 	; Part 7: Skip ability overlay logic - not needed during intro
@@ -492,13 +499,17 @@ _CGB_BattleEnemyColors:
 	; Set trainer-specific BG tile palette assignments
 	farcall SetTrainerBGPalettes_Far
 
-	; Load enemy color2 into OBJ palette 6
-	ld de, wOBPals1 palette 6
-	call SetEnemyOAMColor2Palette ;
+	; Load enemy color2 into OBJ palette 2
+	ld de, wOBPals1 palette 2
+	call SetEnemyOAMColor2Palette
 
-	; Load enemy color3 into OBJ palette 7
+	; Load enemy color3 into OBJ palette 6
+	ld de, wOBPals1 palette 6
+	call SetEnemyOAMColor3Palette
+
+	; Load enemy color4 into OBJ palette 7
 	ld de, wOBPals1 palette 7
-	call SetEnemyOAMColor3Palette ;
+	call SetEnemyOAMColor4Palette
 
 	pop bc
 	; Part 7: Skip ability overlay logic - not needed when Enemy is on Screen
@@ -2110,6 +2121,22 @@ SetEnemyOAMColor3Palette:
 
 .lyra1:
 	ld hl, Lyra1OAMColor3Palette
+	jmp LoadOnePalette
+
+; Helper function: Load enemy trainer OAM color4 palette
+; Loaded into OBJ palette slot 7 (passed in DE)
+SetEnemyOAMColor4Palette:
+	ld a, [wOtherTrainerClass]
+	cp LYRA1
+	jr z, .lyra1
+	; Add more trainers here as needed
+
+	; Default: use gray palette
+	ld hl, BattleObjectPals + 6 palettes
+	jmp LoadOnePalette
+
+.lyra1:
+	ld hl, Lyra1OAMColor4Palette
 	jmp LoadOnePalette
 
 _CGB_FinishLayout:
