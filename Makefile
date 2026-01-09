@@ -283,6 +283,10 @@ gfx/pokemon/%/frames.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/fro
 #%.4bpp: %.png
 #	$Qsuperfamiconv tiles -R -i $@ -d $<
 
+# Chris back pic color layer with unique tiles optimization
+gfx/player/chris_back_color.2bpp: gfx/player/chris_back_color.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
 %.2bpp: %.png
 	$Q$(RGBGFX) -c dmg $(RGBGFXFLAGS) -o $@ $<
 	$(if $(tools/gfx),\

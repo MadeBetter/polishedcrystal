@@ -8980,7 +8980,7 @@ InitBattleDisplay:
 
 	ld hl, ChrisBackpicColor
 	ld de, vTiles0 tile $55
-	lb bc, BANK("Trainer Backpics"), 6 * 6
+	lb bc, BANK("Trainer Backpics"), 20  ; Optimized with -u flag: 20 unique tiles (0-19)
 	call DecompressRequest2bpp
 	; Wait for any remaining tile copy requests to complete
 .wait_decompress
@@ -8994,239 +8994,312 @@ InitBattleDisplay:
 	; fallthrough to create OAM sprites
 
 .CreateColorLayerOAM:
-	; Create color layer OAM sprites (overlaying the background tiles)
-	; Uses slots 0-18 (19 sprites total for 6×6 grid, minus 17 hidden tiles)
+	; Create color layer OAM sprites using optimized tileset (rgbgfx -u)
+	; Tile mapping: old grid position → new tile ID
+	; Skip positions map to tile 0 (transparent)
 	ld hl, wShadowOAM + 0 * 4
-	ld a, $55  ; Start tile for color layer
-	ldh [hMapObjectIndexBuffer], a
+	xor a
+	ldh [hBattleTurn], a  ; Grid position counter (0-35)
 	ld b, $6   ; 6 rows
 	ld d, 8 * 8   ; Starting Y position
 .color_outer
 	ld c, $6   ; 6 columns
-	ld e, 3 * 8  ; Starting X position (tilemap column 2 + sprite offset)
+	ld e, 3 * 8  ; Starting X position
 .color_inner
-	; Check if current tile should be skipped (transparent tiles)
-	ldh a, [hMapObjectIndexBuffer]
-	sub $55  ; Get tile number 0-35
+	; Get optimized tile ID for current grid position
+	push bc
+	push de
+	push hl
+	ldh a, [hBattleTurn]
+	call .GetOptimizedTileID  ; Returns tile ID in A (0 = skip)
+	pop hl
+	pop de
+	pop bc
 
-	; Skip white tiles: 0, 1, 3, 5, 6, 7, 9, 11, 12, 18, 19, 21, 23, 24, 30, 31, 32
-	cp 0
-	jp z, .skip_sprite
-	cp 1
-	jp z, .skip_sprite
-	cp 3
-	jp z, .skip_sprite
-	cp 5
-	jp z, .skip_sprite
-	cp 6
-	jp z, .skip_sprite
-	cp 7
-	jp z, .skip_sprite
-	cp 9
-	jp z, .skip_sprite
-	cp 11
-	jp z, .skip_sprite
-	cp 12
-	jp z, .skip_sprite
-	cp 18
-	jp z, .skip_sprite
-	cp 19
-	jp z, .skip_sprite
-	cp 21
-	jp z, .skip_sprite
-	cp 23
-	jp z, .skip_sprite
-	cp 24
-	jp z, .skip_sprite
-	cp 30
-	jp z, .skip_sprite
-	cp 31
-	jp z, .skip_sprite
-	cp 32
-	jp z, .skip_sprite
+	; Check if tile should be skipped (tile 0)
+	and a
+	jr z, .skip_sprite
 
-	; Create sprite for this tile
-	; Get tile number first and save to hBattleTurn (temp variable, safe during intro)
-	ldh a, [hMapObjectIndexBuffer]
-	sub $55
-	ldh [hBattleTurn], a  ; Save tile number in temp storage
+	; Get grid position for offset lookups (only if not skipped)
+	ldh a, [hBattleTurn]
+	push af
 
-	push de ; Save D, E (Y, X positions)
-	push bc ; Save B, C (row/column counters)
+	; Y position with offset
+	ld a, d
+	ld c, a
+	pop af  ; Grid position
+	push af
+	call .GetYOffset
+	add c
+	ld [hli], a  ; Write Y
 
-	; Y position adjustments
-	ld a, d  ; Base Y position
-	ld c, a  ; Save in c
-	ldh a, [hBattleTurn]  ; Get tile number
+	; X position with offset
+	ld a, e
+	ld c, a
+	pop af  ; Grid position
+	push af
+	call .GetXOffset
+	add c
+	ld [hli], a  ; Write X
 
-	cp 4
-	jr nz, .check_y_tile10
-	ld a, c
-	inc a  ; Tile 4: +1px Y
-	jr .y_adjust_done
-.check_y_tile10
-	cp 10
-	jr nz, .check_y_tile14
-	ld a, c
-	inc a  ; Tile 10: +1px Y
-	jr .y_adjust_done
-.check_y_tile14
-	cp 14
-	jr nz, .check_y_tile22
-	ld a, c
-	inc a
-	inc a  ; Tile 14: +2px Y
-	jr .y_adjust_done
-.check_y_tile22
-	cp 22
-	jr nz, .no_y_adjust
-	ld a, c
-	inc a  ; Tile 22: +1px Y
-	jr .y_adjust_done
-.no_y_adjust
-	ld a, c
-.y_adjust_done
-	ld [hli], a  ; Write Y position
+	; Write tile ID
+	pop af  ; Grid position
+	call .GetOptimizedTileID
+	add $55  ; Convert tile ID 1-19 to VRAM tiles $56-$68
+	ld [hli], a
 
-	; X position adjustments
-	ld a, e  ; Base X position
-	ld c, a  ; Save in c
-	ldh a, [hBattleTurn]  ; Get tile number
-
-	cp 2
-	jr nz, .check_x_tile4
-	ld a, c
-	inc a
-	inc a  ; Tile 2: +2px X
-	jr .x_adjust_done
-.check_x_tile4
-	cp 4
-	jr nz, .check_x_tile8
-	ld a, c
-	inc a  ; Tile 4: +1px X
-	jr .x_adjust_done
-.check_x_tile8
-	cp 8
-	jr nz, .check_x_tile10
-	ld a, c
-	inc a  ; Tile 8: +1px X
-	jr .x_adjust_done
-.check_x_tile10
-	cp 10
-	jr nz, .check_x_tile13
-	ld a, c
-	add 6  ; Tile 10: +6px X
-	jr .x_adjust_done
-.check_x_tile13
-	cp 13
-	jr nz, .check_x_tile14
-	ld a, c
-	inc a  ; Tile 13: +1px X
-	jr .x_adjust_done
-.check_x_tile14
-	cp 14
-	jr nz, .check_x_tile15
-	ld a, c
-	inc a  ; Tile 14: +1px X
-	jr .x_adjust_done
-.check_x_tile15
-	cp 15
-	jr nz, .check_x_tile22
-	ld a, c
-	inc a  ; Tile 15: +1px X
-	jr .x_adjust_done
-.check_x_tile22
-	cp 22
-	jr nz, .check_x_tile25_27
-	ld a, c
-	add 4  ; Tile 22: +4px X
-	jr .x_adjust_done
-.check_x_tile25_27
-	cp 25
-	jr c, .check_x_tile33
-	cp 28
-	jr nc, .check_x_tile33
-	ld a, c
-	inc a
-	inc a  ; Tiles 25, 26, 27: +2px X
-	jr .x_adjust_done
-.check_x_tile33
-	cp 33
-	jr nz, .no_x_adjust
-	ld a, c
-	inc a  ; Tile 33: +1px X
-	jr .x_adjust_done
-.no_x_adjust
-	ld a, c
-.x_adjust_done
-	pop bc ; Restore B, C
-	pop de ; Restore D, E
-	ld [hli], a  ; Write X position
-
-	; Write tile index
-	ldh a, [hMapObjectIndexBuffer]
-	ld [hli], a  ; Tile index
-	inc a
-	ldh [hMapObjectIndexBuffer], a
-
-	; Palette assignments based on tile number
-	ldh a, [hBattleTurn]  ; Get tile number
-
-	; Check for palette 5 tiles (28, 29)
-	cp 28
-	jr z, .use_palette5
-	cp 29
-	jr z, .use_palette5
-
-	; Check for palette 4 tiles (20, 22, 25, 26, 27, 33, 34, 35)
-	cp 20
-	jr z, .use_palette4
-	cp 22
-	jr z, .use_palette4
-	cp 25
-	jr c, .check_palette1
-	cp 28
-	jr c, .use_palette4
-	cp 33
-	jr c, .check_palette1
-	cp 36
-	jr nc, .check_palette1
-	jr .use_palette4
-
-.check_palette1
-	; Default to palette 1 for remaining tiles (2, 4, 8, 10, 13, 14, 15, 16, 17)
-	ld a, $1
-	jr .write_palette
-
-.use_palette4
-	ld a, $4
-	jr .write_palette
-
-.use_palette5
-	ld a, $5
-
-.write_palette
-	ld [hli], a  ; Attributes (palette)
+	; Palette assignment
+	ldh a, [hBattleTurn]
+	call .GetOptimizedTileID
+	call .GetPalette
+	ld [hli], a
 	jr .next_position
 
 .skip_sprite
-	; Don't create sprite, but still increment tile index
-	ldh a, [hMapObjectIndexBuffer]
-	inc a
-	ldh [hMapObjectIndexBuffer], a
-
+	; Skip this position
 .next_position
-	; Increment X position
+	; Increment grid position
+	ldh a, [hBattleTurn]
+	inc a
+	ldh [hBattleTurn], a
+
+	; Increment X
 	ld a, e
 	add $8
-	ld e, a  ; Increment X (move right)
+	ld e, a
 	dec c
 	jp nz, .color_inner
+
+	; Increment Y
 	ld a, d
 	add $8
-	ld d, a  ; Increment Y (move down)
+	ld d, a
 	dec b
 	jp nz, .color_outer
+	ret
+
+; Map grid position (0-35) to optimized tile ID (0=skip, 1-19=tiles)
+.GetOptimizedTileID:
+	cp 2
+	jr nz, .chk_4
+	ld a, 1
+	ret
+.chk_4
+	cp 4
+	jr nz, .chk_8
+	ld a, 2
+	ret
+.chk_8
+	cp 8
+	jr nz, .chk_10
+	ld a, 3
+	ret
+.chk_10
+	cp 10
+	jr nz, .chk_13
+	ld a, 4
+	ret
+.chk_13
+	cp 13
+	jr nz, .chk_14
+	ld a, 5
+	ret
+.chk_14
+	cp 14
+	jr nz, .chk_15
+	ld a, 6
+	ret
+.chk_15
+	cp 15
+	jr nz, .chk_16
+	ld a, 7
+	ret
+.chk_16
+	cp 16
+	jr nz, .chk_17
+	ld a, 8
+	ret
+.chk_17
+	cp 17
+	jr nz, .chk_20
+	ld a, 9
+	ret
+.chk_20
+	cp 20
+	jr nz, .chk_22
+	ld a, 10
+	ret
+.chk_22
+	cp 22
+	jr nz, .chk_25
+	ld a, 11
+	ret
+.chk_25
+	cp 25
+	jr nz, .chk_26
+	ld a, 12
+	ret
+.chk_26
+	cp 26
+	jr nz, .chk_27
+	ld a, 13
+	ret
+.chk_27
+	cp 27
+	jr nz, .chk_28
+	ld a, 14
+	ret
+.chk_28
+	cp 28
+	jr nz, .chk_29
+	ld a, 15
+	ret
+.chk_29
+	cp 29
+	jr nz, .chk_33
+	ld a, 16
+	ret
+.chk_33
+	cp 33
+	jr nz, .chk_34
+	ld a, 17
+	ret
+.chk_34
+	cp 34
+	jr nz, .chk_35
+	ld a, 18
+	ret
+.chk_35
+	cp 35
+	jr nz, .tile_skip
+	ld a, 19
+	ret
+.tile_skip
+	xor a
+	ret
+
+; Get Y offset for grid position
+.GetYOffset:
+	cp 4
+	jr nz, .yoff_10
+	ld a, 1
+	ret
+.yoff_10
+	cp 10
+	jr nz, .yoff_14
+	ld a, 1
+	ret
+.yoff_14
+	cp 14
+	jr nz, .yoff_22
+	ld a, 2
+	ret
+.yoff_22
+	cp 22
+	jr nz, .no_yoff
+	ld a, 1
+	ret
+.no_yoff
+	xor a
+	ret
+
+; Get X offset for grid position
+.GetXOffset:
+	cp 2
+	jr nz, .xoff_4
+	ld a, 2
+	ret
+.xoff_4
+	cp 4
+	jr nz, .xoff_8
+	ld a, 1
+	ret
+.xoff_8
+	cp 8
+	jr nz, .xoff_10
+	ld a, 1
+	ret
+.xoff_10
+	cp 10
+	jr nz, .xoff_13
+	ld a, 5
+	ret
+.xoff_13
+	cp 13
+	jr nz, .xoff_14
+	ld a, 1
+	ret
+.xoff_14
+	cp 14
+	jr nz, .xoff_15
+	ld a, 1
+	ret
+.xoff_15
+	cp 15
+	jr nz, .xoff_22
+	ld a, 1
+	ret
+.xoff_22
+	cp 22
+	jr nz, .xoff_25
+	ld a, 4
+	ret
+.xoff_25
+	cp 25
+	jr nz, .xoff_26
+	ld a, 2
+	ret
+.xoff_26
+	cp 26
+	jr nz, .xoff_27
+	ld a, 2
+	ret
+.xoff_27
+	cp 27
+	jr nz, .xoff_33
+	ld a, 2
+	ret
+.xoff_33
+	cp 33
+	jr nz, .no_xoff
+	ld a, 1
+	ret
+.no_xoff
+	xor a
+	ret
+
+; Get palette for optimized tile ID (1-19)
+.GetPalette:
+	; Palette 5: tiles 15, 16 (old 28, 29)
+	cp 15
+	jr z, .pal5
+	cp 16
+	jr z, .pal5
+	; Palette 4: tiles 10, 11, 12, 13, 14, 17, 18, 19 (old 20, 22, 25-27, 33-35)
+	cp 10
+	jr z, .pal4
+	cp 11
+	jr z, .pal4
+	cp 12
+	jr z, .pal4
+	cp 13
+	jr z, .pal4
+	cp 14
+	jr z, .pal4
+	cp 17
+	jr z, .pal4
+	cp 18
+	jr z, .pal4
+	cp 19
+	jr z, .pal4
+	; Default: palette 1 (tiles 1-9)
+	ld a, $1
+	ret
+.pal4
+	ld a, $4
+	ret
+.pal5
+	ld a, $5
 	ret
 
 .LoadKrisColorLayerSprites:
