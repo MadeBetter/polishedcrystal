@@ -9024,7 +9024,6 @@ InitBattleDisplay:
 	push bc ; Save row/col counters
 	ldh a, [hBattleTurn]
 	push af
-	push bc  ; Protect loop counters (Kris/Lyra pattern)
 
 	; Y position with offset
 	ld a, d
@@ -9042,7 +9041,6 @@ InitBattleDisplay:
 	push af
 	call .GetXOffset
 	add c
-	pop bc   ; Restore loop counters (Kris/Lyra pattern)
 	ld [hli], a  ; Write X
 
 	; Write tile ID
