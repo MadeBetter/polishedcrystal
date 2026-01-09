@@ -9021,8 +9021,10 @@ InitBattleDisplay:
 	jr z, .skip_sprite
 
 	; Get grid position for offset lookups (only if not skipped)
+	push bc ; Save row/col counters
 	ldh a, [hBattleTurn]
 	push af
+	push bc  ; Protect loop counters (Kris/Lyra pattern)
 
 	; Y position with offset
 	ld a, d
@@ -9040,6 +9042,7 @@ InitBattleDisplay:
 	push af
 	call .GetXOffset
 	add c
+	pop bc   ; Restore loop counters (Kris/Lyra pattern)
 	ld [hli], a  ; Write X
 
 	; Write tile ID
@@ -9053,6 +9056,7 @@ InitBattleDisplay:
 	call .GetOptimizedTileID
 	call .GetPalette
 	ld [hli], a
+	pop bc ; Restore row/col counters
 	jr .next_position
 
 .skip_sprite
