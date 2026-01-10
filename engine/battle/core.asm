@@ -8955,40 +8955,51 @@ InitBattleDisplay:
 	cp BATTLETYPE_TUTORIAL
 	jp z, .LoadLyraColorLayerSprites
 
-	; Dispatcher: Load color layer based on player gender
-	ld a, [wPlayerGender]
-	and a  ; PLAYER_MALE
-	jp z, .LoadChrisColorLayerSprites
-	cp PLAYER_FEMALE
-	jp z, .LoadKrisColorLayerSprites
-	cp PLAYER_ENBY
-	jp z, .LoadCrysColorLayerSprites
+	; Load color layer for current player character (unified function)
+	call .LoadPlayerColorLayerSprites
 	ret
 
-.LoadChrisColorLayerSprites:
-	; Only for Chris (male player) - tutorial already handled by dispatcher
-	ld a, [wPlayerGender]
-	and a ; PLAYER_MALE
-	ret nz
+.LoadPlayerColorLayerSprites:
+	; Unified function to load color layer for any player character
+	; Checks wPlayerGender and loads appropriate graphics with correct tile count
 
-	; Load chris_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
-	; Ensure we're writing to VRAM bank 0
+	; Save VRAM bank and set to bank 0
 	ldh a, [rVBK]
 	push af
 	xor a
 	ldh [rVBK], a
 
+	; Determine which player and set up graphics pointer + tile count
+	ld a, [wPlayerGender]
+	and a  ; PLAYER_MALE
+	jr z, .load_chris
+	cp PLAYER_FEMALE
+	jr z, .load_kris
+	; Default to Crys (PLAYER_ENBY)
+.load_crys:
+	ld hl, CrysBackpicColor
+	lb bc, BANK("Trainer Backpics"), 16  ; 16 unique tiles
+	jr .do_decompress
+.load_kris:
+	ld hl, KrisBackpicColor
+	lb bc, BANK("Trainer Backpics"), 20  ; 20 unique tiles
+	jr .do_decompress
+.load_chris:
 	ld hl, ChrisBackpicColor
+	lb bc, BANK("Trainer Backpics"), 20  ; 20 unique tiles
+
+.do_decompress:
 	ld de, vTiles0 tile $55
-	lb bc, BANK("Trainer Backpics"), 20  ; Optimized with -u flag: 20 unique tiles (0-19)
 	call DecompressRequest2bpp
-	; Wait for any remaining tile copy requests to complete
-.wait_decompress
+
+	; Wait for decompression to complete
+.wait_decompress:
 	call DelayFrame
 	ldh a, [hRequested2bpp]
 	and a
 	jr nz, .wait_decompress
 
+	; Restore VRAM bank
 	pop af
 	ldh [rVBK], a
 	; fallthrough to create OAM sprites
@@ -9237,7 +9248,7 @@ InitBattleDisplay:
 	db 6,5,-2,1 , 7,0,0,4 ,   8,-1,-2,4 ,  9,-1,-3,4 ,  0,0,0,0 ,   0,0,0,0     ; y = 2
 	db 10,2,1,4 , 11,-1,0,4 , 12,-1,0,4 ,  13,-1,-3,4 , 14,-1,0,4 , 15,-1,-1,4  ; y = 3
 	db 0,0,0,0 ,  0,0,0,0 ,   16,0,1,1 ,   0,0,0,0 ,    17,-1,0,4 , 0,0,0,0     ; y = 4
-	db 0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,    18,0,0,0 ,   19,4,0,5 ,  0,0,0,0     ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,    18,0,0,1 ,   19,4,0,5 ,  0,0,0,0     ; y = 5
 
 .CrysGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,   1,-1,0,1 ,  2,-1,0,1 ,  0,0,0,0 ,   0,0,0,0   ; y = 0
@@ -9254,64 +9265,6 @@ InitBattleDisplay:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 3
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 5
-
-.LoadKrisColorLayerSprites:
-	; Only for Kris (female player) - tutorial already handled by dispatcher
-	ld a, [wPlayerGender]
-	cp PLAYER_FEMALE
-	ret nz
-
-	; Load kris_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
-	; Ensure we're writing to VRAM bank 0
-	ldh a, [rVBK]
-	push af
-	xor a
-	ldh [rVBK], a
-
-	; Load compressed color layer graphics
-	ld hl, KrisBackpicColor
-	ld de, vTiles0 tile $55
-	lb bc, BANK("Trainer Backpics"), 20  ; Optimized with -u flag: 20 unique tiles (0-19)
-	call DecompressRequest2bpp
-
-.wait_kris_decompress:
-	call DelayFrame
-	ldh a, [hRequested2bpp]
-	and a
-	jr nz, .wait_kris_decompress
-
-	pop af
-	ldh [rVBK], a
-	; Use shared table-driven OAM creation
-	jp .CreateColorLayerOAM
-
-.LoadCrysColorLayerSprites:
-	; Only for Crys (enby player) - tutorial already handled by dispatcher
-	ld a, [wPlayerGender]
-	cp PLAYER_ENBY
-	ret nz
-
-	; Load crys_back_color.png to tiles $55+ in vTiles0 (OAM accessible)
-	ldh a, [rVBK]
-	push af
-	xor a
-	ldh [rVBK], a
-
-	ld hl, CrysBackpicColor
-	ld de, vTiles0 tile $55
-	lb bc, BANK("Trainer Backpics"), 16  ; Optimized with -u flag: 16 unique tiles (0-15)
-	call DecompressRequest2bpp
-
-.wait_crys_decompress:
-	call DelayFrame
-	ldh a, [hRequested2bpp]
-	and a
-	jr nz, .wait_crys_decompress
-
-	pop af
-	ldh [rVBK], a
-	; Use shared table-driven OAM creation (automatically uses .CrysGridData)
-	jp .CreateColorLayerOAM
 
 .LoadLyraColorLayerSprites:
 	; Lyra functions moved to separate section to save space
