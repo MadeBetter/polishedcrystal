@@ -9082,103 +9082,21 @@ InitBattleDisplay:
 
 ; Map grid position (0-35) to optimized tile ID (0=skip, 1-19=tiles)
 .GetOptimizedTileID:
-	cp 2
-	jr nz, .chk_4
-	ld a, 1
+	push hl
+	push bc
+	ld hl, .OptimizedTileIDArray
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld a, [hl]
+	pop bc
+	pop hl
 	ret
-.chk_4
-	cp 4
-	jr nz, .chk_8
-	ld a, 2
-	ret
-.chk_8
-	cp 8
-	jr nz, .chk_10
-	ld a, 3
-	ret
-.chk_10
-	cp 10
-	jr nz, .chk_13
-	ld a, 4
-	ret
-.chk_13
-	cp 13
-	jr nz, .chk_14
-	ld a, 5
-	ret
-.chk_14
-	cp 14
-	jr nz, .chk_15
-	ld a, 6
-	ret
-.chk_15
-	cp 15
-	jr nz, .chk_16
-	ld a, 7
-	ret
-.chk_16
-	cp 16
-	jr nz, .chk_17
-	ld a, 8
-	ret
-.chk_17
-	cp 17
-	jr nz, .chk_20
-	ld a, 9
-	ret
-.chk_20
-	cp 20
-	jr nz, .chk_22
-	ld a, 10
-	ret
-.chk_22
-	cp 22
-	jr nz, .chk_25
-	ld a, 11
-	ret
-.chk_25
-	cp 25
-	jr nz, .chk_26
-	ld a, 12
-	ret
-.chk_26
-	cp 26
-	jr nz, .chk_27
-	ld a, 13
-	ret
-.chk_27
-	cp 27
-	jr nz, .chk_28
-	ld a, 14
-	ret
-.chk_28
-	cp 28
-	jr nz, .chk_29
-	ld a, 15
-	ret
-.chk_29
-	cp 29
-	jr nz, .chk_33
-	ld a, 16
-	ret
-.chk_33
-	cp 33
-	jr nz, .chk_34
-	ld a, 17
-	ret
-.chk_34
-	cp 34
-	jr nz, .chk_35
-	ld a, 18
-	ret
-.chk_35
-	cp 35
-	jr nz, .tile_skip
-	ld a, 19
-	ret
-.tile_skip
-	xor a
-	ret
+
+.OptimizedTileIDArray:
+	db 0,0,1,0,2,0,0,0,3,0,4,0,0,5,6,7
+	db 8,9,0,0,10,0,11,0,0,12,13,14,15,16
+	db 0,0,0,17,18,19
 
 ; Get Y offset for grid position
 .GetYOffset:
