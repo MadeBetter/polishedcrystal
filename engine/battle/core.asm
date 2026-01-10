@@ -8994,72 +8994,61 @@ InitBattleDisplay:
 	; fallthrough to create OAM sprites
 
 .CreateColorLayerOAM:
-	; Create color layer OAM sprites using optimized tileset (rgbgfx -u)
-	; Tile mapping: old grid position → new tile ID
-	; Skip positions map to tile 0 (transparent)
+	; Create color layer OAM sprites using table-driven lookup
 	ld hl, wShadowOAM + 0 * 4
 	xor a
 	ldh [hBattleTurn], a  ; Grid position counter (0-35)
 	ld b, $6   ; 6 rows
 	ld d, 8 * 8   ; Starting Y position
-.color_outer
+.color_outer:
 	ld c, $6   ; 6 columns
 	ld e, 3 * 8  ; Starting X position
-.color_inner
-	; Get optimized tile ID for current grid position
-	push bc
-	push de
-	push hl
+.color_inner:
+	; Get tile ID to check for skip
 	ldh a, [hBattleTurn]
-	call .GetOptimizedTileID  ; Returns tile ID in A (0 = skip)
-	pop hl
-	pop de
-	pop bc
-
-	; Check if tile should be skipped (tile 0)
+	call .GetOptimizedTileID
 	and a
 	jr z, .skip_sprite
 
-	; Get grid position for offset lookups (only if not skipped)
-	push bc ; Save row/col counters
-	ldh a, [hBattleTurn]
-	push af
+	; Save loop counters and positions before using them as temporaries
+	push bc
+	push de
 
 	; Y position with offset
-	ld a, d
-	ld c, a
-	pop af  ; Grid position
-	push af
-	call .GetYOffset
-	add c
-	ld [hli], a  ; Write Y
+	ldh a, [hBattleTurn]
+	call .GetOptimizedYOffset
+	ld c, a              ; c = yOffset
+	ld a, d              ; a = base Y
+	sub c                ; a = Y - offset (positive moves UP)
+	ld [hli], a          ; Write Y
 
 	; X position with offset
-	ld a, e
-	ld c, a
-	pop af  ; Grid position
-	push af
-	call .GetXOffset
-	add c
-	ld [hli], a  ; Write X
+	ldh a, [hBattleTurn]
+	call .GetOptimizedXOffset
+	ld c, a              ; c = xOffset
+	ld a, e              ; a = base X
+	add c                ; a = X + offset
+	ld [hli], a          ; Write X
 
-	; Write tile ID
-	pop af  ; Grid position
-	call .GetOptimizedTileID
-	add $55  ; Convert tile ID 1-19 to VRAM tiles $56-$68
-	ld [hli], a
+	; Restore positions and counters
+	pop de
+	pop bc
 
-	; Palette assignment
+	; Tile ID
 	ldh a, [hBattleTurn]
 	call .GetOptimizedTileID
-	call .GetPalette
+	add $55              ; Convert 1-19 to $56-$68
 	ld [hli], a
-	pop bc ; Restore row/col counters
+
+	; Palette
+	ldh a, [hBattleTurn]
+	call .GetOptimizedPalette
+	ld [hli], a
 	jr .next_position
 
-.skip_sprite
+.skip_sprite:
 	; Skip this position
-.next_position
+.next_position:
 	; Increment grid position
 	ldh a, [hBattleTurn]
 	inc a
@@ -9080,147 +9069,99 @@ InitBattleDisplay:
 	jp nz, .color_outer
 	ret
 
-; Map grid position (0-35) to optimized tile ID (0=skip, 1-19=tiles)
+; Helper functions to look up grid data from table
+; Each takes grid position (0-35) in a, returns one byte in a
+
 .GetOptimizedTileID:
+	; Input: a = grid position (0-35)
+	; Output: a = tile ID (0-19, where 0 = skip)
+	; Preserves: bc, de, hl
 	push hl
-	push bc
-	ld hl, .OptimizedTileIDArray
-	ld c, a
-	ld b, 0
-	add hl, bc
-	ld a, [hl]
-	pop bc
+	push de
+	ld hl, .OptimizedGridData
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de      ; hl += a * 4
+	ld a, [hl]      ; Get byte 0: tile ID
+	pop de
 	pop hl
 	ret
 
-.OptimizedTileIDArray:
-	db 0,0,1,0,2,0,0,0,3,0,4,0,0,5,6,7
-	db 8,9,0,0,10,0,11,0,0,12,13,14,15,16
-	db 0,0,0,17,18,19
-
-; Get Y offset for grid position
-.GetYOffset:
-	cp 4
-	jr nz, .yoff_10
-	ld a, 1
-	ret
-.yoff_10
-	cp 10
-	jr nz, .yoff_14
-	ld a, 1
-	ret
-.yoff_14
-	cp 14
-	jr nz, .yoff_22
-	ld a, 2
-	ret
-.yoff_22
-	cp 22
-	jr nz, .no_yoff
-	ld a, 1
-	ret
-.no_yoff
-	xor a
+.GetOptimizedXOffset:
+	; Input: a = grid position (0-35)
+	; Output: a = X offset in pixels
+	; Preserves: bc, de, hl
+	push hl
+	push de
+	ld hl, .OptimizedGridData
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de      ; hl += a * 4
+	inc hl
+	ld a, [hl]      ; Get byte 1: X offset
+	pop de
+	pop hl
 	ret
 
-; Get X offset for grid position
-.GetXOffset:
-	cp 2
-	jr nz, .xoff_4
-	ld a, 2
-	ret
-.xoff_4
-	cp 4
-	jr nz, .xoff_8
-	ld a, 1
-	ret
-.xoff_8
-	cp 8
-	jr nz, .xoff_10
-	ld a, 1
-	ret
-.xoff_10
-	cp 10
-	jr nz, .xoff_13
-	ld a, 5
-	ret
-.xoff_13
-	cp 13
-	jr nz, .xoff_14
-	ld a, 1
-	ret
-.xoff_14
-	cp 14
-	jr nz, .xoff_15
-	ld a, 1
-	ret
-.xoff_15
-	cp 15
-	jr nz, .xoff_22
-	ld a, 1
-	ret
-.xoff_22
-	cp 22
-	jr nz, .xoff_25
-	ld a, 4
-	ret
-.xoff_25
-	cp 25
-	jr nz, .xoff_26
-	ld a, 2
-	ret
-.xoff_26
-	cp 26
-	jr nz, .xoff_27
-	ld a, 2
-	ret
-.xoff_27
-	cp 27
-	jr nz, .xoff_33
-	ld a, 2
-	ret
-.xoff_33
-	cp 33
-	jr nz, .no_xoff
-	ld a, 1
-	ret
-.no_xoff
-	xor a
+.GetOptimizedYOffset:
+	; Input: a = grid position (0-35)
+	; Output: a = Y offset in pixels
+	; Preserves: bc, de, hl
+	push hl
+	push de
+	ld hl, .OptimizedGridData
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de      ; hl += a * 4
+	inc hl
+	inc hl
+	ld a, [hl]      ; Get byte 2: Y offset
+	pop de
+	pop hl
 	ret
 
-; Get palette for optimized tile ID (1-19)
-.GetPalette:
-	; Palette 5: tiles 15, 16 (old 28, 29)
-	cp 15
-	jr z, .pal5
-	cp 16
-	jr z, .pal5
-	; Palette 4: tiles 10, 11, 12, 13, 14, 17, 18, 19 (old 20, 22, 25-27, 33-35)
-	cp 10
-	jr z, .pal4
-	cp 11
-	jr z, .pal4
-	cp 12
-	jr z, .pal4
-	cp 13
-	jr z, .pal4
-	cp 14
-	jr z, .pal4
-	cp 17
-	jr z, .pal4
-	cp 18
-	jr z, .pal4
-	cp 19
-	jr z, .pal4
-	; Default: palette 1 (tiles 1-9)
-	ld a, $1
+.GetOptimizedPalette:
+	; Input: a = grid position (0-35)
+	; Output: a = palette number
+	; Preserves: bc, de, hl
+	push hl
+	push de
+	ld hl, .OptimizedGridData
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de      ; hl += a * 4
+	inc hl
+	inc hl
+	inc hl
+	ld a, [hl]      ; Get byte 3: palette
+	pop de
+	pop hl
 	ret
-.pal4
-	ld a, $4
-	ret
-.pal5
-	ld a, $5
-	ret
+
+.OptimizedGridData:
+	; Grid index = y * 6 + x
+	; db tileID, xOff, yOff, palette
+	; Coordinate system: X offsets (positive=RIGHT, negative=LEFT)
+	;                    Y offsets (positive=UP, negative=DOWN) - inverted from GB standard
+	; x: 0             1             2             3             4             5
+	db 0,0,0,0 ,  0,0,0,0 ,  1,2,0,1 ,  0,0,0,0 ,  2,1,-1,1 ,  0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  3,1,0,1 ,  0,0,0,0 ,  4,6,-1,1 ,  0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  5,1,0,1 ,  6,1,-2,1 ,  7,1,0,1 ,  8,0,0,1 ,  9,0,0,1   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 , 10,0,0,4 ,  0,0,0,0 , 11,4,-1,4 ,  0,0,0,0   ; y = 3
+	db 0,0,0,0 , 12,2,0,4 , 13,2,0,4 , 14,2,0,4 , 15,0,0,5 , 16,0,0,5   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 17,1,0,4 , 18,0,0,4 , 19,0,0,4   ; y = 5
 
 .LoadKrisColorLayerSprites:
 	; Only for Kris (female player) - tutorial already handled by dispatcher
