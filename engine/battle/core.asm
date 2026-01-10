@@ -9078,7 +9078,24 @@ InitBattleDisplay:
 	; Preserves: bc, de, hl
 	push hl
 	push de
-	ld hl, .OptimizedGridData
+	push af
+	; Select table based on player gender
+	ld a, [wPlayerGender]
+	cp PLAYER_FEMALE
+	jr z, .tile_kris
+	cp PLAYER_ENBY
+	jr z, .tile_crys
+	; Default to Chris
+.tile_chris:
+	ld hl, .ChrisGridData
+	jr .tile_got_table
+.tile_kris:
+	ld hl, .KrisGridData
+	jr .tile_got_table
+.tile_crys:
+	ld hl, .CrysGridData
+.tile_got_table:
+	pop af
 	ld e, a
 	ld d, 0
 	add hl, de
@@ -9096,7 +9113,24 @@ InitBattleDisplay:
 	; Preserves: bc, de, hl
 	push hl
 	push de
-	ld hl, .OptimizedGridData
+	push af
+	; Select table based on player gender
+	ld a, [wPlayerGender]
+	cp PLAYER_FEMALE
+	jr z, .xoff_kris
+	cp PLAYER_ENBY
+	jr z, .xoff_crys
+	; Default to Chris
+.xoff_chris:
+	ld hl, .ChrisGridData
+	jr .xoff_got_table
+.xoff_kris:
+	ld hl, .KrisGridData
+	jr .xoff_got_table
+.xoff_crys:
+	ld hl, .CrysGridData
+.xoff_got_table:
+	pop af
 	ld e, a
 	ld d, 0
 	add hl, de
@@ -9115,7 +9149,24 @@ InitBattleDisplay:
 	; Preserves: bc, de, hl
 	push hl
 	push de
-	ld hl, .OptimizedGridData
+	push af
+	; Select table based on player gender
+	ld a, [wPlayerGender]
+	cp PLAYER_FEMALE
+	jr z, .yoff_kris
+	cp PLAYER_ENBY
+	jr z, .yoff_crys
+	; Default to Chris
+.yoff_chris:
+	ld hl, .ChrisGridData
+	jr .yoff_got_table
+.yoff_kris:
+	ld hl, .KrisGridData
+	jr .yoff_got_table
+.yoff_crys:
+	ld hl, .CrysGridData
+.yoff_got_table:
+	pop af
 	ld e, a
 	ld d, 0
 	add hl, de
@@ -9135,7 +9186,24 @@ InitBattleDisplay:
 	; Preserves: bc, de, hl
 	push hl
 	push de
-	ld hl, .OptimizedGridData
+	push af
+	; Select table based on player gender
+	ld a, [wPlayerGender]
+	cp PLAYER_FEMALE
+	jr z, .pal_kris
+	cp PLAYER_ENBY
+	jr z, .pal_crys
+	; Default to Chris
+.pal_chris:
+	ld hl, .ChrisGridData
+	jr .pal_got_table
+.pal_kris:
+	ld hl, .KrisGridData
+	jr .pal_got_table
+.pal_crys:
+	ld hl, .CrysGridData
+.pal_got_table:
+	pop af
 	ld e, a
 	ld d, 0
 	add hl, de
@@ -9150,7 +9218,7 @@ InitBattleDisplay:
 	pop hl
 	ret
 
-.OptimizedGridData:
+.ChrisGridData:
 	; Grid index = y * 6 + x
 	; db tileID, xOff, yOff, palette
 	; Coordinate system: X offsets (positive=RIGHT, negative=LEFT)
@@ -9158,10 +9226,34 @@ InitBattleDisplay:
 	; x: 0             1             2             3             4             5
 	db 0,0,0,0 ,  0,0,0,0 ,  1,2,0,1 ,  0,0,0,0 ,  2,1,-1,1 ,  0,0,0,0   ; y = 0
 	db 0,0,0,0 ,  0,0,0,0 ,  3,1,0,1 ,  0,0,0,0 ,  4,6,-1,1 ,  0,0,0,0   ; y = 1
-	db 0,0,0,0 ,  5,1,0,1 ,  6,1,-2,1 ,  7,1,0,1 ,  8,0,0,1 ,  9,0,0,1   ; y = 2
-	db 0,0,0,0 ,  0,0,0,0 , 10,0,0,4 ,  0,0,0,0 , 11,4,-1,4 ,  0,0,0,0   ; y = 3
-	db 0,0,0,0 , 12,2,0,4 , 13,2,0,4 , 14,2,0,4 , 15,0,0,5 , 16,0,0,5   ; y = 4
-	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 17,1,0,4 , 18,0,0,4 , 19,0,0,4   ; y = 5
+	db 0,0,0,0 ,  5,1,0,1 ,  6,1,-2,1 , 7,1,0,1 ,  8,0,0,1 ,   9,0,0,1   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 ,  10,0,0,4 , 0,0,0,0 ,  11,4,-1,4 , 0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  12,2,0,4 , 13,2,0,4 , 14,2,0,4 , 15,0,0,5 ,  16,0,0,5  ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  17,1,0,4 , 18,0,0,4 ,  19,0,0,4  ; y = 5
+
+.KrisGridData:
+	db 0,0,0,0 ,  1,4,-3,1 ,  0,0,0,0 ,    0,0,0,0 ,    0,0,0,0 ,   0,0,0,0     ; y = 0
+	db 0,0,0,0 ,  2,1,0,1 ,   3,0,-11,1 ,  4,-1,-3,4 ,  5,-2,1,4 ,  0,0,0,0     ; y = 1
+	db 6,5,-2,1 , 7,0,0,4 ,   8,-1,-2,4 ,  9,-1,-3,4 ,  0,0,0,0 ,   0,0,0,0     ; y = 2
+	db 10,2,1,4 , 11,-1,0,4 , 12,-1,0,4 ,  13,-1,-3,4 , 14,-1,0,4 , 15,-1,-1,4  ; y = 3
+	db 0,0,0,0 ,  0,0,0,0 ,   16,0,1,1 ,   0,0,0,0 ,    17,-1,0,4 , 0,0,0,0     ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,    18,0,0,0 ,   19,4,0,5 ,  0,0,0,0     ; y = 5
+
+.CrysGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,   1,-1,0,1 ,  2,-1,0,1 ,  0,0,0,0 ,   0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  3,0,0,1 ,   4,0,0,1 ,   5,0,0,1 ,   0,0,0,0 ,   0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  6,0,0,1 ,   7,0,0,1 ,   8,0,0,1 ,   0,0,0,0 ,   0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  9,0,0,1 ,   10,0,0,1 ,  11,0,0,1 ,  0,0,0,0 ,   0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  12,1,-1,4 , 13,1,-1,4 , 0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,   14,0,0,4 ,  15,3,1,5 ,  0,0,0,0   ; y = 5
+
+.EmptyGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 5
 
 .LoadKrisColorLayerSprites:
 	; Only for Kris (female player) - tutorial already handled by dispatcher
@@ -9179,7 +9271,7 @@ InitBattleDisplay:
 	; Load compressed color layer graphics
 	ld hl, KrisBackpicColor
 	ld de, vTiles0 tile $55
-	lb bc, BANK("Trainer Backpics"), 6 * 6
+	lb bc, BANK("Trainer Backpics"), 20  ; Optimized with -u flag: 20 unique tiles (0-19)
 	call DecompressRequest2bpp
 
 .wait_kris_decompress:
@@ -9190,294 +9282,8 @@ InitBattleDisplay:
 
 	pop af
 	ldh [rVBK], a
-	; fallthrough
-
-.CreateKrisColorLayerOAM:
-	; Create OAM sprites for Kris color layer
-	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 25, 27, 29, 30, 31, 32, 35
-	; Position adjustments: (many - see individual tile checks)
-	; Palette assignments:
-	;   - Tiles 1, 7, 8, 12, 26, 33: palette 1
-	;   - Tiles 9, 10, 13, 14, 15, 18, 19, 20, 21, 22, 23, 28: palette 4
-	;   - Tile 34: palette 5
-
-	ld hl, wShadowOAM + 0 * 4
-	ld a, $55  ; Starting tile ID
-	ldh [hMapObjectIndexBuffer], a
-	ld b, $6  ; 6 rows
-	ld d, 8 * 8  ; Starting Y position (64px)
-.kris_color_outer:
-	ld c, $6  ; 6 columns
-	ld e, 3 * 8  ; Starting X position (24px)
-.kris_color_inner:
-	; Get current tile index and save to hBattleTurn
-	ldh a, [hMapObjectIndexBuffer]
-	sub $55
-	ldh [hBattleTurn], a
-
-	; Skip tiles: 0, 2, 3, 4, 5, 6, 11, 16, 17, 24, 25, 27, 29, 30, 31, 32, 35
-	cp 0
-	jp z, .kris_skip_sprite
-	cp 2
-	jp z, .kris_skip_sprite
-	cp 3
-	jp z, .kris_skip_sprite
-	cp 4
-	jp z, .kris_skip_sprite
-	cp 5
-	jp z, .kris_skip_sprite
-	cp 6
-	jp z, .kris_skip_sprite
-	cp 11
-	jp z, .kris_skip_sprite
-	cp 16
-	jp z, .kris_skip_sprite
-	cp 17
-	jp z, .kris_skip_sprite
-	cp 24
-	jp z, .kris_skip_sprite
-	cp 25
-	jp z, .kris_skip_sprite
-	cp 27
-	jp z, .kris_skip_sprite
-	cp 29
-	jp z, .kris_skip_sprite
-	cp 30
-	jp z, .kris_skip_sprite
-	cp 31
-	jp z, .kris_skip_sprite
-	cp 32
-	jp z, .kris_skip_sprite
-	cp 35
-	jp z, .kris_skip_sprite
-
-	push de
-	push bc
-
-	; Y position adjustments
-	ld a, d  ; Base Y
-	ld c, a
-	ldh a, [hBattleTurn]
-
-	cp 1
-	jr nz, .kris_check_y_tile8
-	ld a, c
-	add 3  ; Tile 1: Y+3
-	jr .kris_y_done
-.kris_check_y_tile8:
-	cp 8
-	jr nz, .kris_check_y_tile9
-	ld a, c
-	add 11  ; Tile 8: Y+11
-	jr .kris_y_done
-.kris_check_y_tile9:
-	cp 9
-	jr nz, .kris_check_y_tile10
-	ld a, c
-	add 3  ; Tile 9: Y+3
-	jr .kris_y_done
-.kris_check_y_tile10:
-	cp 10
-	jr nz, .kris_check_y_tile12
-	ld a, c
-	dec a  ; Tile 10: Y-1
-	jr .kris_y_done
-.kris_check_y_tile12:
-	cp 12
-	jr nz, .kris_check_y_tile14
-	ld a, c
-	inc a
-	inc a  ; Tile 12: Y+2
-	jr .kris_y_done
-.kris_check_y_tile14:
-	cp 14
-	jr nz, .kris_check_y_tile15
-	ld a, c
-	inc a
-	inc a  ; Tile 14: Y+2
-	jr .kris_y_done
-.kris_check_y_tile15:
-	cp 15
-	jr nz, .kris_check_y_tile18
-	ld a, c
-	add 3  ; Tile 15: Y+3
-	jr .kris_y_done
-.kris_check_y_tile18:
-	cp 18
-	jr nz, .kris_check_y_tile21
-	ld a, c
-	dec a  ; Tile 18: Y-1
-	jr .kris_y_done
-.kris_check_y_tile21:
-	cp 21
-	jr nz, .kris_check_y_tile23
-	ld a, c
-	add 3  ; Tile 21: Y+3
-	jr .kris_y_done
-.kris_check_y_tile23:
-	cp 23
-	jr nz, .kris_check_y_tile26
-	ld a, c
-	inc a  ; Tile 23: Y+1
-	jr .kris_y_done
-.kris_check_y_tile26:
-	cp 26
-	jr nz, .kris_no_y_adjust
-	ld a, c
-	dec a  ; Tile 26: Y-1
-	jr .kris_y_done
-.kris_no_y_adjust:
-	ld a, c
-.kris_y_done:
-	ld [hli], a  ; Write Y
-
-	; X position adjustments
-	ld a, e  ; Base X
-	ld c, a
-	ldh a, [hBattleTurn]
-
-	cp 1
-	jr nz, .kris_check_x_tile7
-	ld a, c
-	add 4  ; Tile 1: X+4
-	jr .kris_x_done
-.kris_check_x_tile7:
-	cp 7
-	jr nz, .kris_check_x_tile9
-	ld a, c
-	inc a  ; Tile 7: X+1
-	jr .kris_x_done
-.kris_check_x_tile9:
-	cp 9
-	jr nz, .kris_check_x_tile10
-	ld a, c
-	dec a  ; Tile 9: X-1
-	jr .kris_x_done
-.kris_check_x_tile10:
-	cp 10
-	jr nz, .kris_check_x_tile12
-	ld a, c
-	dec a
-	dec a  ; Tile 10: X-2
-	jr .kris_x_done
-.kris_check_x_tile12:
-	cp 12
-	jr nz, .kris_check_x_tile14
-	ld a, c
-	add 5  ; Tile 12: X+5
-	jr .kris_x_done
-.kris_check_x_tile14:
-	cp 14
-	jr nz, .kris_check_x_tile15
-	ld a, c
-	dec a  ; Tile 14: X-1
-	jr .kris_x_done
-.kris_check_x_tile15:
-	cp 15
-	jr nz, .kris_check_x_tile18
-	ld a, c
-	dec a  ; Tile 15: X-1
-	jr .kris_x_done
-.kris_check_x_tile18:
-	cp 18
-	jr nz, .kris_check_x_tile19_20
-	ld a, c
-	inc a
-	inc a  ; Tile 18: X+2
-	jr .kris_x_done
-.kris_check_x_tile19_20:
-	cp 19
-	jr z, .kris_x_minus_1
-	cp 20
-	jr z, .kris_x_minus_1
-	cp 21
-	jr z, .kris_x_minus_1
-	cp 22
-	jr z, .kris_x_minus_1
-	cp 23
-	jr z, .kris_x_minus_1
-	cp 28
-	jr z, .kris_x_minus_1
-	cp 34
-	jr nz, .kris_no_x_adjust
-	ld a, c
-	add 4  ; Tile 34: X+4
-	jr .kris_x_done
-.kris_x_minus_1:
-	; Tiles 19, 20, 21, 22, 23, 28: X-1
-	ld a, c
-	dec a
-	jr .kris_x_done
-.kris_no_x_adjust:
-	ld a, c
-.kris_x_done:
-	pop bc
-	pop de
-	ld [hli], a  ; Write X
-
-	; Write tile ID
-	ldh a, [hMapObjectIndexBuffer]
-	ld [hli], a
-	inc a
-	ldh [hMapObjectIndexBuffer], a
-
-	; Palette assignment
-	ldh a, [hBattleTurn]
-
-	; Check palette 1 tiles (1, 7, 8, 12, 26, 33)
-	cp 1
-	jr z, .kris_palette_1
-	cp 7
-	jr z, .kris_palette_1
-	cp 8
-	jr z, .kris_palette_1
-	cp 12
-	jr z, .kris_palette_1
-	cp 26
-	jr z, .kris_palette_1
-	cp 33
-	jr z, .kris_palette_1
-
-	; Check palette 5 tile (34)
-	cp 34
-	jr z, .kris_palette_5
-
-	; Default: palette 4 (tiles 9, 10, 13, 14, 15, 18, 19, 20, 21, 22, 23, 28)
-	ld a, $4
-	jr .kris_palette_done
-
-.kris_palette_1:
-	ld a, $1
-	jr .kris_palette_done
-
-.kris_palette_5:
-	ld a, $5
-
-.kris_palette_done:
-	ld [hli], a
-	jr .kris_next_position
-
-.kris_skip_sprite:
-	; Skip this sprite but increment tile ID
-	ldh a, [hMapObjectIndexBuffer]
-	inc a
-	ldh [hMapObjectIndexBuffer], a
-
-.kris_next_position:
-	; Move to next column
-	ld a, e
-	add $8
-	ld e, a
-	dec c
-	jp nz, .kris_color_inner
-
-	; Move to next row
-	ld a, d
-	add $8
-	ld d, a
-	dec b
-	jp nz, .kris_color_outer
-	ret
+	; Use shared table-driven OAM creation
+	jp .CreateColorLayerOAM
 
 .LoadCrysColorLayerSprites:
 	; Only for Crys (enby player) - tutorial already handled by dispatcher
@@ -9493,7 +9299,7 @@ InitBattleDisplay:
 
 	ld hl, CrysBackpicColor
 	ld de, vTiles0 tile $55
-	lb bc, BANK("Trainer Backpics"), 6 * 6
+	lb bc, BANK("Trainer Backpics"), 16  ; Optimized with -u flag: 16 unique tiles (0-15)
 	call DecompressRequest2bpp
 
 .wait_crys_decompress:
@@ -9504,196 +9310,8 @@ InitBattleDisplay:
 
 	pop af
 	ldh [rVBK], a
-	; fallthrough
-
-.CreateCrysColorLayerOAM:
-	; Create OAM sprites for Crys color layer
-	; Skip tiles: 0, 1, 4, 5, 6, 10, 11, 12, 16, 17, 18, 22, 23, 24, 27, 28, 29, 30, 31, 32, 35
-	; Position adjustments:
-	;   - Tiles 2, 3: X-1
-	;   - Tiles 25, 26: X+1, Y+1
-	;   - Tile 34: X+3, Y-1
-	; Palette assignments:
-	;   - Tiles 2, 3, 7, 8, 9, 13, 14, 15, 19, 20, 21: palette 1
-	;   - Tiles 25, 26, 33: palette 4
-	;   - Tile 34: palette 5
-
-	ld hl, wShadowOAM + 0 * 4
-	ld a, $55
-	ldh [hMapObjectIndexBuffer], a
-	ld b, $6
-	ld d, 8 * 8
-.crys_color_outer:
-	ld c, $6
-	ld e, 3 * 8
-.crys_color_inner:
-	; Get tile number and save to hBattleTurn
-	ldh a, [hMapObjectIndexBuffer]
-	sub $55
-	ldh [hBattleTurn], a
-
-	; Skip tiles: 0, 1, 4, 5, 6, 10, 11, 12, 16, 17, 18, 22, 23, 24, 27, 28, 29, 30, 31, 32, 35
-	cp 0
-	jp z, .crys_skip_sprite
-	cp 1
-	jp z, .crys_skip_sprite
-	cp 4
-	jp z, .crys_skip_sprite
-	cp 5
-	jp z, .crys_skip_sprite
-	cp 6
-	jp z, .crys_skip_sprite
-	cp 10
-	jp z, .crys_skip_sprite
-	cp 11
-	jp z, .crys_skip_sprite
-	cp 12
-	jp z, .crys_skip_sprite
-	cp 16
-	jp z, .crys_skip_sprite
-	cp 17
-	jp z, .crys_skip_sprite
-	cp 18
-	jp z, .crys_skip_sprite
-	cp 22
-	jp z, .crys_skip_sprite
-	cp 23
-	jp z, .crys_skip_sprite
-	cp 24
-	jp z, .crys_skip_sprite
-	cp 27
-	jp z, .crys_skip_sprite
-	cp 28
-	jp z, .crys_skip_sprite
-	cp 29
-	jp z, .crys_skip_sprite
-	cp 30
-	jp z, .crys_skip_sprite
-	cp 31
-	jp z, .crys_skip_sprite
-	cp 32
-	jp z, .crys_skip_sprite
-	cp 35
-	jp z, .crys_skip_sprite
-
-	push de
-	push bc
-
-	; Y position adjustments
-	ld a, d  ; Base Y
-	ld c, a
-	ldh a, [hBattleTurn]
-
-	cp 25
-	jr z, .crys_y_plus_1
-	cp 26
-	jr z, .crys_y_plus_1
-	cp 34
-	jr nz, .crys_no_y_adjust
-	; Tile 34: Y-1
-	ld a, c
-	dec a
-	jr .crys_y_done
-.crys_y_plus_1:
-	; Tiles 25, 26: Y+1
-	ld a, c
-	inc a
-	jr .crys_y_done
-.crys_no_y_adjust:
-	ld a, c
-.crys_y_done:
-	ld [hli], a  ; Write Y
-
-	; X position adjustments
-	ld a, e  ; Base X
-	ld c, a
-	ldh a, [hBattleTurn]
-
-	cp 2
-	jr z, .crys_x_minus_1
-	cp 3
-	jr z, .crys_x_minus_1
-	cp 25
-	jr z, .crys_x_plus_1
-	cp 26
-	jr z, .crys_x_plus_1
-	cp 34
-	jr nz, .crys_x_no_adjust
-	; Tile 34: X+3
-	ld a, c
-	add 3
-	jr .crys_x_done
-.crys_x_minus_1:
-	; Tiles 2, 3: X-1
-	ld a, c
-	dec a
-	jr .crys_x_done
-.crys_x_plus_1:
-	; Tiles 25, 26: X+1
-	ld a, c
-	inc a
-	jr .crys_x_done
-.crys_x_no_adjust:
-	ld a, c
-.crys_x_done:
-	pop bc
-	pop de
-	ld [hli], a  ; Write X
-
-	; Write tile index
-	ldh a, [hMapObjectIndexBuffer]
-	ld [hli], a
-	inc a
-	ldh [hMapObjectIndexBuffer], a
-
-	; Palette assignment
-	ldh a, [hBattleTurn]
-
-	; Check palette 4 tiles (25, 26, 33)
-	cp 25
-	jr z, .crys_palette_4
-	cp 26
-	jr z, .crys_palette_4
-	cp 33
-	jr z, .crys_palette_4
-
-	; Check palette 5 tile (34)
-	cp 34
-	jr z, .crys_palette_5
-
-	; Default: palette 1 (tiles 2, 3, 7, 8, 9, 13, 14, 15, 19, 20, 21)
-	ld a, $1
-	jr .crys_palette_done
-
-.crys_palette_4:
-	ld a, $4
-	jr .crys_palette_done
-
-.crys_palette_5:
-	ld a, $5
-
-.crys_palette_done:
-	ld [hli], a
-	jr .crys_next_position
-
-.crys_skip_sprite:
-	ldh a, [hMapObjectIndexBuffer]
-	inc a
-	ldh [hMapObjectIndexBuffer], a
-
-.crys_next_position:
-	ld a, e
-	add $8
-	ld e, a
-	dec c
-	jp nz, .crys_color_inner
-
-	ld a, d
-	add $8
-	ld d, a
-	dec b
-	jp nz, .crys_color_outer
-	ret
+	; Use shared table-driven OAM creation (automatically uses .CrysGridData)
+	jp .CreateColorLayerOAM
 
 .LoadLyraColorLayerSprites:
 	; Lyra functions moved to separate section to save space

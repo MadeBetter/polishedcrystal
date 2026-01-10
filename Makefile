@@ -287,6 +287,14 @@ gfx/pokemon/%/frames.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/fro
 gfx/player/chris_back_color.2bpp: gfx/player/chris_back_color.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
+# Kris back pic color layer with unique tiles optimization
+gfx/player/kris_back_color.2bpp: gfx/player/kris_back_color.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
+# Crys back pic color layer with unique tiles optimization
+gfx/player/crys_back_color.2bpp: gfx/player/crys_back_color.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
 %.2bpp: %.png
 	$Q$(RGBGFX) -c dmg $(RGBGFXFLAGS) -o $@ $<
 	$(if $(tools/gfx),\
