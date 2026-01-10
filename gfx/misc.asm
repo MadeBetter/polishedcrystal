@@ -100,6 +100,9 @@ CrysBackpicColor:: INCBIN "gfx/player/crys_back_color.2bpp.lz"
 LyraBackpicSkin::  INCBIN "gfx/battle/lyra_back_skin.2bpp.lz"
 LyraBackpicColor:: INCBIN "gfx/battle/lyra_back_color.2bpp.lz"
 
+; Trainer color layer OAM graphics
+Lyra1TrainerOAM:: INCBIN "gfx/trainers/lyra1/oam.2bpp.lz"
+
 
 SECTION "Emote Graphics", ROMX
 

@@ -8957,6 +8957,9 @@ InitBattleDisplay:
 
 	; Load color layer for current player character (unified function)
 	call .LoadPlayerColorLayerSprites
+
+	; Load color layer for trainer sprite if applicable
+	farcall LoadTrainerColorSprites_Far
 	ret
 
 .LoadPlayerColorLayerSprites:
@@ -9844,3 +9847,270 @@ CreateLyraColorLayerOAM:
 	dec b
 	jp nz, .lyra_color_outer
 	ret
+
+SECTION "Trainer Color Layer", ROMX
+
+LoadTrainerColorSprites_Far::
+	; Load trainer color layer OAM for supported trainers
+	; Currently only supports LYRA1 (more trainers can be added later)
+
+	; Check if this is a trainer battle
+	ld a, [wBattleMode]
+	dec a
+	ret z  ; Return if wild battle
+
+	; Save VRAM bank and set to bank 0
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	; Check which trainer class
+	ld a, [wTrainerClass]
+	cp LYRA1  ; Constant $1E
+	jr z, .load_lyra1
+
+	; No color layer for this trainer yet
+	pop af
+	ldh [rVBK], a
+	ret
+
+.load_lyra1:
+	; Load Lyra1 OAM tiles to vTiles0 $69-$7E (22 tiles max)
+	ld hl, Lyra1TrainerOAM
+	ld de, vTiles0 tile $69
+	lb bc, BANK("Trainer Backpics"), 18  ; 18 unique tiles
+	call DecompressRequest2bpp
+
+	; Wait for decompression to complete
+.wait_trainer_decompress:
+	call DelayFrame
+	ldh a, [hRequested2bpp]
+	and a
+	jr nz, .wait_trainer_decompress
+
+	; Restore VRAM bank
+	pop af
+	ldh [rVBK], a
+	; fallthrough to create trainer OAM sprites
+
+CreateTrainerColorOAM:
+	; Create trainer color layer OAM sprites using table-driven lookup
+	; Uses OBJ slots 19-39 (21 sprites available, 7x7 grid = 49 positions)
+	ld hl, wShadowOAM + 19 * 4  ; Start at slot 19
+	xor a
+	ldh [hBattleTurn], a  ; Grid position counter (0-48 for 7x7)
+	ld b, $7   ; 7 rows
+	ld d, 16   ; Starting Y position (row 0 with OAM offset)
+.trainer_color_outer:
+	ld c, $7   ; 7 columns
+	ld e, 13 * 8  ; Starting X position (104px = hlcoord 13, 0 - one column left)
+.trainer_color_inner:
+	; Get tile ID to check for skip
+	ldh a, [hBattleTurn]
+	call GetTrainerTileID
+	and a
+	jr z, .skip_trainer_sprite
+
+	; Save loop counters and positions before using them as temporaries
+	push bc
+	push de
+
+	; Y position with offset
+	ldh a, [hBattleTurn]
+	call GetTrainerYOffset
+	ld c, a              ; c = yOffset
+	ld a, d              ; a = base Y
+	sub c                ; a = Y - offset (positive moves UP)
+	ld [hli], a          ; Write Y
+
+	; X position with offset
+	ldh a, [hBattleTurn]
+	call GetTrainerXOffset
+	ld c, a              ; c = xOffset
+	ld a, e              ; a = base X
+	add c                ; a = X + offset
+	ld [hli], a          ; Write X
+
+	; Restore positions and counters
+	pop de
+	pop bc
+
+	; Tile ID
+	ldh a, [hBattleTurn]
+	call GetTrainerTileID
+	add $69              ; Convert 1-21 to $6A-$7E
+	ld [hli], a
+
+	; Palette
+	ldh a, [hBattleTurn]
+	call GetTrainerPalette
+	ld [hli], a
+	jr .next_trainer_position
+
+.skip_trainer_sprite:
+	; Skip this position - no sprite needed
+.next_trainer_position:
+	; Increment grid position
+	ldh a, [hBattleTurn]
+	inc a
+	ldh [hBattleTurn], a
+
+	; Increment X
+	ld a, e
+	add $8
+	ld e, a
+	dec c
+	jp nz, .trainer_color_inner
+
+	; Increment Y
+	ld a, d
+	add $8
+	ld d, a
+	dec b
+	jp nz, .trainer_color_outer
+	ret
+
+; Trainer helper functions to look up grid data from table
+; Each takes grid position (0-48) in a, returns one byte in a
+
+GetTrainerTileID:
+	; Input: a = grid position (0-48 for 7x7)
+	; Output: a = tile ID (0-21, where 0 = skip)
+	; Preserves: bc, de, hl
+	push hl
+	push de
+	push af
+	; Select table based on trainer class
+	ld a, [wTrainerClass]
+	cp LYRA1
+	jr z, .trainer_tile_lyra1
+	; Default: no tiles
+	pop af
+	xor a
+	pop de
+	pop hl
+	ret
+.trainer_tile_lyra1:
+	ld hl, Lyra1GridData
+	pop af
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de      ; hl += a * 4
+	ld a, [hl]      ; Get byte 0: tile ID
+	pop de
+	pop hl
+	ret
+
+GetTrainerXOffset:
+	; Input: a = grid position (0-48)
+	; Output: a = X offset in pixels
+	; Preserves: bc, de, hl
+	push hl
+	push de
+	push af
+	; Select table based on trainer class
+	ld a, [wTrainerClass]
+	cp LYRA1
+	jr z, .trainer_xoff_lyra1
+	; Default: no offset
+	pop af
+	xor a
+	pop de
+	pop hl
+	ret
+.trainer_xoff_lyra1:
+	ld hl, Lyra1GridData
+	pop af
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de      ; hl += a * 4
+	inc hl
+	ld a, [hl]      ; Get byte 1: X offset
+	pop de
+	pop hl
+	ret
+
+GetTrainerYOffset:
+	; Input: a = grid position (0-48)
+	; Output: a = Y offset in pixels
+	; Preserves: bc, de, hl
+	push hl
+	push de
+	push af
+	; Select table based on trainer class
+	ld a, [wTrainerClass]
+	cp LYRA1
+	jr z, .trainer_yoff_lyra1
+	; Default: no offset
+	pop af
+	xor a
+	pop de
+	pop hl
+	ret
+.trainer_yoff_lyra1:
+	ld hl, Lyra1GridData
+	pop af
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de      ; hl += a * 4
+	inc hl
+	inc hl
+	ld a, [hl]      ; Get byte 2: Y offset
+	pop de
+	pop hl
+	ret
+
+GetTrainerPalette:
+	; Input: a = grid position (0-48)
+	; Output: a = palette number
+	; Preserves: bc, de, hl
+	push hl
+	push de
+	push af
+	; Select table based on trainer class
+	ld a, [wTrainerClass]
+	cp LYRA1
+	jr z, .trainer_pal_lyra1
+	; Default: palette 0
+	pop af
+	xor a
+	pop de
+	pop hl
+	ret
+.trainer_pal_lyra1:
+	ld hl, Lyra1GridData
+	pop af
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de      ; hl += a * 4
+	inc hl
+	inc hl
+	inc hl
+	ld a, [hl]      ; Get byte 3: palette
+	pop de
+	pop hl
+	ret
+
+Lyra1GridData:
+	; Grid index = y * 7 + x (49 positions total for 7x7 grid)
+	; x: 0           1          2             3          4           5           6
+	db 0,0,0,0 ,  0,0,0,0 ,  1,0,-3,0 , 2,-3,-6,0 ,  3,-3,-4,0 ,  0,0,0,0 ,   0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  4,0,-3,2 , 5,0,-4,2 ,   6,0,-4,2 ,   0,0,0,0 ,   0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  0,0,0,0 ,  7,6,0,6 ,  8,0,-2,0 ,   9,0,-2,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 ,  10,0,3,0 , 11,0,0,6 ,   12,0,0,6 ,   0,0,0,0 ,   0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  13,-1,0,6 ,  14,-1,0,6 ,  15,-4,2,7 , 0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,    0,0,0,0 ,    0,0,0,0 ,   0,0,0,0   ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,  16,0,2,0 , 17,0,0,0 ,   0,0,0,0 ,    0,0,0,0 ,   0,0,0,0   ; y = 6
