@@ -2827,6 +2827,15 @@ SlideBattlePicOut:
 	call z, .SlideColorLayerFrame
 .skip_color_layer_slide
 
+	; Slide trainer color layer OAM if trainer visible
+	ld a, [wTrainerSpriteVisible]
+	and a
+	jr z, .skip_trainer_color_layer_slide
+	ldh a, [hMapObjectIndexBuffer]
+	cp 8  ; Only for enemy trainer slide
+	call z, .SlideTrainerColorLayerFrame
+.skip_trainer_color_layer_slide
+
 	; Trigger single-VBlank update for tiles, attributes, and OAM
 	ld b, 0  ; Update both tiles and attrs with default behavior
 	call SafeCopyTilemapAtOnce
@@ -2880,6 +2889,27 @@ SlideBattlePicOut:
 	inc hl      ; Move to next sprite (+4 bytes)
 	dec b
 	jr nz, .color_slide_loop
+	pop hl
+	pop bc
+	ret
+
+.SlideTrainerColorLayerFrame:
+	; Slide trainer color layer OAM sprites RIGHT by 8 pixels (1 tile)
+	; Affects slots 19-39 (21 sprites for trainer color layer)
+	push bc
+	push hl
+	ld hl, wShadowOAM + 19 * 4 + 1  ; Start at X coord of slot 19 (byte offset +1)
+	ld b, 21  ; 21 trainer color layer sprites
+.trainer_color_slide_loop
+	ld a, [hl]  ; Get current X coordinate
+	add 8       ; Move RIGHT by 8 pixels (trainer slides off right edge)
+	ld [hl], a  ; Store new X coordinate
+	inc hl
+	inc hl
+	inc hl
+	inc hl      ; Move to next sprite (+4 bytes)
+	dec b
+	jr nz, .trainer_color_slide_loop
 	pop hl
 	pop bc
 	ret
