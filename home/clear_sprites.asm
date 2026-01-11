@@ -91,18 +91,17 @@ UpdateSprites_PreserveColorLayer::
 	ret
 
 ClearOAMSprites_PreserveColorLayer::
-; Clear OAM sprites while preserving color layer when player back pic is visible
-; - If back pic visible: clear only animation slots 19-39 (21 sprites)
+; Clear OAM sprites while preserving color layer when player or trainer visible
+; - If player back pic visible: preserve all OAM (protect slots 0-18 player color layer)
+; - If trainer sprite visible: preserve all OAM (protect slots 19-39 trainer color layer)
 ; - Otherwise: clear all OAM sprites (slots 0-39)
 	ld a, [wPlayerBackpicVisible]
-	and a
-	jr z, .clear_all
-	; Clear only animation OAM slots (19-39)
-	ld hl, wShadowOAM + 19 * 4
-	ld bc, (OAM_COUNT - 19) * 4  ; 21 sprites * 4 bytes = 84 bytes
-	xor a
-	rst ByteFill
-	ret
-.clear_all
-	; Clear all OAM sprites
+	or a
+	ret nz  ; Player visible - preserve all OAM, return without clearing
+
+	ld a, [wTrainerSpriteVisible]
+	or a
+	ret nz  ; Trainer visible - preserve all OAM, return without clearing
+
+	; Neither visible - clear all OAM sprites
 	jmp ClearSprites

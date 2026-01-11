@@ -8209,9 +8209,15 @@ BattleIntro:
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
+	; Check if trainer sprite visible before clearing slots 19-39
+	ld a, [wTrainerSpriteVisible]
+	and a
+	jr nz, .skip_clear_normal_sprites  ; Trainer visible - don't clear slots 19-39
+	; No trainer - safe to clear animation sprites (slots 19-39)
 	ld a, 19 * 4  ; Clear only sprites 19-39, protect Chris color layer (slots 0-18)
 	ldh [hUsedOAMIndex], a
 	call ClearNormalSprites
+.skip_clear_normal_sprites
 	; Clear ball icon tilemap positions to prevent visual glitch
 	hlcoord 11, 10
 	lb bc, 1, 6  ; 1 row, 6 columns (the 6 ball positions)
