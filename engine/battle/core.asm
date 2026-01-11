@@ -6501,12 +6501,12 @@ BattleWinSlideInEnemyTrainerFrontpic:
 	; Position trainer OAM sprites off-screen right IMMEDIATELY after creation
 	; This prevents visible flicker before slide-in animation begins
 	; (OAM sprites already created by LoadTrainerColorSprites_Far above)
-	; We'll adjust the exact offset later - starting with +48 pixels
+	; Starting position: +64 pixels (8 tiles right) for proper alignment
 	ld hl, wShadowOAM + 19 * 4 + 1  ; Start at X coord of slot 19
 	ld b, 21  ; Process 21 OAM slots (trainer color layer range)
 .position_oam_offscreen
 	ld a, [hl]  ; Get current X coordinate
-	add 48      ; Move right by 48 pixels (off-screen starting position)
+	add 64      ; Move right by 64 pixels (8 tiles off-screen)
 	ld [hl], a  ; Store new X coordinate
 	inc hl
 	inc hl
