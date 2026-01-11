@@ -91,17 +91,50 @@ UpdateSprites_PreserveColorLayer::
 	ret
 
 ClearOAMSprites_PreserveColorLayer::
-; Clear OAM sprites while preserving color layer when player or trainer visible
-; - If player back pic visible: preserve all OAM (protect slots 0-18 player color layer)
-; - If trainer sprite visible: preserve all OAM (protect slots 19-39 trainer color layer)
-; - Otherwise: clear all OAM sprites (slots 0-39)
+; Check if Pokemon are battling first (most common case)
+; If both species loaded: clear all OAM for animations
+; Otherwise: check visibility flags for intro sequences
+
+	; Check if both Pokemon are on screen (species != 0)
+	ld a, [wBattleMonSpecies]
+	and a
+	jr z, .check_visibility_flags  ; Player Pokemon not on screen
+
+	ld a, [wEnemyMonSpecies]
+	and a
+	jr z, .check_visibility_flags  ; Enemy Pokemon not on screen
+
+	; Both Pokemon battling - clear all OAM
+	jmp ClearSprites
+
+.check_visibility_flags
+	; Intro/transition - check visibility flags
 	ld a, [wPlayerBackpicVisible]
-	or a
-	ret nz  ; Player visible - preserve all OAM, return without clearing
+	and a
+	jr z, .check_trainer
 
+	; Player is visible, so we must preserve OAM slots 0-18.
+	; Battle animations use slots 19-39, so those should be cleared.
+	; The trainer color layer also uses slots 19-39, but if a battle
+	; animation was just playing, it would have overwritten the trainer's
+	; graphics anyway, so it's safe to clear.
+	ld hl, wShadowOAM + 19 * 4
+	ld bc, (OAM_COUNT - 19) * 4
+	xor a
+	rst ByteFill
+	ret
+
+.check_trainer
 	ld a, [wTrainerSpriteVisible]
-	or a
-	ret nz  ; Trainer visible - preserve all OAM, return without clearing
+	and a
+	jr z, .clear_all
 
-	; Neither visible - clear all OAM sprites
+	; Only trainer - clear 0-18
+	ld hl, wShadowOAM
+	ld bc, 19 * 4
+	xor a
+	rst ByteFill
+	ret
+
+.clear_all
 	jmp ClearSprites
