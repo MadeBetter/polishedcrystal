@@ -6496,6 +6496,25 @@ BattleWinSlideInEnemyTrainerFrontpic:
 	ld a, TRUE
 	ld [wTrainerSpriteVisible], a
 	call FinishBattleAnim
+	farcall LoadTrainerColorSprites_Far
+
+	; Position trainer OAM sprites off-screen right IMMEDIATELY after creation
+	; This prevents visible flicker before slide-in animation begins
+	; (OAM sprites already created by LoadTrainerColorSprites_Far above)
+	; We'll adjust the exact offset later - starting with +48 pixels
+	ld hl, wShadowOAM + 19 * 4 + 1  ; Start at X coord of slot 19
+	ld b, 21  ; Process 21 OAM slots (trainer color layer range)
+.position_oam_offscreen
+	ld a, [hl]  ; Get current X coordinate
+	add 48      ; Move right by 48 pixels (off-screen starting position)
+	ld [hl], a  ; Store new X coordinate
+	inc hl
+	inc hl
+	inc hl
+	inc hl      ; Move to next sprite (+4 bytes per OAM entry)
+	dec b
+	jr nz, .position_oam_offscreen
+
 	ld a, [wOtherTrainerClass]
 	ld [wTrainerClass], a
 	ld de, vTiles2
@@ -6526,6 +6545,10 @@ BattleWinSlideInEnemyTrainerFrontpic:
 
 	ld a, $1
 	ldh [hBGMapMode], a
+
+	; Slide trainer OAM color layer left in sync with background tiles
+	call .SlideTrainerColorLayerFrameLeft
+
 	ld c, 4
 	call DelayFrames
 	pop hl
@@ -6548,6 +6571,28 @@ BattleWinSlideInEnemyTrainerFrontpic:
 	jr nz, .loop
 
 	jmp PopBCDEHL
+
+.SlideTrainerColorLayerFrameLeft:
+	; Slide trainer color layer OAM sprites LEFT by 8 pixels (1 tile)
+	; Used during slide-in animation to move OAM in sync with background
+	; Affects slots 19-39 (21 sprites for trainer color layer)
+	push bc
+	push hl
+	ld hl, wShadowOAM + 19 * 4 + 1  ; Start at X coord of slot 19 (byte offset +1)
+	ld b, 21  ; 21 trainer color layer OAM slots
+.trainer_color_slide_left_loop
+	ld a, [hl]  ; Get current X coordinate
+	sub 8       ; Move LEFT by 8 pixels (trainer slides in from right)
+	ld [hl], a  ; Store new X coordinate
+	inc hl
+	inc hl
+	inc hl
+	inc hl      ; Move to next sprite (+4 bytes)
+	dec b
+	jr nz, .trainer_color_slide_left_loop
+	pop hl
+	pop bc
+	ret
 
 _LoadBattleFontsHPBar:
 	farjp LoadBattleFontsHPBar
