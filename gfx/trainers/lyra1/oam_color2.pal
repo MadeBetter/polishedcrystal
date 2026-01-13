@@ -1,8 +1,8 @@
 if !DEF(MONOCHROME)
 	RGB 31, 31, 31   ; Color 0: White
-	RGB 20, 04, 05   ; Color 1: Fushia Red
-	RGB 21, 15, 06   ; Color 2: Light Brown
-	RGB 15, 11, 02   ; Color 3: Brown
+	RGB 18, 04, 06   ; Color 1: Fushia Red
+	RGB 18, 13, 07   ; Color 2: Light Brown
+	RGB 13, 08, 06   ; Color 3: Brown
 else
 	MONOCHROME_RGB_FOUR
 endc
