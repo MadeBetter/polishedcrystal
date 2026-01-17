@@ -1,21 +1,25 @@
 SetTrainerBGPalettes_Far::
-	; Dispatcher function to set trainer-specific BG tile palette assignments
+	; Sets trainer-specific BG tile palette assignments using lookup tables
 	; Called during battle intro when trainer sprites are on screen
 	; Only runs for trainer battles
 	ld a, [wBattleMode]
 	dec a
 	ret z  ; Return if wild battle (wBattleMode=1), continue if trainer (wBattleMode=2)
 
+	; Select palette data table based on trainer class
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
-	jp z, SetLyra1BGPalettes
-	; Add more trainers here as needed
-	ret
+	jr z, .use_lyra1
+	; Add more trainers here: cp TRAINER_X; jr z, .use_trainer_x
+	ret  ; No custom palettes for this trainer
 
-SetLyra1BGPalettes:
-	; Set Lyra1 trainer background tile palettes
-	; Palette 06 tiles: 9, 10, 16, 17, 18, 22, 23, 30, 31, 32
-	; Palette 05 tiles: 25, 26, 33
+.use_lyra1:
+	ld de, .Lyra1PaletteData
+	jr .apply_palettes
+
+.apply_palettes:
+	; Save palette data pointer before coordinate calculations clobber DE
+	push de
 
 	; Get sprite coordinates from WRAM and compute address in hl
 	ld a, [wEnemyTrainerPicCoordY]
@@ -41,73 +45,43 @@ SetLyra1BGPalettes:
 	ld de, wAttrmap
 	add hl, de
 
-	; First, set all 7×7 tiles to palette 01
-	push hl
-	lb bc, 7, 7
-	ld a, PAL_BATTLE_BG_ENEMY
-	call FillBoxWithByte
-	pop hl
+	; Restore palette data pointer
+	pop de
 
-	; Now override specific tiles to palette 06 (PAL_BATTLE_BG_TYPE_CAT)
-	ld a, PAL_BATTLE_BG_TYPE_CAT
+	; Apply palette data from lookup table
+	; hl = destination in wAttrmap
+	; de = source palette data (already loaded by dispatcher)
+	ld b, 7  ; 7 rows
+.row_loop:
+	ld c, 7  ; 7 columns
+.col_loop:
+	ld a, [de]  ; Get palette number from table
+	ld [hli], a  ; Write to wAttrmap and increment
+	inc de
+	dec c
+	jr nz, .col_loop
 
-	; Row 1: tiles 9, 10
-	push hl
-	ld de, (1 * SCREEN_WIDTH) + 2
-	add hl, de
-	ld [hl], a ; Tile 9
-	inc hl
-	ld [hl], a ; Tile 10
-	pop hl
+	; Move hl to start of next row in wAttrmap
+	; (skip remaining columns: SCREEN_WIDTH - 7)
+	ld a, l
+	add SCREEN_WIDTH - 7
+	ld l, a
+	ld a, h
+	adc 0
+	ld h, a
 
-	; Row 2: tiles 16, 17, 18
-	push hl
-	ld de, (2 * SCREEN_WIDTH) + 2
-	add hl, de
-	ld [hl], a ; Tile 16
-	inc hl
-	ld [hl], a ; Tile 17
-	inc hl
-	ld [hl], a ; Tile 18
-	pop hl
-
-	; Row 3: tiles 22, 23
-	push hl
-	ld de, (3 * SCREEN_WIDTH) + 1
-	add hl, de
-	ld [hl], a ; Tile 22
-	inc hl
-	ld [hl], a ; Tile 23
-	pop hl
-
-	; Row 4: tiles 30, 31, 32
-	push hl
-	ld de, (4 * SCREEN_WIDTH) + 2
-	add hl, de
-	ld [hl], a ; Tile 30
-	inc hl
-	ld [hl], a ; Tile 31
-	inc hl
-	ld [hl], a ; Tile 32
-	pop hl
-
-	; Now override specific tiles to palette 05 (PAL_BATTLE_BG_STATUS)
-	ld a, PAL_BATTLE_BG_STATUS
-
-	; Row 3: tiles 25, 26
-	push hl
-	ld de, (3 * SCREEN_WIDTH) + 4
-	add hl, de
-	ld [hl], a ; Tile 25
-	inc hl
-	ld [hl], a ; Tile 26
-	pop hl
-
-	; Row 4: tile 33
-	push hl
-	ld de, (4 * SCREEN_WIDTH) + 5
-	add hl, de
-	ld [hl], a ; Tile 33
-	pop hl
-
+	dec b
+	jr nz, .row_loop
 	ret
+
+.Lyra1PaletteData:
+	; 7x7 palette lookup table for Lyra1 trainer sprite
+	; Each byte represents the palette number for that tile position
+	; Palette 1 = Enemy BG, Palette 6 = Skin (Type/Cat), Palette 5 = Clothing (Status)
+	db 1, 1, 1, 1, 1, 1, 1  ; Row 0
+	db 1, 1, 6, 6, 1, 1, 1  ; Row 1
+	db 1, 1, 6, 6, 6, 1, 1  ; Row 2
+	db 1, 6, 6, 1, 5, 5, 1  ; Row 3
+	db 1, 1, 6, 6, 6, 5, 1  ; Row 4
+	db 1, 1, 1, 1, 1, 1, 1  ; Row 5
+	db 1, 1, 1, 1, 1, 1, 1  ; Row 6
