@@ -38,8 +38,8 @@ INCLUDE "gfx/trainers/blaine.pal"
 INCLUDE "gfx/trainers/blue.pal"
 INCLUDE "gfx/trainers/red.pal"
 INCLUDE "gfx/trainers/leaf.pal"
-INCLUDE "gfx/trainers/rival1.pal"
-INCLUDE "gfx/trainers/rival1.pal"
+INCLUDE "gfx/trainers/rival1/bg_color.pal"  ; RIVAL0
+INCLUDE "gfx/trainers/rival1/bg_color.pal"  ; RIVAL1
 INCLUDE "gfx/trainers/rival2.pal"
 Lyra1Palette:
 INCLUDE "gfx/trainers/lyra1/bg_color.pal"

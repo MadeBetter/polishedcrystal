@@ -10,11 +10,19 @@ SetTrainerBGPalettes_Far::
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
 	jr z, .use_lyra1
+	cp RIVAL1
+	jr z, .use_rival1
+	cp RIVAL0
+	jr z, .use_rival1
 	; Add more trainers here: cp TRAINER_X; jr z, .use_trainer_x
 	ret  ; No custom palettes for this trainer
 
 .use_lyra1:
 	ld de, .Lyra1PaletteData
+	jr .apply_palettes
+
+.use_rival1:
+	ld de, .Rival1PaletteData
 	jr .apply_palettes
 
 .apply_palettes:
@@ -85,3 +93,12 @@ SetTrainerBGPalettes_Far::
 	db 1, 1, 6, 6, 6, 5, 1  ; Row 4
 	db 1, 1, 1, 1, 1, 1, 1  ; Row 5
 	db 1, 1, 1, 1, 1, 1, 1  ; Row 6
+
+.Rival1PaletteData:
+	db 1, 1, 1, 1, 1, 1, 1  ; Row 0
+	db 1, 1, 1, 6, 6, 1, 1  ; Row 1
+	db 1, 6, 1, 6, 6, 1, 1  ; Row 2
+	db 1, 1, 1, 1, 1, 1, 1  ; Row 3
+	db 1, 1, 1, 5, 5, 1, 1  ; Row 4
+	db 1, 1, 1, 5, 5, 1, 1  ; Row 5
+	db 1, 1, 1, 5, 5, 1, 1  ; Row 6

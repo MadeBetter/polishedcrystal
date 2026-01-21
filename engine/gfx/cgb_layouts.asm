@@ -167,6 +167,12 @@ INCLUDE "gfx/trainers/lyra1/oam_color3.pal"
 Lyra1OAMColor4Palette:
 INCLUDE "gfx/trainers/lyra1/oam_color4.pal"
 
+Rival1BGColorPalette:
+INCLUDE "gfx/trainers/rival1/bg_color.pal"
+
+Rival1BGColor2Palette:
+INCLUDE "gfx/trainers/rival1/bg_color2.pal"
+
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
 
@@ -2067,6 +2073,10 @@ SetBattlePal2_EnemyBG:
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
 	jr z, .lyra1
+	cp RIVAL1
+	jr z, .rival1
+	cp RIVAL0
+	jr z, .rival1
 	; Add more trainers here as needed
 
 	; Default: use status palette
@@ -2074,6 +2084,10 @@ SetBattlePal2_EnemyBG:
 
 .lyra1:
 	ld hl, Lyra1BGColor2Palette
+	jmp LoadOnePalette
+
+.rival1:
+	ld hl, Rival1BGColor2Palette
 	jmp LoadOnePalette
 
 ; Helper function: Load enemy trainer OAM color palette

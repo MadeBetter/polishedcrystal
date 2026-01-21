@@ -83,7 +83,7 @@ LeafPic: INCBIN "gfx/trainers/leaf.2bpp.lz"
 
 SECTION "Rival0Pic", ROMX
 Rival0Pic:
-Rival1Pic: INCBIN "gfx/trainers/rival1.2bpp.lz"
+Rival1Pic: INCBIN "gfx/trainers/rival1/bg.2bpp.lz"
 
 SECTION "Rival2Pic", ROMX
 Rival2Pic: INCBIN "gfx/trainers/rival2.2bpp.lz"

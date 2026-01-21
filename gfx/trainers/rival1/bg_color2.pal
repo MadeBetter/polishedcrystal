@@ -1,0 +1,8 @@
+if !DEF(MONOCHROME)
+	RGB 31, 31, 31   ; Color 0: White
+	RGB 18, 17, 25   ; Color 1: Pale Purple
+	RGB 11, 09, 18   ; Color 2: Purple
+	RGB 00, 00, 00   ; Color 3: Black
+else
+	MONOCHROME_RGB_FOUR
+endc
