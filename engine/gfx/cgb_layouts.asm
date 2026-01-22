@@ -173,6 +173,18 @@ INCLUDE "gfx/trainers/rival1/bg_color.pal"
 Rival1BGColor2Palette:
 INCLUDE "gfx/trainers/rival1/bg_color2.pal"
 
+Rival1OAMColorPalette:
+INCLUDE "gfx/trainers/rival1/oam_color.pal"
+
+Rival1OAMColor2Palette:
+INCLUDE "gfx/trainers/rival1/oam_color2.pal"
+
+Rival1OAMColor3Palette:
+INCLUDE "gfx/trainers/rival1/oam_color3.pal"
+
+Rival1OAMColor4Palette:
+INCLUDE "gfx/trainers/rival1/oam_color4.pal"
+
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
 
@@ -2096,6 +2108,10 @@ SetEnemyOAMColorPalette:
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
 	jr z, .lyra1
+	cp RIVAL1
+	jr z, .rival1
+	cp RIVAL0
+	jr z, .rival1
 	; Add more trainers here as needed
 
 	; Default: use enemy Pokemon palette
@@ -2105,12 +2121,20 @@ SetEnemyOAMColorPalette:
 	ld hl, Lyra1OAMColorPalette
 	jmp LoadOnePalette
 
+.rival1:
+	ld hl, Rival1OAMColorPalette
+	jmp LoadOnePalette
+
 ; Helper function: Load enemy trainer OAM color2 palette
-; Loaded into OBJ palette slot 6 (passed in DE)
+; Loaded into OBJ palette slot 2 (passed in DE)
 SetEnemyOAMColor2Palette:
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
 	jr z, .lyra1
+	cp RIVAL1
+	jr z, .rival1
+	cp RIVAL0
+	jr z, .rival1
 	; Add more trainers here as needed
 
 	; Default: use gray palette
@@ -2121,12 +2145,20 @@ SetEnemyOAMColor2Palette:
 	ld hl, Lyra1OAMColor2Palette
 	jmp LoadOnePalette
 
+.rival1:
+	ld hl, Rival1OAMColor2Palette
+	jmp LoadOnePalette
+
 ; Helper function: Load enemy trainer OAM color3 palette
-; Loaded into OBJ palette slot 7 (passed in DE)
+; Loaded into OBJ palette slot 6 (passed in DE)
 SetEnemyOAMColor3Palette:
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
 	jr z, .lyra1
+	cp RIVAL1
+	jr z, .rival1
+	cp RIVAL0
+	jr z, .rival1
 	; Add more trainers here as needed
 
 	; Default: use gray palette
@@ -2137,12 +2169,20 @@ SetEnemyOAMColor3Palette:
 	ld hl, Lyra1OAMColor3Palette
 	jmp LoadOnePalette
 
+.rival1:
+	ld hl, Rival1OAMColor3Palette
+	jmp LoadOnePalette
+
 ; Helper function: Load enemy trainer OAM color4 palette
 ; Loaded into OBJ palette slot 7 (passed in DE)
 SetEnemyOAMColor4Palette:
 	ld a, [wOtherTrainerClass]
 	cp LYRA1
 	jr z, .lyra1
+	cp RIVAL1
+	jr z, .rival1
+	cp RIVAL0
+	jr z, .rival1
 	; Add more trainers here as needed
 
 	; Default: use gray palette
@@ -2151,6 +2191,10 @@ SetEnemyOAMColor4Palette:
 
 .lyra1:
 	ld hl, Lyra1OAMColor4Palette
+	jmp LoadOnePalette
+
+.rival1:
+	ld hl, Rival1OAMColor4Palette
 	jmp LoadOnePalette
 
 _CGB_FinishLayout:

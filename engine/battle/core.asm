@@ -9950,6 +9950,10 @@ LoadTrainerColorSprites_Far::
 	ld a, [wTrainerClass]
 	cp LYRA1  ; Constant $1E
 	jr z, .load_lyra1
+	cp RIVAL1
+	jr z, .load_rival1
+	cp RIVAL0
+	jr z, .load_rival1
 
 	; No color layer for this trainer yet
 	pop af
@@ -9957,10 +9961,21 @@ LoadTrainerColorSprites_Far::
 	ret
 
 .load_lyra1:
-	; Load Lyra1 OAM tiles to vTiles0 $69-$7E (22 tiles max)
 	ld hl, Lyra1TrainerOAM
+	ld c, 18  ; LYRA1 has 18 unique tiles
+	jr .load_trainer_oam
+
+.load_rival1:
+	ld hl, Rival1TrainerOAM
+	ld c, 19  ; RIVAL1 has 19 unique tiles
+	; fallthrough to .load_trainer_oam
+
+.load_trainer_oam:
+	; Load trainer OAM tiles to vTiles0 $69-$7E (22 tiles max)
+	; Input: hl = pointer to trainer OAM data
+	;        c  = number of tiles to load
 	ld de, vTiles0 tile $69
-	lb bc, BANK("Trainer Backpics"), 18  ; 18 unique tiles
+	ld b, BANK("Trainer Backpics")
 	call DecompressRequest2bpp
 
 	; Wait for decompression to complete
@@ -10066,6 +10081,10 @@ GetTrainerTileID:
 	ld a, [wTrainerClass]
 	cp LYRA1
 	jr z, .trainer_tile_lyra1
+	cp RIVAL1
+	jr z, .trainer_tile_rival1
+	cp RIVAL0
+	jr z, .trainer_tile_rival1
 	; Default: no tiles
 	pop af
 	xor a
@@ -10074,6 +10093,11 @@ GetTrainerTileID:
 	ret
 .trainer_tile_lyra1:
 	ld hl, Lyra1GridData
+	jr .get_grid_tile
+.trainer_tile_rival1:
+	ld hl, Rival1GridData
+	; fallthrough
+.get_grid_tile:
 	pop af
 	ld e, a
 	ld d, 0
@@ -10097,6 +10121,10 @@ GetTrainerXOffset:
 	ld a, [wTrainerClass]
 	cp LYRA1
 	jr z, .trainer_xoff_lyra1
+	cp RIVAL1
+	jr z, .trainer_xoff_rival1
+	cp RIVAL0
+	jr z, .trainer_xoff_rival1
 	; Default: no offset
 	pop af
 	xor a
@@ -10105,6 +10133,11 @@ GetTrainerXOffset:
 	ret
 .trainer_xoff_lyra1:
 	ld hl, Lyra1GridData
+	jr .get_grid_xoff
+.trainer_xoff_rival1:
+	ld hl, Rival1GridData
+	; fallthrough
+.get_grid_xoff:
 	pop af
 	ld e, a
 	ld d, 0
@@ -10129,6 +10162,10 @@ GetTrainerYOffset:
 	ld a, [wTrainerClass]
 	cp LYRA1
 	jr z, .trainer_yoff_lyra1
+	cp RIVAL1
+	jr z, .trainer_yoff_rival1
+	cp RIVAL0
+	jr z, .trainer_yoff_rival1
 	; Default: no offset
 	pop af
 	xor a
@@ -10137,6 +10174,11 @@ GetTrainerYOffset:
 	ret
 .trainer_yoff_lyra1:
 	ld hl, Lyra1GridData
+	jr .get_grid_yoff
+.trainer_yoff_rival1:
+	ld hl, Rival1GridData
+	; fallthrough
+.get_grid_yoff:
 	pop af
 	ld e, a
 	ld d, 0
@@ -10162,6 +10204,10 @@ GetTrainerPalette:
 	ld a, [wTrainerClass]
 	cp LYRA1
 	jr z, .trainer_pal_lyra1
+	cp RIVAL1
+	jr z, .trainer_pal_rival1
+	cp RIVAL0
+	jr z, .trainer_pal_rival1
 	; Default: palette 0
 	pop af
 	xor a
@@ -10170,6 +10216,11 @@ GetTrainerPalette:
 	ret
 .trainer_pal_lyra1:
 	ld hl, Lyra1GridData
+	jr .get_grid_pal
+.trainer_pal_rival1:
+	ld hl, Rival1GridData
+	; fallthrough
+.get_grid_pal:
 	pop af
 	ld e, a
 	ld d, 0
@@ -10180,13 +10231,15 @@ GetTrainerPalette:
 	inc hl
 	inc hl
 	inc hl
-	ld a, [hl]      ; Get byte 3: palette
+	ld a, [hl]      ; Get byte 3: palette number
 	pop de
 	pop hl
 	ret
 
 Lyra1GridData:
-	; Grid index = y * 7 + x (49 positions total for 7x7 grid)
+	; 1st digit is tile number in vram order
+	; 2nd is move left or right, 3rd is up or down
+	; 4th digit is what OBJ palette to assign
 	; x: 0           1          2             3          4           5           6
 	db 0,0,0,0 ,  0,0,0,0 ,  1,0,-3,0 , 2,-3,-6,0 ,  3,-3,-4,0 ,  0,0,0,0 ,   0,0,0,0   ; y = 0
 	db 0,0,0,0 ,  0,0,0,0 ,  4,0,-3,2 , 5,0,-4,2 ,   6,0,-4,2 ,   0,0,0,0 ,   0,0,0,0   ; y = 1
@@ -10195,3 +10248,21 @@ Lyra1GridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  13,-1,0,6 ,  14,-1,0,6 ,  15,-4,2,7 , 0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,    0,0,0,0 ,    0,0,0,0 ,   0,0,0,0   ; y = 5
 	db 0,0,0,0 ,  0,0,0,0 ,  16,0,2,0 , 17,0,0,0 ,   0,0,0,0 ,    0,0,0,0 ,   0,0,0,0   ; y = 6
+
+Rival1GridData:
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  1,0,1,0 ,   2,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  3,0,0,0 ,  4,1,0,2 ,  5,1,1,2 ,   6,1,0,2 ,   7,-5,0,0 ,  0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  8,0,1,7 ,  9,0,0,2 ,  10,0,0,2 ,  11,0,0,2 ,  0,0,0,0 ,   0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  12,-3,0,2 , 13,-2,0,6 , 0,0,0,0 ,   0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  14,0,5,0 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,  15,8,0,0 , 16,0,0,7 ,  17,0,0,7 ,  18,-7,0,0 , 0,0,0,0   ; y = 6
+
+EmptyGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 6

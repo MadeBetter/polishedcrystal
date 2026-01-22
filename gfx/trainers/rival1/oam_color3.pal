@@ -1,8 +1,8 @@
 if !DEF(MONOCHROME)
 	RGB 31, 31, 31   ; Color 0: White
-	RGB 31, 31, 11   ; Color 1: yellow beige
-	RGB 29, 23, 03   ; Color 2: pale orange
-	RGB 23, 08, 00   ; Color 2: Dark Red
+	RGB 31, 26, 10   ; Color 1: yellow beige
+	RGB 25, 16, 05   ; Color 2: pale orange
+	RGB 21, 07, 00   ; Color 2: Dark Red
 else
 	MONOCHROME_RGB_FOUR
 endc

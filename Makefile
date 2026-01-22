@@ -299,6 +299,10 @@ gfx/player/crys_back_color.2bpp: gfx/player/crys_back_color.png
 gfx/trainers/lyra1/oam.2bpp: gfx/trainers/lyra1/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
+# Rival1 trainer color layer OAM with unique tiles optimization
+gfx/trainers/rival1/oam.2bpp: gfx/trainers/rival1/oam.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
 %.2bpp: %.png
 	$Q$(RGBGFX) -c dmg $(RGBGFXFLAGS) -o $@ $<
 	$(if $(tools/gfx),\
