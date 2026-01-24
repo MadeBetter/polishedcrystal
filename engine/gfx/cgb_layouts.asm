@@ -185,6 +185,12 @@ INCLUDE "gfx/trainers/rival1/oam_color3.pal"
 Rival1OAMColor4Palette:
 INCLUDE "gfx/trainers/rival1/oam_color4.pal"
 
+YoungsterBGColorPalette:
+INCLUDE "gfx/trainers/youngster/bg_color.pal"
+
+YoungsterBGColor2Palette:
+INCLUDE "gfx/trainers/youngster/bg_color2.pal"
+
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
 
@@ -2089,6 +2095,8 @@ SetBattlePal2_EnemyBG:
 	jr z, .rival1
 	cp RIVAL0
 	jr z, .rival1
+	cp YOUNGSTER
+	jr z, .youngster
 	; Add more trainers here as needed
 
 	; Default: use status palette
@@ -2100,6 +2108,10 @@ SetBattlePal2_EnemyBG:
 
 .rival1:
 	ld hl, Rival1BGColor2Palette
+	jmp LoadOnePalette
+
+.youngster:
+	ld hl, YoungsterBGColor2Palette
 	jmp LoadOnePalette
 
 ; Helper function: Load enemy trainer OAM color palette

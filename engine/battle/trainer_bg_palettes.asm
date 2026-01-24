@@ -14,6 +14,8 @@ SetTrainerBGPalettes_Far::
 	jr z, .use_rival1
 	cp RIVAL0
 	jr z, .use_rival1
+	cp YOUNGSTER
+	jr z, .use_youngster
 	; Add more trainers here: cp TRAINER_X; jr z, .use_trainer_x
 	ret  ; No custom palettes for this trainer
 
@@ -23,6 +25,10 @@ SetTrainerBGPalettes_Far::
 
 .use_rival1:
 	ld de, .Rival1PaletteData
+	jr .apply_palettes
+
+.use_youngster:
+	ld de, .YounsterPaletteData
 	jr .apply_palettes
 
 .apply_palettes:
@@ -102,3 +108,12 @@ SetTrainerBGPalettes_Far::
 	db 1, 1, 1, 5, 5, 1, 1  ; Row 4
 	db 1, 1, 1, 5, 5, 1, 1  ; Row 5
 	db 1, 1, 1, 5, 5, 1, 1  ; Row 6
+
+.YounsterPaletteData:
+	db 1, 1, 1, 1, 1, 1, 1  ; Row 0
+	db 1, 1, 1, 6, 6, 1, 1  ; Row 1
+	db 1, 6, 6, 6, 6, 6, 1  ; Row 2
+	db 1, 6, 6, 5, 5, 6, 6  ; Row 3
+	db 1, 1, 1, 5, 5, 6, 6  ; Row 4
+	db 1, 1, 1, 6, 6, 1, 1  ; Row 5
+	db 1, 1, 1, 1, 1, 1, 1  ; Row 6

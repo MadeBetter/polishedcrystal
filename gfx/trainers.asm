@@ -95,7 +95,7 @@ SECTION "Lyra2Pic", ROMX
 Lyra2Pic: INCBIN "gfx/trainers/lyra2.2bpp.lz"
 
 SECTION "YoungsterPic", ROMX
-YoungsterPic: INCBIN "gfx/trainers/youngster.2bpp.lz"
+YoungsterPic: INCBIN "gfx/trainers/youngster/bg.2bpp.lz"
 
 SECTION "BugCatcherPic", ROMX
 BugCatcherPic: INCBIN "gfx/trainers/bug_catcher.2bpp.lz"
