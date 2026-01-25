@@ -303,6 +303,10 @@ gfx/trainers/lyra1/oam.2bpp: gfx/trainers/lyra1/oam.png
 gfx/trainers/rival1/oam.2bpp: gfx/trainers/rival1/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
+# Youngster trainer color layer OAM with unique tiles optimization
+gfx/trainers/youngster/oam.2bpp: gfx/trainers/youngster/oam.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
 %.2bpp: %.png
 	$Q$(RGBGFX) -c dmg $(RGBGFXFLAGS) -o $@ $<
 	$(if $(tools/gfx),\

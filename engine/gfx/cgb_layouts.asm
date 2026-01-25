@@ -191,6 +191,18 @@ INCLUDE "gfx/trainers/youngster/bg_color.pal"
 YoungsterBGColor2Palette:
 INCLUDE "gfx/trainers/youngster/bg_color2.pal"
 
+YoungsterOAMColorPalette:
+INCLUDE "gfx/trainers/youngster/oam_color.pal"
+
+YoungsterOAMColor2Palette:
+INCLUDE "gfx/trainers/youngster/oam_color2.pal"
+
+YoungsterOAMColor3Palette:
+INCLUDE "gfx/trainers/youngster/oam_color3.pal"
+
+YoungsterOAMColor4Palette:
+INCLUDE "gfx/trainers/youngster/oam_color4.pal"
+
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
 
@@ -2118,12 +2130,15 @@ SetBattlePal2_EnemyBG:
 ; Loaded into OBJ palette slot 0 (passed in DE)
 SetEnemyOAMColorPalette:
 	ld a, [wOtherTrainerClass]
+	; TEMPORARY: LYRA1 uses YOUNGSTER OAM palettes for testing
 	cp LYRA1
 	jr z, .lyra1
 	cp RIVAL1
 	jr z, .rival1
 	cp RIVAL0
 	jr z, .rival1
+	cp YOUNGSTER
+	jr z, .youngster
 	; Add more trainers here as needed
 
 	; Default: use enemy Pokemon palette
@@ -2137,6 +2152,10 @@ SetEnemyOAMColorPalette:
 	ld hl, Rival1OAMColorPalette
 	jmp LoadOnePalette
 
+.youngster:
+	ld hl, YoungsterOAMColorPalette
+	jmp LoadOnePalette
+
 ; Helper function: Load enemy trainer OAM color2 palette
 ; Loaded into OBJ palette slot 2 (passed in DE)
 SetEnemyOAMColor2Palette:
@@ -2147,6 +2166,8 @@ SetEnemyOAMColor2Palette:
 	jr z, .rival1
 	cp RIVAL0
 	jr z, .rival1
+	cp YOUNGSTER
+	jr z, .youngster
 	; Add more trainers here as needed
 
 	; Default: use gray palette
@@ -2161,6 +2182,10 @@ SetEnemyOAMColor2Palette:
 	ld hl, Rival1OAMColor2Palette
 	jmp LoadOnePalette
 
+.youngster:
+	ld hl, YoungsterOAMColor2Palette
+	jmp LoadOnePalette
+
 ; Helper function: Load enemy trainer OAM color3 palette
 ; Loaded into OBJ palette slot 6 (passed in DE)
 SetEnemyOAMColor3Palette:
@@ -2171,6 +2196,8 @@ SetEnemyOAMColor3Palette:
 	jr z, .rival1
 	cp RIVAL0
 	jr z, .rival1
+	cp YOUNGSTER
+	jr z, .youngster
 	; Add more trainers here as needed
 
 	; Default: use gray palette
@@ -2185,6 +2212,10 @@ SetEnemyOAMColor3Palette:
 	ld hl, Rival1OAMColor3Palette
 	jmp LoadOnePalette
 
+.youngster:
+	ld hl, YoungsterOAMColor3Palette
+	jmp LoadOnePalette
+
 ; Helper function: Load enemy trainer OAM color4 palette
 ; Loaded into OBJ palette slot 7 (passed in DE)
 SetEnemyOAMColor4Palette:
@@ -2195,6 +2226,8 @@ SetEnemyOAMColor4Palette:
 	jr z, .rival1
 	cp RIVAL0
 	jr z, .rival1
+	cp YOUNGSTER
+	jr z, .youngster
 	; Add more trainers here as needed
 
 	; Default: use gray palette
@@ -2207,6 +2240,10 @@ SetEnemyOAMColor4Palette:
 
 .rival1:
 	ld hl, Rival1OAMColor4Palette
+	jmp LoadOnePalette
+
+.youngster:
+	ld hl, YoungsterOAMColor4Palette
 	jmp LoadOnePalette
 
 _CGB_FinishLayout:

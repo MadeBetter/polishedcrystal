@@ -9947,13 +9947,15 @@ LoadTrainerColorSprites_Far::
 	ldh [rVBK], a
 
 	; Check which trainer class
-	ld a, [wTrainerClass]
+	ld a, [wTrainerClass] 
 	cp LYRA1  ; Constant $1E
 	jr z, .load_lyra1
 	cp RIVAL1
 	jr z, .load_rival1
 	cp RIVAL0
 	jr z, .load_rival1
+	cp YOUNGSTER
+	jr z, .load_youngster
 
 	; No color layer for this trainer yet
 	pop af
@@ -9968,6 +9970,11 @@ LoadTrainerColorSprites_Far::
 .load_rival1:
 	ld hl, Rival1TrainerOAM
 	ld c, 19  ; RIVAL1 has 19 unique tiles
+	jr .load_trainer_oam
+
+.load_youngster:
+	ld hl, YoungsterTrainerOAM
+	ld c, 21  ; YOUNGSTER has 21 unique tiles
 	; fallthrough to .load_trainer_oam
 
 .load_trainer_oam:
@@ -10085,6 +10092,8 @@ GetTrainerTileID:
 	jr z, .trainer_tile_rival1
 	cp RIVAL0
 	jr z, .trainer_tile_rival1
+	cp YOUNGSTER
+	jr z, .trainer_tile_youngster
 	; Default: no tiles
 	pop af
 	xor a
@@ -10096,6 +10105,9 @@ GetTrainerTileID:
 	jr .get_grid_tile
 .trainer_tile_rival1:
 	ld hl, Rival1GridData
+	jr .get_grid_tile
+.trainer_tile_youngster:
+	ld hl, YoungsterGridData
 	; fallthrough
 .get_grid_tile:
 	pop af
@@ -10125,6 +10137,8 @@ GetTrainerXOffset:
 	jr z, .trainer_xoff_rival1
 	cp RIVAL0
 	jr z, .trainer_xoff_rival1
+	cp YOUNGSTER
+	jr z, .trainer_xoff_youngster
 	; Default: no offset
 	pop af
 	xor a
@@ -10136,6 +10150,9 @@ GetTrainerXOffset:
 	jr .get_grid_xoff
 .trainer_xoff_rival1:
 	ld hl, Rival1GridData
+	jr .get_grid_xoff
+.trainer_xoff_youngster:
+	ld hl, YoungsterGridData
 	; fallthrough
 .get_grid_xoff:
 	pop af
@@ -10166,6 +10183,8 @@ GetTrainerYOffset:
 	jr z, .trainer_yoff_rival1
 	cp RIVAL0
 	jr z, .trainer_yoff_rival1
+	cp YOUNGSTER
+	jr z, .trainer_yoff_youngster
 	; Default: no offset
 	pop af
 	xor a
@@ -10177,6 +10196,9 @@ GetTrainerYOffset:
 	jr .get_grid_yoff
 .trainer_yoff_rival1:
 	ld hl, Rival1GridData
+	jr .get_grid_yoff
+.trainer_yoff_youngster:
+	ld hl, YoungsterGridData
 	; fallthrough
 .get_grid_yoff:
 	pop af
@@ -10208,6 +10230,8 @@ GetTrainerPalette:
 	jr z, .trainer_pal_rival1
 	cp RIVAL0
 	jr z, .trainer_pal_rival1
+	cp YOUNGSTER
+	jr z, .trainer_pal_youngster
 	; Default: palette 0
 	pop af
 	xor a
@@ -10219,6 +10243,9 @@ GetTrainerPalette:
 	jr .get_grid_pal
 .trainer_pal_rival1:
 	ld hl, Rival1GridData
+	jr .get_grid_pal
+.trainer_pal_youngster:
+	ld hl, YoungsterGridData
 	; fallthrough
 .get_grid_pal:
 	pop af
@@ -10257,6 +10284,15 @@ Rival1GridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  12,-3,0,2 , 13,-2,0,6 , 0,0,0,0 ,   0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  14,0,5,0 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 5
 	db 0,0,0,0 ,  0,0,0,0 ,  15,8,0,0 , 16,0,0,7 ,  17,0,0,7 ,  18,-7,0,0 , 0,0,0,0   ; y = 6
+
+YoungsterGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  1,-2,-4,0 , 0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  2,0,-2,0 ,  3,0,0,0 ,   4,0,0,0 ,   5,-9,-4,2 , 0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  6,2,-3,7 , 7,7,2,2 ,  8,2,0,2 ,   9,-1,0,0 ,  0,0,0,0 ,   0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  10,2,0,0 , 11,7,3,0 , 12,-1,2,6 , 13,1,2,6 ,  14,-1,3,0 , 0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  15,1,2,6 ,  16,0,-1,0 , 17,-2,4,2 , 0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  18,0,5,0 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  19,-1,0,0 , 20,1,0,0 ,  0,0,0,0 ,   0,0,0,0   ; y = 6
 
 EmptyGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0
