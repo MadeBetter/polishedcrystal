@@ -98,7 +98,7 @@ SECTION "YoungsterPic", ROMX
 YoungsterPic: INCBIN "gfx/trainers/youngster/bg.2bpp.lz"
 
 SECTION "BugCatcherPic", ROMX
-BugCatcherPic: INCBIN "gfx/trainers/bug_catcher.2bpp.lz"
+BugCatcherPic: INCBIN "gfx/trainers/bug_catcher/bg.2bpp.lz"
 
 SECTION "CamperPic", ROMX
 CamperPic: INCBIN "gfx/trainers/camper.2bpp.lz"
