@@ -203,8 +203,55 @@ INCLUDE "gfx/trainers/youngster/oam_color3.pal"
 YoungsterOAMColor4Palette:
 INCLUDE "gfx/trainers/youngster/oam_color4.pal"
 
+BugCatcherOAMColorPalette:
+INCLUDE "gfx/trainers/bug_catcher/oam_color.pal"
+
+BugCatcherOAMColor2Palette:
+INCLUDE "gfx/trainers/bug_catcher/oam_color2.pal"
+
+BugCatcherOAMColor3Palette:
+INCLUDE "gfx/trainers/bug_catcher/oam_color3.pal"
+
+BugCatcherOAMColor4Palette:
+INCLUDE "gfx/trainers/bug_catcher/oam_color4.pal"
+
 TrainerSkinPalette:
 INCLUDE "gfx/trainers/skin.pal"
+
+TrainerOAMPaletteSetTable:
+; Format: db trainer_class, bank, dw pal1, dw pal2, dw pal3, dw pal4
+; Each entry is 10 bytes: 1 byte class + 1 byte bank + 8 bytes (4 pointers)
+	db LYRA1, BANK(Lyra1OAMColorPalette)
+	dw Lyra1OAMColorPalette
+	dw Lyra1OAMColor2Palette
+	dw Lyra1OAMColor3Palette
+	dw Lyra1OAMColor4Palette
+
+	db RIVAL0, BANK(Rival1OAMColorPalette)
+	dw Rival1OAMColorPalette
+	dw Rival1OAMColor2Palette
+	dw Rival1OAMColor3Palette
+	dw Rival1OAMColor4Palette
+
+	db RIVAL1, BANK(Rival1OAMColorPalette)
+	dw Rival1OAMColorPalette
+	dw Rival1OAMColor2Palette
+	dw Rival1OAMColor3Palette
+	dw Rival1OAMColor4Palette
+
+	db YOUNGSTER, BANK(YoungsterOAMColorPalette)
+	dw YoungsterOAMColorPalette
+	dw YoungsterOAMColor2Palette
+	dw YoungsterOAMColor3Palette
+	dw YoungsterOAMColor4Palette
+
+	db BUG_CATCHER, BANK(BugCatcherOAMColorPalette)
+	dw BugCatcherOAMColorPalette
+	dw BugCatcherOAMColor2Palette
+	dw BugCatcherOAMColor3Palette
+	dw BugCatcherOAMColor4Palette
+
+	db $FF  ; Terminator
 
 GetDefaultBattlePalette:
 	ld a, BANK(wTempBattleMonSpecies)
@@ -417,6 +464,9 @@ _CGB_BattlePlayerColors:
 	; Load player color3 into OBJ palette 5
 	call LoadPlayerColor3Palette
 
+	; Apply all OBJ palettes to display buffer
+	call ApplyPals
+
 	; Skip pokeball palette (palette 6) - keep original behavior
 
 	pop bc
@@ -439,8 +489,7 @@ _CGB_BattleIntroColors:
 	call SetBattlePal_Text        ; BG 7 = Text box
 
 	; Part 2: Load OBJ Palettes (initial)
-	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
-	call SetEnemyOAMColorPalette  ; OBJ 0 = Enemy trainer OAM color
+	ld de, wOBPals1 palette PAL_BATTLE_OB_PLAYER
 	call SetBattlePal_PlayerColor ; OBJ 1 = Player color 1
 
 	; Part 3: Apply Palettes
@@ -469,9 +518,9 @@ _CGB_BattleIntroColors:
 	; Set trainer-specific BG tile palette assignments
 	farcall SetTrainerBGPalettes_Far
 
-	; Load enemy color2 into OBJ palette 2
-	ld de, wOBPals1 palette 2
-	call SetEnemyOAMColor2Palette
+	; Load all 4 enemy trainer OAM palettes (OBJ 0, 2, 6, 7)
+	; Done AFTER SetBattleCommonTilemapAndPalettes to overwrite animation palettes in slots 2, 6, 7
+	call SetEnemyTrainerOAMPalettes
 
 	; Load player color2 into OBJ palette 4
 	call LoadPlayerColor2Palette
@@ -479,13 +528,8 @@ _CGB_BattleIntroColors:
 	; Load player color3 into OBJ palette 5
 	call LoadPlayerColor3Palette
 
-	; Load enemy color3 into OBJ palette 6
-	ld de, wOBPals1 palette 6
-	call SetEnemyOAMColor3Palette
-
-	; Load enemy color4 into OBJ palette 7
-	ld de, wOBPals1 palette 7
-	call SetEnemyOAMColor4Palette
+	; Apply all OBJ palettes to display buffer
+	call ApplyPals
 
 	pop bc
 	; Part 7: Skip ability overlay logic - not needed during intro
@@ -507,8 +551,7 @@ _CGB_BattleEnemyColors:
 	call SetBattlePal_Text    ; BG 7
 
 	; Part 2: Load OBJ Palettes (initial)
-	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
-	call SetEnemyOAMColorPalette  ; OBJ 0
+	ld de, wOBPals1 palette PAL_BATTLE_OB_PLAYER
 	call SetBattlePal_Player ; OBJ 1
 
 	; Part 3: Apply Palettes
@@ -535,17 +578,12 @@ _CGB_BattleEnemyColors:
 	; Set trainer-specific BG tile palette assignments
 	farcall SetTrainerBGPalettes_Far
 
-	; Load enemy color2 into OBJ palette 2
-	ld de, wOBPals1 palette 2
-	call SetEnemyOAMColor2Palette
+	; Load all 4 enemy trainer OAM palettes (OBJ 0, 2, 6, 7)
+	; Done AFTER SetBattleCommonTilemapAndPalettes to overwrite animation palettes in slots 2, 6, 7
+	call SetEnemyTrainerOAMPalettes
 
-	; Load enemy color3 into OBJ palette 6
-	ld de, wOBPals1 palette 6
-	call SetEnemyOAMColor3Palette
-
-	; Load enemy color4 into OBJ palette 7
-	ld de, wOBPals1 palette 7
-	call SetEnemyOAMColor4Palette
+	; Apply all OBJ palettes to display buffer
+	call ApplyPals
 
 	pop bc
 	; Part 7: Skip ability overlay logic - not needed when Enemy is on Screen
@@ -2126,125 +2164,101 @@ SetBattlePal2_EnemyBG:
 	ld hl, YoungsterBGColor2Palette
 	jmp LoadOnePalette
 
-; Helper function: Load enemy trainer OAM color palette
-; Loaded into OBJ palette slot 0 (passed in DE)
-SetEnemyOAMColorPalette:
+; Unified function: Load all 4 enemy trainer OAM palettes from lookup table
+; Replaces SetEnemyOAMColorPalette, SetEnemyOAMColor2Palette,
+; SetEnemyOAMColor3Palette, SetEnemyOAMColor4Palette
+SetEnemyTrainerOAMPalettes:
 	ld a, [wOtherTrainerClass]
-	; TEMPORARY: LYRA1 uses YOUNGSTER OAM palettes for testing
-	cp LYRA1
-	jr z, .lyra1
-	cp RIVAL1
-	jr z, .rival1
-	cp RIVAL0
-	jr z, .rival1
-	cp YOUNGSTER
-	jr z, .youngster
-	; Add more trainers here as needed
+	ld c, a  ; Save trainer class in C
+	ld de, TrainerOAMPaletteSetTable
 
-	; Default: use enemy Pokemon palette
-	jp SetBattlePal_Enemy
+.loop:
+	ld a, [de]  ; Load trainer class from table
+	cp $FF
+	jr z, .default
+	cp c
+	jr z, .found
 
-.lyra1:
-	ld hl, Lyra1OAMColorPalette
-	jmp LoadOnePalette
+	; Skip this entry (10 bytes: 1 class + 1 bank + 8 pointer bytes)
+	ld a, e
+	add 10
+	ld e, a
+	ld a, d
+	adc 0
+	ld d, a
+	jr .loop
 
-.rival1:
-	ld hl, Rival1OAMColorPalette
-	jmp LoadOnePalette
+.found:
+	; Move DE to bank byte
+	inc de
+	ld a, [de]  ; Load bank
+	rst Bankswitch
+	inc de
 
-.youngster:
-	ld hl, YoungsterOAMColorPalette
-	jmp LoadOnePalette
+	; Load Color 1 palette (OBJ slot 0)
+	ld a, [de]
+	ld l, a
+	inc de
+	ld a, [de]
+	ld h, a
+	inc de
+	push de
+	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
+	call LoadOnePalette
+	pop de
 
-; Helper function: Load enemy trainer OAM color2 palette
-; Loaded into OBJ palette slot 2 (passed in DE)
-SetEnemyOAMColor2Palette:
-	ld a, [wOtherTrainerClass]
-	cp LYRA1
-	jr z, .lyra1
-	cp RIVAL1
-	jr z, .rival1
-	cp RIVAL0
-	jr z, .rival1
-	cp YOUNGSTER
-	jr z, .youngster
-	; Add more trainers here as needed
+	; Load Color 2 palette (OBJ slot 2)
+	ld a, [de]
+	ld l, a
+	inc de
+	ld a, [de]
+	ld h, a
+	inc de
+	push de
+	ld de, wOBPals1 palette 2
+	call LoadOnePalette
+	pop de
 
-	; Default: use gray palette
+	; Load Color 3 palette (OBJ slot 6)
+	ld a, [de]
+	ld l, a
+	inc de
+	ld a, [de]
+	ld h, a
+	inc de
+	push de
+	ld de, wOBPals1 palette 6
+	call LoadOnePalette
+	pop de
+
+	; Load Color 4 palette (OBJ slot 7)
+	ld a, [de]
+	ld l, a
+	inc de
+	ld a, [de]
+	ld h, a
+	ld de, wOBPals1 palette 7
+	jp LoadOnePalette
+
+.default:
+	; Color 1: use enemy Pokemon palette (slot 0)
+	ld de, wOBPals1 palette PAL_BATTLE_OB_ENEMY
+	call SetBattlePal_Enemy
+
+	; Color 2: gray palette (slot 2)
 	ld hl, BattleObjectPals + 4 palettes
-	jmp LoadOnePalette
+	ld de, wOBPals1 palette 2
+	call LoadOnePalette
 
-.lyra1:
-	ld hl, Lyra1OAMColor2Palette
-	jmp LoadOnePalette
-
-.rival1:
-	ld hl, Rival1OAMColor2Palette
-	jmp LoadOnePalette
-
-.youngster:
-	ld hl, YoungsterOAMColor2Palette
-	jmp LoadOnePalette
-
-; Helper function: Load enemy trainer OAM color3 palette
-; Loaded into OBJ palette slot 6 (passed in DE)
-SetEnemyOAMColor3Palette:
-	ld a, [wOtherTrainerClass]
-	cp LYRA1
-	jr z, .lyra1
-	cp RIVAL1
-	jr z, .rival1
-	cp RIVAL0
-	jr z, .rival1
-	cp YOUNGSTER
-	jr z, .youngster
-	; Add more trainers here as needed
-
-	; Default: use gray palette
+	; Color 3: gray palette (slot 6)
 	ld hl, BattleObjectPals + 5 palettes
-	jmp LoadOnePalette
+	ld de, wOBPals1 palette 6
+	call LoadOnePalette
 
-.lyra1:
-	ld hl, Lyra1OAMColor3Palette
-	jmp LoadOnePalette
-
-.rival1:
-	ld hl, Rival1OAMColor3Palette
-	jmp LoadOnePalette
-
-.youngster:
-	ld hl, YoungsterOAMColor3Palette
-	jmp LoadOnePalette
-
-; Helper function: Load enemy trainer OAM color4 palette
-; Loaded into OBJ palette slot 7 (passed in DE)
-SetEnemyOAMColor4Palette:
-	ld a, [wOtherTrainerClass]
-	cp LYRA1
-	jr z, .lyra1
-	cp RIVAL1
-	jr z, .rival1
-	cp RIVAL0
-	jr z, .rival1
-	cp YOUNGSTER
-	jr z, .youngster
-	; Add more trainers here as needed
-
-	; Default: use gray palette
+	; Color 4: gray palette (slot 7)
 	ld hl, BattleObjectPals + 6 palettes
-	jmp LoadOnePalette
-
-.lyra1:
-	ld hl, Lyra1OAMColor4Palette
-	jmp LoadOnePalette
-
-.rival1:
-	ld hl, Rival1OAMColor4Palette
-	jmp LoadOnePalette
-
-.youngster:
-	ld hl, YoungsterOAMColor4Palette
-	jmp LoadOnePalette
+	ld de, wOBPals1 palette 7
+	jp LoadOnePalette
 
 _CGB_FinishLayout:
 	call ApplyAttrMap
