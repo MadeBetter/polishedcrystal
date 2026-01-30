@@ -1,0 +1,8 @@
+if !DEF(MONOCHROME)
+	RGB 31, 31, 31   ; Color 0: White
+	RGB 25, 19, 15   ; Color 1: Skin tone
+	RGB 20, 14, 10   ; Color 2: Darker skin
+	RGB 15, 10, 07   ; Color 3: Darkest skin
+else
+	MONOCHROME_RGB_FOUR
+endc

@@ -16,6 +16,8 @@ SetTrainerBGPalettes_Far::
 	jr z, .use_rival1
 	cp YOUNGSTER
 	jr z, .use_youngster
+	cp BUG_CATCHER
+	jr z, .use_bugcatcher
 	; Add more trainers here: cp TRAINER_X; jr z, .use_trainer_x
 	ret  ; No custom palettes for this trainer
 
@@ -29,6 +31,10 @@ SetTrainerBGPalettes_Far::
 
 .use_youngster:
 	ld de, .YounsterPaletteData
+	jr .apply_palettes
+
+.use_bugcatcher:
+	ld de, .BugCatcherPaletteData
 	jr .apply_palettes
 
 .apply_palettes:
@@ -117,3 +123,12 @@ SetTrainerBGPalettes_Far::
 	db 1, 1, 1, 5, 5, 6, 6  ; Row 4
 	db 1, 1, 1, 6, 6, 1, 1  ; Row 5
 	db 1, 1, 1, 1, 1, 1, 1  ; Row 6
+
+.BugCatcherPaletteData:
+  db 1, 1, 1, 1, 1, 1, 1  ; Row 0
+  db 1, 1, 1, 1, 1, 5, 5  ; Row 1
+  db 1, 6, 6, 6, 1, 5, 5  ; Row 2
+  db 1, 6, 6, 6, 6, 5, 5  ; Row 3
+  db 1, 6, 6, 6, 6, 5, 5  ; Row 4
+  db 1, 6, 6, 6, 1, 1, 1  ; Row 5
+  db 1, 6, 6, 6, 1, 1, 1  ; Row 6
