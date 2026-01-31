@@ -9947,7 +9947,7 @@ LoadTrainerColorSprites_Far::
 	ldh [rVBK], a
 
 	; Check which trainer class
-	ld a, [wTrainerClass] 
+	ld a, [wTrainerClass]
 	cp LYRA1  ; Constant $1E
 	jr z, .load_lyra1
 	cp RIVAL1
@@ -9956,6 +9956,8 @@ LoadTrainerColorSprites_Far::
 	jr z, .load_rival1
 	cp YOUNGSTER
 	jr z, .load_youngster
+	cp BUG_CATCHER
+	jr z, .load_bug_catcher
 
 	; No color layer for this trainer yet
 	pop af
@@ -9975,6 +9977,11 @@ LoadTrainerColorSprites_Far::
 .load_youngster:
 	ld hl, YoungsterTrainerOAM
 	ld c, 21  ; YOUNGSTER has 21 unique tiles
+	jr .load_trainer_oam
+
+.load_bug_catcher:
+	ld hl, BugCatcherTrainerOAM
+	ld c, 21  ; BUG_CATCHER has 21 unique tiles
 	; fallthrough to .load_trainer_oam
 
 .load_trainer_oam:
@@ -10094,6 +10101,8 @@ GetTrainerTileID:
 	jr z, .trainer_tile_rival1
 	cp YOUNGSTER
 	jr z, .trainer_tile_youngster
+	cp BUG_CATCHER
+	jr z, .trainer_tile_bug_catcher
 	; Default: no tiles
 	pop af
 	xor a
@@ -10108,6 +10117,9 @@ GetTrainerTileID:
 	jr .get_grid_tile
 .trainer_tile_youngster:
 	ld hl, YoungsterGridData
+	jr .get_grid_tile
+.trainer_tile_bug_catcher:
+	ld hl, BugCatcherGridData
 	; fallthrough
 .get_grid_tile:
 	pop af
@@ -10139,6 +10151,8 @@ GetTrainerXOffset:
 	jr z, .trainer_xoff_rival1
 	cp YOUNGSTER
 	jr z, .trainer_xoff_youngster
+	cp BUG_CATCHER
+	jr z, .trainer_xoff_bug_catcher
 	; Default: no offset
 	pop af
 	xor a
@@ -10153,6 +10167,9 @@ GetTrainerXOffset:
 	jr .get_grid_xoff
 .trainer_xoff_youngster:
 	ld hl, YoungsterGridData
+	jr .get_grid_xoff
+.trainer_xoff_bug_catcher:
+	ld hl, BugCatcherGridData
 	; fallthrough
 .get_grid_xoff:
 	pop af
@@ -10185,6 +10202,8 @@ GetTrainerYOffset:
 	jr z, .trainer_yoff_rival1
 	cp YOUNGSTER
 	jr z, .trainer_yoff_youngster
+	cp BUG_CATCHER
+	jr z, .trainer_yoff_bug_catcher
 	; Default: no offset
 	pop af
 	xor a
@@ -10199,6 +10218,9 @@ GetTrainerYOffset:
 	jr .get_grid_yoff
 .trainer_yoff_youngster:
 	ld hl, YoungsterGridData
+	jr .get_grid_yoff
+.trainer_yoff_bug_catcher:
+	ld hl, BugCatcherGridData
 	; fallthrough
 .get_grid_yoff:
 	pop af
@@ -10232,6 +10254,8 @@ GetTrainerPalette:
 	jr z, .trainer_pal_rival1
 	cp YOUNGSTER
 	jr z, .trainer_pal_youngster
+	cp BUG_CATCHER
+	jr z, .trainer_pal_bug_catcher
 	; Default: palette 0
 	pop af
 	xor a
@@ -10246,6 +10270,9 @@ GetTrainerPalette:
 	jr .get_grid_pal
 .trainer_pal_youngster:
 	ld hl, YoungsterGridData
+	jr .get_grid_pal
+.trainer_pal_bug_catcher:
+	ld hl, BugCatcherGridData
 	; fallthrough
 .get_grid_pal:
 	pop af
@@ -10266,7 +10293,7 @@ GetTrainerPalette:
 Lyra1GridData:
 	; 1st digit is tile number in vram order
 	; 2nd is move left or right, 3rd is up or down
-	; 4th digit is what OBJ palette to assign
+	; 4th digit is what OBJ palette to assign (0, 2, 6, 7)
 	; x: 0           1          2             3          4           5           6
 	db 0,0,0,0 ,  0,0,0,0 ,  1,0,-3,0 , 2,-3,-6,0 ,  3,-3,-4,0 ,  0,0,0,0 ,   0,0,0,0   ; y = 0
 	db 0,0,0,0 ,  0,0,0,0 ,  4,0,-3,2 , 5,0,-4,2 ,   6,0,-4,2 ,   0,0,0,0 ,   0,0,0,0   ; y = 1
@@ -10287,12 +10314,21 @@ Rival1GridData:
 
 YoungsterGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  1,-2,-4,0 , 0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 0
-	db 0,0,0,0 ,  0,0,0,0 ,  2,0,-2,0 ,  3,0,0,0 ,   4,0,0,0 ,   5,-9,-4,2 , 0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  0,0,0,0 ,  2,0,-2,0 , 3,0,0,0 ,   4,0,0,0 ,   5,-9,-4,2 , 0,0,0,0   ; y = 1
 	db 0,0,0,0 ,  6,2,-3,7 , 7,7,2,2 ,  8,2,0,2 ,   9,-1,0,0 ,  0,0,0,0 ,   0,0,0,0   ; y = 2
 	db 0,0,0,0 ,  10,2,0,0 , 11,7,3,0 , 12,-1,2,6 , 13,1,2,6 ,  14,-1,3,0 , 0,0,0,0   ; y = 3
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  15,1,2,6 ,  16,0,-1,0 , 17,-2,4,2 , 0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  18,0,5,0 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 5
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  19,-1,0,0 , 20,1,0,0 ,  0,0,0,0 ,   0,0,0,0   ; y = 6
+
+BugCatcherGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  1,5,-4,0 , 2,-2,-5,6 , 3,-2,-6,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  0,0,0,0 ,  4,-1,0,2 ,  0,0,0,0 ,   0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 2
+	db 5,6,3,0 ,  6,6,2,0 ,  7,5,1,0 ,   8,5,1,0 ,   9,0,0,6 ,  0,0,0,0 ,  0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  10,3,0,0 , 11,0,3,7 ,  12,0,0,6 ,  13,0,3,0 , 0,0,0,0 ,  0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  14,3,3,7 , 15,0,2,7 ,  0,0,0,0 ,   0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 5
+	db 16,3,0,2 , 17,0,6,2 , 18,0,5,2 ,  19,0,0,2 ,  20,0,0,0 , 0,0,0,0 ,  0,0,0,0   ; y = 6
 
 EmptyGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0

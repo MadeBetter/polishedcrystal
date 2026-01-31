@@ -95,7 +95,6 @@ SetTrainerBGPalettes_Far::
 	ret
 
 .Lyra1PaletteData:
-	; 7x7 palette lookup table for Lyra1 trainer sprite
 	; Each byte represents the palette number for that tile position
 	; Palette 1 = Enemy BG, Palette 6 = Skin (Type/Cat), Palette 5 = Clothing (Status)
 	db 1, 1, 1, 1, 1, 1, 1  ; Row 0
@@ -127,7 +126,7 @@ SetTrainerBGPalettes_Far::
 .BugCatcherPaletteData:
   db 1, 1, 1, 1, 1, 1, 1  ; Row 0
   db 1, 1, 1, 1, 1, 5, 5  ; Row 1
-  db 1, 6, 6, 6, 1, 5, 5  ; Row 2
+  db 1, 1, 1, 1, 1, 5, 5  ; Row 2
   db 1, 6, 6, 6, 6, 5, 5  ; Row 3
   db 1, 6, 6, 6, 6, 5, 5  ; Row 4
   db 1, 6, 6, 6, 1, 1, 1  ; Row 5
