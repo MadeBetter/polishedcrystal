@@ -297,7 +297,7 @@ SECTION "SightseersPic", ROMX
 SightseersPic: INCBIN "gfx/trainers/sightseers.2bpp.lz"
 
 SECTION "CooltrainermPic", ROMX
-CooltrainermPic: INCBIN "gfx/trainers/cooltrainer_m.2bpp.lz"
+CooltrainermPic: INCBIN "gfx/trainers/cooltrainer_m/bg.2bpp.lz"
 
 SECTION "CooltrainerfPic", ROMX
 CooltrainerfPic: INCBIN "gfx/trainers/cooltrainer_f.2bpp.lz"

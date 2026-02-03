@@ -61,6 +61,8 @@ SetBattlePal2_EnemyBG_Far::
 	jr z, .youngster
 	cp BUG_CATCHER
 	jr z, .bugcatcher
+	cp COOLTRAINERM
+	jr z, .cooltrainerm
 	; Add more trainers here as needed
 
 	; Default: use status palette
@@ -85,6 +87,10 @@ SetBattlePal2_EnemyBG_Far::
 .bugcatcher:
 	ld hl, BugCatcherBGColor2Palette
 	ld a, BANK(BugCatcherBGColor2Palette)
+	; fallthrough
+.cooltrainerm:
+	ld hl, CooltrainerMBGColor2Palette
+	ld a, BANK(CooltrainerMBGColor2Palette)
 	; fallthrough
 .load:
 	jp LoadTrainerPalette_White_Col1_Col2_Black_Far
@@ -263,6 +269,9 @@ INCLUDE "gfx/trainers/bug_catcher/oam_color3.pal"
 
 BugCatcherOAMColor4Palette:
 INCLUDE "gfx/trainers/bug_catcher/oam_color4.pal"
+
+CooltrainerMBGColor2Palette:
+INCLUDE "gfx/trainers/cooltrainer_m/bg_color2.pal"
 
 TrainerOAMPaletteSetTable:
 ; Format: db trainer_class, bank, dw pal1, dw pal2, dw pal3, dw pal4
