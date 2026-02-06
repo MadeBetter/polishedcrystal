@@ -270,6 +270,18 @@ INCLUDE "gfx/trainers/bug_catcher/oam_color3.pal"
 BugCatcherOAMColor4Palette:
 INCLUDE "gfx/trainers/bug_catcher/oam_color4.pal"
 
+CooltrainerMOAMColorPalette:
+INCLUDE "gfx/trainers/cooltrainer_m/oam_color.pal"
+
+CooltrainerMOAMColor2Palette:
+INCLUDE "gfx/trainers/cooltrainer_m/oam_color2.pal"
+
+CooltrainerMOAMColor3Palette:
+INCLUDE "gfx/trainers/cooltrainer_m/oam_color3.pal"
+
+CooltrainerMOAMColor4Palette:
+INCLUDE "gfx/trainers/cooltrainer_m/oam_color4.pal"
+
 CooltrainerMBGColor2Palette:
 INCLUDE "gfx/trainers/cooltrainer_m/bg_color2.pal"
 
@@ -305,5 +317,11 @@ TrainerOAMPaletteSetTable:
 	dw BugCatcherOAMColor2Palette
 	dw BugCatcherOAMColor3Palette
 	dw BugCatcherOAMColor4Palette
+
+	db COOLTRAINERM, BANK(CooltrainerMOAMColorPalette)
+	dw CooltrainerMOAMColorPalette
+	dw CooltrainerMOAMColor2Palette
+	dw CooltrainerMOAMColor3Palette
+	dw CooltrainerMOAMColor4Palette
 
 	db $FF  ; Terminator

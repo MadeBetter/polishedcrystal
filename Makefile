@@ -283,32 +283,36 @@ gfx/pokemon/%/frames.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/fro
 #%.4bpp: %.png
 #	$Qsuperfamiconv tiles -R -i $@ -d $<
 
-# Chris back pic color layer with unique tiles optimization
+# Chris back pic color layer OAM
 gfx/player/chris_back_color.2bpp: gfx/player/chris_back_color.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
-# Kris back pic color layer with unique tiles optimization
+# Kris back pic color layer OAM
 gfx/player/kris_back_color.2bpp: gfx/player/kris_back_color.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
-# Crys back pic color layer with unique tiles optimization
+# Crys back pic color layer OAM
 gfx/player/crys_back_color.2bpp: gfx/player/crys_back_color.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
-# Lyra1 trainer color layer OAM with unique tiles optimization
+# Lyra1 trainer color layer OAM
 gfx/trainers/lyra1/oam.2bpp: gfx/trainers/lyra1/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
-# Rival1 trainer color layer OAM with unique tiles optimization
+# Rival1 trainer color layer OAM
 gfx/trainers/rival1/oam.2bpp: gfx/trainers/rival1/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
-# Youngster trainer color layer OAM with unique tiles optimization
+# Youngster trainer color layer OAM
 gfx/trainers/youngster/oam.2bpp: gfx/trainers/youngster/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
-# BugCatcher trainer color layer OAM with unique tiles optimization
+# BugCatcher trainer color layer OAM
 gfx/trainers/bug_catcher/oam.2bpp: gfx/trainers/bug_catcher/oam.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
+# CooltrainerM trainer color layer OAM
+gfx/trainers/cooltrainer_m/oam.2bpp: gfx/trainers/cooltrainer_m/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
 %.2bpp: %.png

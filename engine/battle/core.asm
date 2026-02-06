@@ -9958,8 +9958,12 @@ LoadTrainerColorSprites_Far::
 	jr z, .load_youngster
 	cp BUG_CATCHER
 	jr z, .load_bug_catcher
+	cp COOLTRAINERM
+	jr z, .load_cooltrainerm
 
 	; No color layer for this trainer yet
+	; fallthrough to skip
+.skip_trainer_oam
 	pop af
 	ldh [rVBK], a
 	ret
@@ -9982,6 +9986,11 @@ LoadTrainerColorSprites_Far::
 .load_bug_catcher:
 	ld hl, BugCatcherTrainerOAM
 	ld c, 21  ; BUG_CATCHER has 21 unique tiles
+	jr .load_trainer_oam
+
+.load_cooltrainerm:
+	ld hl, CooltrainerMTrainerOAM
+	ld c, 15  ; COOLTRAINERM has 15 unique tiles
 	; fallthrough to .load_trainer_oam
 
 .load_trainer_oam:
@@ -10103,6 +10112,8 @@ GetTrainerTileID:
 	jr z, .trainer_tile_youngster
 	cp BUG_CATCHER
 	jr z, .trainer_tile_bug_catcher
+	cp COOLTRAINERM
+	jr z, .trainer_tile_cooltrainerm
 	; Default: no tiles
 	pop af
 	xor a
@@ -10120,6 +10131,9 @@ GetTrainerTileID:
 	jr .get_grid_tile
 .trainer_tile_bug_catcher:
 	ld hl, BugCatcherGridData
+	jr .get_grid_tile
+.trainer_tile_cooltrainerm:
+	ld hl, CooltrainerMGridData
 	; fallthrough
 .get_grid_tile:
 	pop af
@@ -10153,6 +10167,8 @@ GetTrainerXOffset:
 	jr z, .trainer_xoff_youngster
 	cp BUG_CATCHER
 	jr z, .trainer_xoff_bug_catcher
+	cp COOLTRAINERM
+	jr z, .trainer_xoff_cooltrainerm
 	; Default: no offset
 	pop af
 	xor a
@@ -10170,6 +10186,9 @@ GetTrainerXOffset:
 	jr .get_grid_xoff
 .trainer_xoff_bug_catcher:
 	ld hl, BugCatcherGridData
+	jr .get_grid_xoff
+.trainer_xoff_cooltrainerm:
+	ld hl, CooltrainerMGridData
 	; fallthrough
 .get_grid_xoff:
 	pop af
@@ -10204,6 +10223,8 @@ GetTrainerYOffset:
 	jr z, .trainer_yoff_youngster
 	cp BUG_CATCHER
 	jr z, .trainer_yoff_bug_catcher
+	cp COOLTRAINERM
+	jr z, .trainer_yoff_cooltrainerm
 	; Default: no offset
 	pop af
 	xor a
@@ -10221,6 +10242,9 @@ GetTrainerYOffset:
 	jr .get_grid_yoff
 .trainer_yoff_bug_catcher:
 	ld hl, BugCatcherGridData
+	jr .get_grid_yoff
+.trainer_yoff_cooltrainerm:
+	ld hl, CooltrainerMGridData
 	; fallthrough
 .get_grid_yoff:
 	pop af
@@ -10256,6 +10280,8 @@ GetTrainerPalette:
 	jr z, .trainer_pal_youngster
 	cp BUG_CATCHER
 	jr z, .trainer_pal_bug_catcher
+	cp COOLTRAINERM
+	jr z, .trainer_pal_cooltrainerm
 	; Default: palette 0
 	pop af
 	xor a
@@ -10273,6 +10299,9 @@ GetTrainerPalette:
 	jr .get_grid_pal
 .trainer_pal_bug_catcher:
 	ld hl, BugCatcherGridData
+	jr .get_grid_pal
+.trainer_pal_cooltrainerm:
+	ld hl, CooltrainerMGridData
 	; fallthrough
 .get_grid_pal:
 	pop af
@@ -10329,6 +10358,15 @@ BugCatcherGridData:
 	db 0,0,0,0 ,  10,3,0,0 , 11,0,3,7 ,  12,0,0,6 ,  13,0,3,0 , 0,0,0,0 ,  0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  14,3,3,7 , 15,0,2,7 ,  0,0,0,0 ,   0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 5
 	db 16,3,0,2 , 17,0,6,2 , 18,0,5,2 ,  19,0,0,2 ,  20,0,0,0 , 0,0,0,0 ,  0,0,0,0   ; y = 6
+
+CooltrainerMGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  1,0,0,2 ,   0,0,0,0 ,   0,0,0,0 ,  0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  2,-1,4,0 ,  3,-1,2,0 ,  4,-1,1,0 , 0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  5,2,0,2 ,  0,0,0,0 ,  6,4,0,2 ,   0,0,0,0 ,   0,0,0,0 ,  0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  7,0,2,6 ,   0,0,0,0 ,   8,-1,0,2 , 0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  9,0,0,6 ,   10,0,1,6 ,  11,0,0,6 , 0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0 ,  0,0,0,0   ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,  12,6,0,7 , 13,-2,0,6 , 14,2,0,7 ,  0,0,0,0 ,  0,0,0,0   ; y = 6
 
 EmptyGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0
