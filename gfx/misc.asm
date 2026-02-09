@@ -106,6 +106,7 @@ Rival1TrainerOAM:: INCBIN "gfx/trainers/rival1/oam.2bpp.lz"
 YoungsterTrainerOAM:: INCBIN "gfx/trainers/youngster/oam.2bpp.lz"
 BugCatcherTrainerOAM:: INCBIN "gfx/trainers/bug_catcher/oam.2bpp.lz"
 CooltrainerMTrainerOAM:: INCBIN "gfx/trainers/cooltrainer_m/oam.2bpp.lz"
+SageTrainerOAM:: INCBIN "gfx/trainers/sage/oam.2bpp.lz"
 
 
 SECTION "Emote Graphics", ROMX

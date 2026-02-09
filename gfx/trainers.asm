@@ -179,7 +179,7 @@ SECTION "HexManiacPic", ROMX
 HexManiacPic: INCBIN "gfx/trainers/hex_maniac.2bpp.lz"
 
 SECTION "SagePic", ROMX
-SagePic: INCBIN "gfx/trainers/sage.2bpp.lz"
+SagePic: INCBIN "gfx/trainers/sage/bg.2bpp.lz"
 
 SECTION "MediumPic", ROMX
 MediumPic: INCBIN "gfx/trainers/medium.2bpp.lz"

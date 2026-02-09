@@ -9960,6 +9960,8 @@ LoadTrainerColorSprites_Far::
 	jr z, .load_bug_catcher
 	cp COOLTRAINERM
 	jr z, .load_cooltrainerm
+	cp SAGE
+	jr z, .load_sage
 
 	; No color layer for this trainer yet
 	; fallthrough to skip
@@ -9991,6 +9993,11 @@ LoadTrainerColorSprites_Far::
 .load_cooltrainerm:
 	ld hl, CooltrainerMTrainerOAM
 	ld c, 15  ; COOLTRAINERM has 15 unique tiles
+	jr .load_trainer_oam
+
+.load_sage:
+	ld hl, SageTrainerOAM
+	ld c, 22  ; SAGE has 22 unique tiles
 	; fallthrough to .load_trainer_oam
 
 .load_trainer_oam:
@@ -10114,6 +10121,8 @@ GetTrainerTileID:
 	jr z, .trainer_tile_bug_catcher
 	cp COOLTRAINERM
 	jr z, .trainer_tile_cooltrainerm
+	cp SAGE
+	jr z, .trainer_tile_sage
 	; Default: no tiles
 	pop af
 	xor a
@@ -10134,6 +10143,9 @@ GetTrainerTileID:
 	jr .get_grid_tile
 .trainer_tile_cooltrainerm:
 	ld hl, CooltrainerMGridData
+	jr .get_grid_tile
+.trainer_tile_sage:
+	ld hl, SageGridData
 	; fallthrough
 .get_grid_tile:
 	pop af
@@ -10169,6 +10181,8 @@ GetTrainerXOffset:
 	jr z, .trainer_xoff_bug_catcher
 	cp COOLTRAINERM
 	jr z, .trainer_xoff_cooltrainerm
+	cp SAGE
+	jr z, .trainer_xoff_sage
 	; Default: no offset
 	pop af
 	xor a
@@ -10189,6 +10203,9 @@ GetTrainerXOffset:
 	jr .get_grid_xoff
 .trainer_xoff_cooltrainerm:
 	ld hl, CooltrainerMGridData
+	jr .get_grid_xoff
+.trainer_xoff_sage:
+	ld hl, SageGridData
 	; fallthrough
 .get_grid_xoff:
 	pop af
@@ -10225,6 +10242,8 @@ GetTrainerYOffset:
 	jr z, .trainer_yoff_bug_catcher
 	cp COOLTRAINERM
 	jr z, .trainer_yoff_cooltrainerm
+	cp SAGE
+	jr z, .trainer_yoff_sage
 	; Default: no offset
 	pop af
 	xor a
@@ -10245,6 +10264,9 @@ GetTrainerYOffset:
 	jr .get_grid_yoff
 .trainer_yoff_cooltrainerm:
 	ld hl, CooltrainerMGridData
+	jr .get_grid_yoff
+.trainer_yoff_sage:
+	ld hl, SageGridData
 	; fallthrough
 .get_grid_yoff:
 	pop af
@@ -10282,6 +10304,8 @@ GetTrainerPalette:
 	jr z, .trainer_pal_bug_catcher
 	cp COOLTRAINERM
 	jr z, .trainer_pal_cooltrainerm
+	cp SAGE
+	jr z, .trainer_pal_sage
 	; Default: palette 0
 	pop af
 	xor a
@@ -10302,6 +10326,9 @@ GetTrainerPalette:
 	jr .get_grid_pal
 .trainer_pal_cooltrainerm:
 	ld hl, CooltrainerMGridData
+	jr .get_grid_pal
+.trainer_pal_sage:
+	ld hl, SageGridData
 	; fallthrough
 .get_grid_pal:
 	pop af
@@ -10367,6 +10394,15 @@ CooltrainerMGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  9,0,0,6 ,   10,0,1,6 ,  11,0,0,6 , 0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0 ,  0,0,0,0   ; y = 5
 	db 0,0,0,0 ,  0,0,0,0 ,  12,6,0,7 , 13,-2,0,6 , 14,2,0,7 ,  0,0,0,0 ,  0,0,0,0   ; y = 6
+
+SageGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,   1,1,0,0 ,  2,1,-2,0 ,  0,0,0,0 ,    0,0,0,0 ,  0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  3,5,0,7 ,   4,0,0,0 ,  5,1,0,0 ,   6,-2,-1,7 ,  0,0,0,0 ,  0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  7,7,-3,2 ,  8,0,0,0 ,  9,0,0,0 ,   10,-5,-3,2 , 0,0,0,0 ,  0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 ,   11,0,0,0 , 12,-2,0,2 , 13,-1,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  14,2,4,2 ,  15,0,0,0 , 16,-1,0,6 , 17,-5,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,  18,0,5,7 ,  19,0,1,2 ,   0,0,0,0 ,  0,0,0,0   ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,   20,2,0,0 , 0,0,0,0 ,   21,-2,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 6
 
 EmptyGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0

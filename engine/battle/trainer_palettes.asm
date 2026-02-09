@@ -95,7 +95,7 @@ SetBattlePal2_EnemyBG_Far::
 	ld hl, CooltrainerMBGColor2Palette
 	ld a, BANK(CooltrainerMBGColor2Palette)
 	jr .load
-	
+
 .sage:
 	ld hl, SageBGColor2Palette
 	ld a, BANK(SageBGColor2Palette)
@@ -296,6 +296,18 @@ INCLUDE "gfx/trainers/cooltrainer_m/bg_color2.pal"
 SageBGColor2Palette:
 INCLUDE "gfx/trainers/sage/bg_color2.pal"
 
+SageOAMColorPalette:
+INCLUDE "gfx/trainers/sage/oam_color.pal"
+
+SageOAMColor2Palette:
+INCLUDE "gfx/trainers/sage/oam_color2.pal"
+
+SageOAMColor3Palette:
+INCLUDE "gfx/trainers/sage/oam_color3.pal"
+
+SageOAMColor4Palette:
+INCLUDE "gfx/trainers/sage/oam_color4.pal"
+
 TrainerOAMPaletteSetTable:
 ; Format: db trainer_class, bank, dw pal1, dw pal2, dw pal3, dw pal4
 ; Each entry is 10 bytes: 1 byte class + 1 byte bank + 8 bytes (4 pointers)
@@ -334,5 +346,11 @@ TrainerOAMPaletteSetTable:
 	dw CooltrainerMOAMColor2Palette
 	dw CooltrainerMOAMColor3Palette
 	dw CooltrainerMOAMColor4Palette
+
+	db SAGE, BANK(SageOAMColorPalette)
+	dw SageOAMColorPalette
+	dw SageOAMColor2Palette
+	dw SageOAMColor3Palette
+	dw SageOAMColor4Palette
 
 	db $FF  ; Terminator
