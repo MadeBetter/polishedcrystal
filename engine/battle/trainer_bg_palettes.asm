@@ -20,6 +20,8 @@ SetTrainerBGPalettes_Far::
 	jr z, .use_bugcatcher
 	cp COOLTRAINERM
 	jr z, .use_cooltrainerm
+	cp SAGE
+	jr z, .use_sage
 	; Add more trainers here: cp TRAINER_X; jr z, .use_trainer_x
 	ret  ; No custom palettes for this trainer
 
@@ -42,6 +44,9 @@ SetTrainerBGPalettes_Far::
 .use_cooltrainerm:
 	ld de, .CooltrainerMPaletteData
 	jr .apply_palettes
+
+.use_sage:
+	ld de, .SagePaletteData
 
 .apply_palettes:
 	; Save palette data pointer before coordinate calculations clobber DE
@@ -146,3 +151,12 @@ SetTrainerBGPalettes_Far::
   db 1, 1, 1, 5, 5, 6, 6  ; Row 4
   db 1, 1, 5, 5, 5, 5, 1  ; Row 5
   db 1, 1, 5, 5, 5, 5, 1  ; Row 6
+
+.SagePaletteData:
+  db 6, 6, 6, 6, 6, 6, 6  ; Row 0
+  db 6, 6, 6, 6, 6, 6, 6  ; Row 1
+  db 6, 6, 6, 6, 1, 1, 1 ; Row 2
+  db 1, 1, 6, 6, 1, 1, 1  ; Row 3
+  db 1, 1, 5, 5, 1, 1, 1  ; Row 4
+  db 5, 5, 5, 5, 5, 5, 5  ; Row 5
+  db 5, 5, 5, 5, 5, 5, 5  ; Row 6
