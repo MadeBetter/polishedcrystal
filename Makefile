@@ -315,6 +315,10 @@ gfx/trainers/bug_catcher/oam.2bpp: gfx/trainers/bug_catcher/oam.png
 gfx/trainers/cooltrainer_m/oam.2bpp: gfx/trainers/cooltrainer_m/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
+# Sage trainer color layer OAM
+gfx/trainers/sage/oam.2bpp: gfx/trainers/sage/oam.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
 %.2bpp: %.png
 	$Q$(RGBGFX) -c dmg $(RGBGFXFLAGS) -o $@ $<
 	$(if $(tools/gfx),\
