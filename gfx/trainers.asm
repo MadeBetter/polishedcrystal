@@ -188,7 +188,7 @@ SECTION "KimonoGirlPic", ROMX
 KimonoGirlPic: INCBIN "gfx/trainers/kimono_girl.2bpp.lz"
 
 SECTION "ElderPic", ROMX
-ElderPic: INCBIN "gfx/trainers/elder.2bpp.lz"
+ElderPic: INCBIN "gfx/trainers/elder/bg.2bpp.lz"
 
 SECTION "SrAndJrPic", ROMX
 SrAndJrPic: INCBIN "gfx/trainers/sr_and_jr.2bpp.lz"

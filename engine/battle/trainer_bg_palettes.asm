@@ -22,6 +22,8 @@ SetTrainerBGPalettes_Far::
 	jr z, .use_cooltrainerm
 	cp SAGE
 	jr z, .use_sage
+	cp ELDER
+	jr z, .use_elder
 	; Add more trainers here: cp TRAINER_X; jr z, .use_trainer_x
 	ret  ; No custom palettes for this trainer
 
@@ -47,6 +49,10 @@ SetTrainerBGPalettes_Far::
 
 .use_sage:
 	ld de, .SagePaletteData
+	jr .apply_palettes
+
+.use_elder:
+	ld de, .ElderPaletteData
 
 .apply_palettes:
 	; Save palette data pointer before coordinate calculations clobber DE
@@ -107,7 +113,7 @@ SetTrainerBGPalettes_Far::
 
 .Lyra1PaletteData:
 	; Each byte represents the palette number for that tile position
-	; Palette 1 = Enemy BG, Palette 6 = Skin (Type/Cat), Palette 5 = Clothing (Status)
+	; Palette 1 = Enemy BG, Palette 6 = Skin, Palette 5 = Clothing
 	db 1, 1, 1, 1, 1, 1, 1  ; Row 0
 	db 1, 1, 6, 6, 1, 1, 1  ; Row 1
 	db 1, 1, 6, 6, 6, 1, 1  ; Row 2
@@ -160,3 +166,12 @@ SetTrainerBGPalettes_Far::
   db 1, 1, 5, 5, 1, 1, 1  ; Row 4
   db 5, 5, 5, 5, 5, 5, 5  ; Row 5
   db 5, 5, 5, 5, 5, 5, 5  ; Row 6
+
+.ElderPaletteData:
+  db 6, 6, 6, 6, 6, 6, 6  ; Row 0
+  db 6, 6, 6, 6, 6, 6, 6  ; Row 1
+  db 1, 1, 1, 1, 5, 1, 1  ; Row 2
+  db 1, 1, 6, 6, 5, 1, 1  ; Row 3
+  db 1, 1, 5, 5, 1, 1, 1  ; Row 4
+  db 1, 1, 5, 5, 1, 1, 1  ; Row 5
+  db 1, 1, 1, 5, 1, 1, 1  ; Row 6
