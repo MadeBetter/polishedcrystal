@@ -9962,6 +9962,8 @@ LoadTrainerColorSprites_Far::
 	jr z, .load_cooltrainerm
 	cp SAGE
 	jr z, .load_sage
+	cp ELDER
+	jr z, .load_elder
 
 	; No color layer for this trainer yet
 	; fallthrough to skip
@@ -9998,6 +10000,11 @@ LoadTrainerColorSprites_Far::
 .load_sage:
 	ld hl, SageTrainerOAM
 	ld c, 22  ; SAGE has 22 unique tiles
+	jr .load_trainer_oam
+
+.load_elder:
+	ld hl, ElderTrainerOAM
+	ld c, 22  ; ELDER has 22 unique tiles
 	; fallthrough to .load_trainer_oam
 
 .load_trainer_oam:
@@ -10123,6 +10130,8 @@ GetTrainerTileID:
 	jr z, .trainer_tile_cooltrainerm
 	cp SAGE
 	jr z, .trainer_tile_sage
+	cp ELDER
+	jr z, .trainer_tile_elder
 	; Default: no tiles
 	pop af
 	xor a
@@ -10146,6 +10155,9 @@ GetTrainerTileID:
 	jr .get_grid_tile
 .trainer_tile_sage:
 	ld hl, SageGridData
+	jr .get_grid_tile
+.trainer_tile_elder:
+	ld hl, ElderGridData
 	; fallthrough
 .get_grid_tile:
 	pop af
@@ -10183,6 +10195,8 @@ GetTrainerXOffset:
 	jr z, .trainer_xoff_cooltrainerm
 	cp SAGE
 	jr z, .trainer_xoff_sage
+	cp ELDER
+	jr z, .trainer_xoff_elder
 	; Default: no offset
 	pop af
 	xor a
@@ -10206,6 +10220,9 @@ GetTrainerXOffset:
 	jr .get_grid_xoff
 .trainer_xoff_sage:
 	ld hl, SageGridData
+	jr .get_grid_xoff
+.trainer_xoff_elder:
+	ld hl, ElderGridData
 	; fallthrough
 .get_grid_xoff:
 	pop af
@@ -10244,6 +10261,8 @@ GetTrainerYOffset:
 	jr z, .trainer_yoff_cooltrainerm
 	cp SAGE
 	jr z, .trainer_yoff_sage
+	cp ELDER
+	jr z, .trainer_yoff_elder
 	; Default: no offset
 	pop af
 	xor a
@@ -10267,6 +10286,9 @@ GetTrainerYOffset:
 	jr .get_grid_yoff
 .trainer_yoff_sage:
 	ld hl, SageGridData
+	jr .get_grid_yoff
+.trainer_yoff_elder:
+	ld hl, ElderGridData
 	; fallthrough
 .get_grid_yoff:
 	pop af
@@ -10306,6 +10328,8 @@ GetTrainerPalette:
 	jr z, .trainer_pal_cooltrainerm
 	cp SAGE
 	jr z, .trainer_pal_sage
+	cp ELDER
+	jr z, .trainer_pal_elder
 	; Default: palette 0
 	pop af
 	xor a
@@ -10329,6 +10353,9 @@ GetTrainerPalette:
 	jr .get_grid_pal
 .trainer_pal_sage:
 	ld hl, SageGridData
+	jr .get_grid_pal
+.trainer_pal_elder:
+	ld hl, ElderGridData
 	; fallthrough
 .get_grid_pal:
 	pop af
@@ -10403,6 +10430,15 @@ SageGridData:
 	db 0,0,0,0 ,  14,2,4,2 ,  15,0,0,0 , 16,-1,0,6 , 17,-5,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,  18,0,5,7 ,  19,0,1,2 ,   0,0,0,0 ,  0,0,0,0   ; y = 5
 	db 0,0,0,0 ,  0,0,0,0 ,   20,2,0,0 , 0,0,0,0 ,   21,-2,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 6
+
+ElderGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,   1,-5,-5,0 ,   0,0,0,0 ,  0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  2,1,1,0 ,   3,-4,-5,0 , 4,-4,-4,0 ,   0,0,0,0 ,  0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  5,10,0,0 , 6,0,1,2 ,   7,0,0,2 ,   8,-3,-3,6 ,   0,0,0,0 ,  0,0,0,0   ; y = 2
+	db 9,10,1,0 , 10,8,0,0 , 11,-1,0,7 , 12,0,0,7 ,  0,0,0,0 ,     0,0,0,0 ,  0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  13,2,2,0 , 14,0,0,7 ,  15,-1,0,6 , 16,-4,0,0 ,   0,0,0,0 ,  0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  17,0,0,7 ,  18,-3,0,6 , 19,-10,-1,6 , 0,0,0,0 ,  0,0,0,0   ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,  20,-3,0,0 , 21,1,0,0 ,  0,0,0,0 ,     0,0,0,0 ,  0,0,0,0   ; y = 6
 
 EmptyGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0

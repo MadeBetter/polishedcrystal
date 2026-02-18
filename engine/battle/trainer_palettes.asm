@@ -65,6 +65,8 @@ SetBattlePal2_EnemyBG_Far::
 	jr z, .cooltrainerm
 	cp SAGE
 	jr z, .sage
+	cp ELDER
+	jr z, .elder
 	; Add more trainers here as needed
 
 	; Default: use status palette
@@ -99,6 +101,11 @@ SetBattlePal2_EnemyBG_Far::
 .sage:
 	ld hl, SageBGColor2Palette
 	ld a, BANK(SageBGColor2Palette)
+	jr .load
+
+.elder:
+	ld hl, ElderBGColor2Palette
+	ld a, BANK(ElderBGColor2Palette)
 	; fallthrough
 .load:
 	jp LoadTrainerPalette_White_Col1_Col2_Black_Far
@@ -308,6 +315,21 @@ INCLUDE "gfx/trainers/sage/oam_color3.pal"
 SageOAMColor4Palette:
 INCLUDE "gfx/trainers/sage/oam_color4.pal"
 
+ElderBGColor2Palette:
+INCLUDE "gfx/trainers/elder/bg_color2.pal"
+
+ElderOAMColorPalette:
+INCLUDE "gfx/trainers/elder/oam_color.pal"
+
+ElderOAMColor2Palette:
+INCLUDE "gfx/trainers/elder/oam_color2.pal"
+
+ElderOAMColor3Palette:
+INCLUDE "gfx/trainers/elder/oam_color3.pal"
+
+ElderOAMColor4Palette:
+INCLUDE "gfx/trainers/elder/oam_color4.pal"
+
 TrainerOAMPaletteSetTable:
 ; Format: db trainer_class, bank, dw pal1, dw pal2, dw pal3, dw pal4
 ; Each entry is 10 bytes: 1 byte class + 1 byte bank + 8 bytes (4 pointers)
@@ -352,5 +374,11 @@ TrainerOAMPaletteSetTable:
 	dw SageOAMColor2Palette
 	dw SageOAMColor3Palette
 	dw SageOAMColor4Palette
+
+	db ELDER, BANK(ElderOAMColorPalette)
+	dw ElderOAMColorPalette
+	dw ElderOAMColor2Palette
+	dw ElderOAMColor3Palette
+	dw ElderOAMColor4Palette
 
 	db $FF  ; Terminator

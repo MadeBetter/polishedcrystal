@@ -319,6 +319,10 @@ gfx/trainers/cooltrainer_m/oam.2bpp: gfx/trainers/cooltrainer_m/oam.png
 gfx/trainers/sage/oam.2bpp: gfx/trainers/sage/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
+# Elder trainer color layer OAM
+gfx/trainers/sage/oam.2bpp: gfx/trainers/elder/oam.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
 %.2bpp: %.png
 	$Q$(RGBGFX) -c dmg $(RGBGFXFLAGS) -o $@ $<
 	$(if $(tools/gfx),\
