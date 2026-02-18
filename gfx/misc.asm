@@ -107,6 +107,7 @@ YoungsterTrainerOAM:: INCBIN "gfx/trainers/youngster/oam.2bpp.lz"
 BugCatcherTrainerOAM:: INCBIN "gfx/trainers/bug_catcher/oam.2bpp.lz"
 CooltrainerMTrainerOAM:: INCBIN "gfx/trainers/cooltrainer_m/oam.2bpp.lz"
 SageTrainerOAM:: INCBIN "gfx/trainers/sage/oam.2bpp.lz"
+ElderTrainerOAM:: INCBIN "gfx/trainers/elder/oam.2bpp.lz"
 
 
 SECTION "Emote Graphics", ROMX
