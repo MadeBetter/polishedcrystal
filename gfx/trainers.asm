@@ -170,7 +170,7 @@ SECTION "SchoolboyPic", ROMX
 SchoolboyPic: INCBIN "gfx/trainers/schoolboy.2bpp.lz"
 
 SECTION "SchoolgirlPic", ROMX
-SchoolgirlPic: INCBIN "gfx/trainers/schoolgirl.2bpp.lz"
+SchoolgirlPic: INCBIN "gfx/trainers/schoolgirl/bg.2bpp.lz"
 
 SECTION "PsychicTPic", ROMX
 PsychicTPic: INCBIN "gfx/trainers/psychic_t.2bpp.lz"

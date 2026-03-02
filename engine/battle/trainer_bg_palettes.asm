@@ -24,6 +24,8 @@ SetTrainerBGPalettes_Far::
 	jr z, .use_sage
 	cp ELDER
 	jr z, .use_elder
+	cp SCHOOLGIRL
+	jr z, .use_schoolgirl
 	; Add more trainers here: cp TRAINER_X; jr z, .use_trainer_x
 	ret  ; No custom palettes for this trainer
 
@@ -53,6 +55,10 @@ SetTrainerBGPalettes_Far::
 
 .use_elder:
 	ld de, .ElderPaletteData
+	jr .apply_palettes
+
+.use_schoolgirl:
+	ld de, .SchoolgirlPaletteData
 
 .apply_palettes:
 	; Save palette data pointer before coordinate calculations clobber DE
@@ -175,3 +181,12 @@ SetTrainerBGPalettes_Far::
   db 1, 1, 5, 5, 1, 1, 1  ; Row 4
   db 1, 1, 5, 5, 1, 1, 1  ; Row 5
   db 1, 1, 1, 5, 1, 1, 1  ; Row 6
+
+.SchoolgirlPaletteData:
+  db 1, 1, 1, 1, 1, 1, 1  ; Row 0
+  db 1, 1, 1, 1, 1, 1, 1  ; Row 1
+  db 1, 1, 5, 6, 6, 1, 1  ; Row 2
+  db 1, 1, 6, 6, 1, 1, 1  ; Row 3
+  db 1, 1, 5, 5, 1, 1, 1  ; Row 4
+  db 1, 6, 6, 6, 1, 1, 1  ; Row 5
+  db 1, 1, 5, 6, 1, 1, 1  ; Row 6

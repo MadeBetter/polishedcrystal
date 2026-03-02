@@ -9964,6 +9964,8 @@ LoadTrainerColorSprites_Far::
 	jr z, .load_sage
 	cp ELDER
 	jr z, .load_elder
+	cp SCHOOLGIRL
+	jr z, .load_schoolgirl
 
 	; No color layer for this trainer yet
 	; fallthrough to skip
@@ -10005,6 +10007,11 @@ LoadTrainerColorSprites_Far::
 .load_elder:
 	ld hl, ElderTrainerOAM
 	ld c, 22  ; ELDER has 22 unique tiles
+	jr .load_trainer_oam
+
+.load_schoolgirl:
+	ld hl, SchoolgirlTrainerOAM
+	ld c, 17  ; ELDER has 17 unique tiles
 	; fallthrough to .load_trainer_oam
 
 .load_trainer_oam:
@@ -10132,6 +10139,8 @@ GetTrainerTileID:
 	jr z, .trainer_tile_sage
 	cp ELDER
 	jr z, .trainer_tile_elder
+	cp SCHOOLGIRL
+	jr z, .trainer_tile_schoolgirl
 	; Default: no tiles
 	pop af
 	xor a
@@ -10158,6 +10167,9 @@ GetTrainerTileID:
 	jr .get_grid_tile
 .trainer_tile_elder:
 	ld hl, ElderGridData
+	jr .get_grid_tile
+.trainer_tile_schoolgirl:
+	ld hl, SchoolgirlGridData
 	; fallthrough
 .get_grid_tile:
 	pop af
@@ -10197,6 +10209,8 @@ GetTrainerXOffset:
 	jr z, .trainer_xoff_sage
 	cp ELDER
 	jr z, .trainer_xoff_elder
+	cp SCHOOLGIRL
+	jr z, .trainer_xoff_schoolgirl
 	; Default: no offset
 	pop af
 	xor a
@@ -10223,6 +10237,9 @@ GetTrainerXOffset:
 	jr .get_grid_xoff
 .trainer_xoff_elder:
 	ld hl, ElderGridData
+	jr .get_grid_xoff
+.trainer_xoff_schoolgirl:
+	ld hl, SchoolgirlGridData
 	; fallthrough
 .get_grid_xoff:
 	pop af
@@ -10263,6 +10280,8 @@ GetTrainerYOffset:
 	jr z, .trainer_yoff_sage
 	cp ELDER
 	jr z, .trainer_yoff_elder
+	cp SCHOOLGIRL
+	jr z, .trainer_yoff_schoolgirl
 	; Default: no offset
 	pop af
 	xor a
@@ -10289,6 +10308,9 @@ GetTrainerYOffset:
 	jr .get_grid_yoff
 .trainer_yoff_elder:
 	ld hl, ElderGridData
+	jr .get_grid_yoff
+.trainer_yoff_schoolgirl:
+	ld hl, SchoolgirlGridData
 	; fallthrough
 .get_grid_yoff:
 	pop af
@@ -10330,6 +10352,8 @@ GetTrainerPalette:
 	jr z, .trainer_pal_sage
 	cp ELDER
 	jr z, .trainer_pal_elder
+	cp SCHOOLGIRL
+	jr z, .trainer_pal_schoolgirl
 	; Default: palette 0
 	pop af
 	xor a
@@ -10356,6 +10380,9 @@ GetTrainerPalette:
 	jr .get_grid_pal
 .trainer_pal_elder:
 	ld hl, ElderGridData
+	jr .get_grid_pal
+.trainer_pal_schoolgirl:
+	ld hl, SchoolgirlGridData
 	; fallthrough
 .get_grid_pal:
 	pop af
@@ -10439,6 +10466,15 @@ ElderGridData:
 	db 0,0,0,0 ,  13,2,2,0 , 14,0,0,7 ,  15,-1,0,6 , 16,-4,0,0 ,   0,0,0,0 ,  0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  0,0,0,0 ,  17,0,0,7 ,  18,-3,0,6 , 19,-10,-1,6 , 0,0,0,0 ,  0,0,0,0   ; y = 5
 	db 0,0,0,0 ,  0,0,0,0 ,  20,-3,0,0 , 21,1,0,0 ,  0,0,0,0 ,     0,0,0,0 ,  0,0,0,0   ; y = 6
+
+SchoolgirlGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,   0,0,0,0 ,  0,0,0,0 ,    0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,   1,0,0,2 ,  0,0,0,0 ,    2,0,-3,6 ,  0,0,0,0 ,   0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  0,0,0,0 ,   3,0,0,6 ,  4,0,1,0 ,    5,0,0,0 ,   6,-5,0,2 ,  0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 ,   7,6,1,7 ,  8,-1,0,2 ,   0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  9,0,0,2 ,   10,0,0,6 , 11,0,0,6 ,   0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  12,4,0,7 ,  13,0,3,7 , 14,0,0,7 ,   0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 5
+	db 0,0,0,0 ,  0,0,0,0 ,   15,4,0,6 , 16,-3,1,2 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 6
 
 EmptyGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0

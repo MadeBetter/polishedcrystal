@@ -67,6 +67,8 @@ SetBattlePal2_EnemyBG_Far::
 	jr z, .sage
 	cp ELDER
 	jr z, .elder
+	cp SCHOOLGIRL
+	jr z, .schoolgirl
 	; Add more trainers here as needed
 
 	; Default: use status palette
@@ -106,6 +108,11 @@ SetBattlePal2_EnemyBG_Far::
 .elder:
 	ld hl, ElderBGColor2Palette
 	ld a, BANK(ElderBGColor2Palette)
+	jr .load
+
+.schoolgirl:
+	ld hl, SchoolgirlBGColor2Palette
+	ld a, BANK(SchoolgirlBGColor2Palette)
 	; fallthrough
 .load:
 	jp LoadTrainerPalette_White_Col1_Col2_Black_Far
@@ -330,6 +337,21 @@ INCLUDE "gfx/trainers/elder/oam_color3.pal"
 ElderOAMColor4Palette:
 INCLUDE "gfx/trainers/elder/oam_color4.pal"
 
+SchoolgirlBGColor2Palette:
+INCLUDE "gfx/trainers/schoolgirl/bg_color2.pal"
+
+SchoolgirlOAMColorPalette:
+INCLUDE "gfx/trainers/schoolgirl/oam_color.pal"
+
+SchoolgirlOAMColor2Palette:
+INCLUDE "gfx/trainers/schoolgirl/oam_color2.pal"
+
+SchoolgirlOAMColor3Palette:
+INCLUDE "gfx/trainers/schoolgirl/oam_color3.pal"
+
+SchoolgirlOAMColor4Palette:
+INCLUDE "gfx/trainers/schoolgirl/oam_color4.pal"
+
 TrainerOAMPaletteSetTable:
 ; Format: db trainer_class, bank, dw pal1, dw pal2, dw pal3, dw pal4
 ; Each entry is 10 bytes: 1 byte class + 1 byte bank + 8 bytes (4 pointers)
@@ -380,5 +402,11 @@ TrainerOAMPaletteSetTable:
 	dw ElderOAMColor2Palette
 	dw ElderOAMColor3Palette
 	dw ElderOAMColor4Palette
+
+	db SCHOOLGIRL, BANK(SchoolgirlOAMColorPalette)
+	dw SchoolgirlOAMColorPalette
+	dw SchoolgirlOAMColor2Palette
+	dw SchoolgirlOAMColor3Palette
+	dw SchoolgirlOAMColor4Palette
 
 	db $FF  ; Terminator
