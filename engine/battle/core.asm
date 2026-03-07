@@ -10011,7 +10011,7 @@ LoadTrainerColorSprites_Far::
 
 .load_schoolgirl:
 	ld hl, SchoolgirlTrainerOAM
-	ld c, 17  ; ELDER has 17 unique tiles
+	ld c, 17  ; Schoolgirl has 17 unique tiles
 	; fallthrough to .load_trainer_oam
 
 .load_trainer_oam:
