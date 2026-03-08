@@ -113,7 +113,7 @@ SECTION "FisherPic", ROMX
 FisherPic: INCBIN "gfx/trainers/fisher.2bpp.lz"
 
 SECTION "BirdKeeperPic", ROMX
-BirdKeeperPic: INCBIN "gfx/trainers/bird_keeper.2bpp.lz"
+BirdKeeperPic: INCBIN "gfx/trainers/bird_keeper/bg.2bpp.lz"
 
 SECTION "HikerPic", ROMX
 HikerPic: INCBIN "gfx/trainers/hiker.2bpp.lz"

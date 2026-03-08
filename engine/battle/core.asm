@@ -9966,6 +9966,8 @@ LoadTrainerColorSprites_Far::
 	jr z, .load_elder
 	cp SCHOOLGIRL
 	jr z, .load_schoolgirl
+	cp BIRD_KEEPER
+	jr z, .load_bird_keeper
 
 	; No color layer for this trainer yet
 	; fallthrough to skip
@@ -10012,6 +10014,12 @@ LoadTrainerColorSprites_Far::
 .load_schoolgirl:
 	ld hl, SchoolgirlTrainerOAM
 	ld c, 17  ; Schoolgirl has 17 unique tiles
+	jr .load_trainer_oam
+
+.load_bird_keeper:
+	ld hl, BirdKeeperTrainerOAM
+	ld c, 20  ; Schoolgirl has 20 unique tiles
+
 	; fallthrough to .load_trainer_oam
 
 .load_trainer_oam:
@@ -10141,6 +10149,8 @@ GetTrainerTileID:
 	jr z, .trainer_tile_elder
 	cp SCHOOLGIRL
 	jr z, .trainer_tile_schoolgirl
+	cp BIRD_KEEPER
+	jr z, .trainer_tile_bird_keeper
 	; Default: no tiles
 	pop af
 	xor a
@@ -10170,6 +10180,9 @@ GetTrainerTileID:
 	jr .get_grid_tile
 .trainer_tile_schoolgirl:
 	ld hl, SchoolgirlGridData
+	jr .get_grid_tile
+.trainer_tile_bird_keeper:
+	ld hl, BirdKeeperGridData
 	; fallthrough
 .get_grid_tile:
 	pop af
@@ -10211,6 +10224,8 @@ GetTrainerXOffset:
 	jr z, .trainer_xoff_elder
 	cp SCHOOLGIRL
 	jr z, .trainer_xoff_schoolgirl
+	cp BIRD_KEEPER
+	jr z, .trainer_xoff_bird_keeper
 	; Default: no offset
 	pop af
 	xor a
@@ -10240,6 +10255,9 @@ GetTrainerXOffset:
 	jr .get_grid_xoff
 .trainer_xoff_schoolgirl:
 	ld hl, SchoolgirlGridData
+	jr .get_grid_xoff
+.trainer_xoff_bird_keeper:
+	ld hl, BirdKeeperGridData
 	; fallthrough
 .get_grid_xoff:
 	pop af
@@ -10282,6 +10300,8 @@ GetTrainerYOffset:
 	jr z, .trainer_yoff_elder
 	cp SCHOOLGIRL
 	jr z, .trainer_yoff_schoolgirl
+	cp BIRD_KEEPER
+	jr z, .trainer_yoff_bird_keeper
 	; Default: no offset
 	pop af
 	xor a
@@ -10311,6 +10331,9 @@ GetTrainerYOffset:
 	jr .get_grid_yoff
 .trainer_yoff_schoolgirl:
 	ld hl, SchoolgirlGridData
+	jr .get_grid_yoff
+.trainer_yoff_bird_keeper:
+	ld hl, BirdKeeperGridData
 	; fallthrough
 .get_grid_yoff:
 	pop af
@@ -10354,6 +10377,8 @@ GetTrainerPalette:
 	jr z, .trainer_pal_elder
 	cp SCHOOLGIRL
 	jr z, .trainer_pal_schoolgirl
+	cp BIRD_KEEPER
+	jr z, .trainer_pal_bird_keeper
 	; Default: palette 0
 	pop af
 	xor a
@@ -10383,6 +10408,9 @@ GetTrainerPalette:
 	jr .get_grid_pal
 .trainer_pal_schoolgirl:
 	ld hl, SchoolgirlGridData
+	jr .get_grid_pal
+.trainer_pal_bird_keeper:
+	ld hl, BirdKeeperGridData
 	; fallthrough
 .get_grid_pal:
 	pop af
@@ -10475,6 +10503,15 @@ SchoolgirlGridData:
 	db 0,0,0,0 ,  9,0,0,2 ,   10,0,0,6 , 11,0,0,6 ,   0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 4
 	db 0,0,0,0 ,  12,4,0,7 ,  13,0,3,7 , 14,0,0,7 ,   0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 5
 	db 0,0,0,0 ,  0,0,0,0 ,   15,4,0,6 , 16,-3,1,2 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 6
+
+BirdKeeperGridData:
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  1,-2,-2,0 , 2,-2,-3,0 , 0,0,0,0 ,   0,0,0,0   ; y = 0
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  3,-3,-4,2 , 4,-2,-3,2 , 0,0,0,0 ,   0,0,0,0   ; y = 1
+	db 0,0,0,0 ,  5,0,-3,0 , 6,0,-4,7 , 7,-1,0,6 ,  0,0,0,0 ,   0,0,0,0 ,   0,0,0,0   ; y = 2
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  8,1,1,7 ,   9,1,-3,7 ,  0,0,0,0 ,   0,0,0,0   ; y = 3
+	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  10,0,-2,6 , 11,0,0,6 ,  12,-2,0,7 , 0,0,0,0   ; y = 4
+	db 0,0,0,0 ,  0,0,0,0 ,  13,0,0,6 , 0,0,0,0 ,   14,0,0,6 ,  15,0,-1,0 , 16,0,0,0   ; y = 5
+	db 0,0,0,0 ,  17,1,0,7 , 0,0,0,0 ,  0,0,0,0 ,   18,2,0,7 ,  19,0,1,7 ,   0,0,0,0   ; y = 6
 
 EmptyGridData:
 	db 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 , 0,0,0,0 ,  0,0,0,0 ,  0,0,0,0 ,  0,0,0,0   ; y = 0

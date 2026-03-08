@@ -327,6 +327,10 @@ gfx/trainers/elder/oam.2bpp: gfx/trainers/elder/oam.png
 gfx/trainers/schoolgirl/oam.2bpp: gfx/trainers/schoolgirl/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
+# BirdKeeper trainer color layer OAM
+gfx/trainers/bird_keeper/oam.2bpp: gfx/trainers/bird_keeper/oam.png
+	$Q$(RGBGFX) -c dmg -u -o $@ $<
+
 %.2bpp: %.png
 	$Q$(RGBGFX) -c dmg $(RGBGFXFLAGS) -o $@ $<
 	$(if $(tools/gfx),\

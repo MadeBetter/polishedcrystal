@@ -109,6 +109,7 @@ CooltrainerMTrainerOAM:: INCBIN "gfx/trainers/cooltrainer_m/oam.2bpp.lz"
 SageTrainerOAM:: INCBIN "gfx/trainers/sage/oam.2bpp.lz"
 ElderTrainerOAM:: INCBIN "gfx/trainers/elder/oam.2bpp.lz"
 SchoolgirlTrainerOAM:: INCBIN "gfx/trainers/schoolgirl/oam.2bpp.lz"
+BirdKeeperTrainerOAM:: INCBIN "gfx/trainers/bird_keeper/oam.2bpp.lz"
 
 
 SECTION "Emote Graphics", ROMX

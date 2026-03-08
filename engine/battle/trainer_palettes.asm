@@ -69,6 +69,8 @@ SetBattlePal2_EnemyBG_Far::
 	jr z, .elder
 	cp SCHOOLGIRL
 	jr z, .schoolgirl
+	cp BIRD_KEEPER
+	jr z, .birdkeeper
 	; Add more trainers here as needed
 
 	; Default: use status palette
@@ -113,6 +115,11 @@ SetBattlePal2_EnemyBG_Far::
 .schoolgirl:
 	ld hl, SchoolgirlBGColor2Palette
 	ld a, BANK(SchoolgirlBGColor2Palette)
+	jr .load
+
+.birdkeeper:
+	ld hl, BirdKeeperBGColor2Palette
+	ld a, BANK(BirdKeeperBGColor2Palette)
 	; fallthrough
 .load:
 	jp LoadTrainerPalette_White_Col1_Col2_Black_Far
@@ -352,6 +359,21 @@ INCLUDE "gfx/trainers/schoolgirl/oam_color3.pal"
 SchoolgirlOAMColor4Palette:
 INCLUDE "gfx/trainers/schoolgirl/oam_color4.pal"
 
+BirdKeeperBGColor2Palette:
+INCLUDE "gfx/trainers/bird_keeper/bg_color2.pal"
+
+BirdKeeperOAMColorPalette:
+INCLUDE "gfx/trainers/bird_keeper/oam_color.pal"
+
+BirdKeeperOAMColor2Palette:
+INCLUDE "gfx/trainers/bird_keeper/oam_color2.pal"
+
+BirdKeeperOAMColor3Palette:
+INCLUDE "gfx/trainers/bird_keeper/oam_color3.pal"
+
+BirdKeeperOAMColor4Palette:
+INCLUDE "gfx/trainers/bird_keeper/oam_color4.pal"
+
 TrainerOAMPaletteSetTable:
 ; Format: db trainer_class, bank, dw pal1, dw pal2, dw pal3, dw pal4
 ; Each entry is 10 bytes: 1 byte class + 1 byte bank + 8 bytes (4 pointers)
@@ -408,5 +430,11 @@ TrainerOAMPaletteSetTable:
 	dw SchoolgirlOAMColor2Palette
 	dw SchoolgirlOAMColor3Palette
 	dw SchoolgirlOAMColor4Palette
+
+	db BIRD_KEEPER, BANK(BirdKeeperOAMColorPalette)
+	dw BirdKeeperOAMColorPalette
+	dw BirdKeeperOAMColor2Palette
+	dw BirdKeeperOAMColor3Palette
+	dw BirdKeeperOAMColor4Palette
 
 	db $FF  ; Terminator
