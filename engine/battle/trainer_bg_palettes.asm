@@ -204,5 +204,5 @@ SetTrainerBGPalettes_Far::
   db 6, 6, 6, 6, 6, 6, 6  ; Row 2
   db 6, 6, 5, 5, 6, 6, 6  ; Row 3
   db 1, 1, 5, 5, 6, 6, 1  ; Row 4
-  db 6, 6, 5, 5, 1, 1, 1  ; Row 5
+  db 6, 5, 5, 5, 1, 6, 1  ; Row 5
   db 1, 5, 5, 5, 5, 6, 6  ; Row 6
