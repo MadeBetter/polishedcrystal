@@ -18,6 +18,7 @@ Tilesets::
 	tileset TilesetJohtoSacred
 	tileset TilesetBattleTowerOutside
 	tileset TilesetSnowtopMountain
+	tileset TilesetNewBarkCherrygrove
 	tileset TilesetKanto
 	tileset TilesetKantoNorth
 	tileset TilesetKantoUrban
@@ -162,6 +163,28 @@ SECTION "Tileset Data - battle tower outside", ROMX
 TilesetBattleTowerOutsideMeta:: INCBIN "data/tilesets/battle_tower_outside_metatiles.bin.lzp"
 TilesetBattleTowerOutsideAttr:: INCBIN "data/tilesets/battle_tower_outside_attributes.bin.lzp"
 TilesetBattleTowerOutsideColl:: INCBIN "data/tilesets/battle_tower_outside_collision.bin.lzp"
+
+
+SECTION "Tileset Graphics - new bark cherrygrove vram0", ROMX
+
+TilesetNewBarkCherrygroveGFX0:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram0p.lzp"
+
+
+SECTION "Tileset Graphics - new bark cherrygrove vram1", ROMX
+
+TilesetNewBarkCherrygroveGFX1:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram1.lzp"
+
+
+SECTION "Tileset Graphics - new bark cherrygrove vram2", ROMX
+
+TilesetNewBarkCherrygroveGFX2:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram2.lzp"
+
+
+SECTION "Tileset Data - new bark cherrygrove", ROMX
+
+TilesetNewBarkCherrygroveMeta:: INCBIN "data/tilesets/new_bark_cherrygrove_metatiles.bin.lzp"
+TilesetNewBarkCherrygroveAttr:: INCBIN "data/tilesets/new_bark_cherrygrove_attributes.bin.lzp"
+TilesetNewBarkCherrygroveColl:: INCBIN "data/tilesets/new_bark_cherrygrove_collision.bin.lzp"
 
 
 SECTION "Tileset Graphics - kanto common vram0", ROMX

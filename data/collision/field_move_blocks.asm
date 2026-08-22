@@ -5,6 +5,7 @@ CutGrassBlockPointers:
 	dbw TILESET_JOHTO_COAST, .johto_coast
 	dbw TILESET_JOHTO_OUTLANDS, .johto_outlands
 	dbw TILESET_JOHTO_ANCIENT, .johto_ancient
+	dbw TILESET_NEW_BARK_CHERRYGROVE, .new_bark_cherrygrove
 	dbw TILESET_KANTO, .kanto
 	dbw TILESET_KANTO_NORTH, .kanto_north
 	dbw TILESET_KANTO_URBAN, .kanto_urban
@@ -34,6 +35,18 @@ CutGrassBlockPointers:
 	db $92, $8e
 	db $93, $8f
 	db $97, $02
+	db -1
+
+.new_bark_cherrygrove
+	db $96, $02
+	db $97, $02
+	db $f6, $56
+	db $f7, $57
+	db $03, $02
+	db $74, $24
+	db $75, $23
+	db $76, $0b
+	db $77, $1b
 	db -1
 
 .kanto

@@ -507,6 +507,29 @@ AnimateKantoFlowerTile:
 .KantoFlowerTileFrames:
 INCBIN "gfx/tilesets/animations/flower_kanto.2bpp"
 
+AnimateRedPlusPlusFlowerTile:
+	ld hl, sp + 0
+	ld b, h
+	ld c, l
+
+	; period 2, every 2 frames, offset to 1 tile (16 bytes)
+	ld a, [wTileAnimationTimer]
+	maskbits 2, 1
+	add a
+	add a
+	add a
+
+	add LOW(.FlowerTileFrames)
+	ld l, a
+	adc HIGH(.FlowerTileFrames)
+	sub l
+	ld h, a
+
+	jmp WriteTileHLToDE
+
+.FlowerTileFrames:
+INCBIN "gfx/tilesets/animations/flower_redplusplus_new_bark.2bpp"
+
 AnimateLavaBubbleTile1:
 	ld hl, sp + 0
 	ld b, h

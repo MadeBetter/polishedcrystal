@@ -22,6 +22,20 @@ MACRO? tileframe
 	dw \1 ; function
 ENDM
 
+TilesetNewBarkCherrygroveAnim::
+	tileframe AnimateFarawayWaterTiles,         $0:03
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe AnimateRedPlusPlusFlowerTile,     $0:02
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe StandingTileFrame8
+	tileframe DoneTileAnimation
+
 TilesetJohtoTraditionalAnim::
 TilesetJohtoOutlandsAnim::
 TilesetJohtoAncientAnim::

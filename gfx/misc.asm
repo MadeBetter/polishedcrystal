@@ -1,6 +1,7 @@
 SECTION "Roof Graphics", ROMX
 
 NewBarkRoofGFX:: INCBIN "gfx/tilesets/roofs/new_bark.2bpp.lzp"
+RedPlusPlusNewBarkRoofGFX:: INCBIN "gfx/tilesets/roofs/redplusplus_new_bark.2bpp.lzp"
 VioletRoofGFX::  INCBIN "gfx/tilesets/roofs/violet.2bpp.lzp"
 AzaleaRoofGFX::  INCBIN "gfx/tilesets/roofs/azalea.2bpp.lzp"
 OlivineRoofGFX:: INCBIN "gfx/tilesets/roofs/olivine.2bpp.lzp"

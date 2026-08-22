@@ -10,7 +10,7 @@ MACRO map_attributes
 	DEF MAP_CONNECTIONS_\2 = 0
 ENDM
 
-	map_attributes NewBarkTown, NEW_BARK_TOWN, $5
+	map_attributes NewBarkTown, NEW_BARK_TOWN, $f
 	connection west, Route29, ROUTE_29, 0
 	connection east, Route27, ROUTE_27, 0
 

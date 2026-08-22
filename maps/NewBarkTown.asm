@@ -8,34 +8,34 @@ NewBarkTown_MapScriptHeader:
 	callback MAPCALLBACK_NEWMAP, NewBarkTownFlyPoint
 
 	def_warp_events
-	warp_event  6,  3, ELMS_LAB, 1
-	warp_event 15,  5, PLAYERS_HOUSE_1F, 1
-	warp_event  3, 11, PLAYERS_NEIGHBORS_HOUSE, 1
-	warp_event 11, 13, LYRAS_HOUSE_1F, 1
-	warp_event 10,  2, ELMS_HOUSE, 2
+	warp_event  8,  3, ELMS_LAB, 1
+	warp_event 17,  5, PLAYERS_HOUSE_1F, 1
+	warp_event  5, 12, PLAYERS_NEIGHBORS_HOUSE, 1
+	warp_event 13, 13, LYRAS_HOUSE_1F, 1
+	warp_event 12,  2, ELMS_HOUSE, 2
 
 	def_coord_events
 	coord_event  1,  8, SCENE_NEWBARKTOWN_TEACHER_STOPS_YOU, NewBarkTown_TeacherStopsYouTrigger1
 	coord_event  1,  9, SCENE_NEWBARKTOWN_TEACHER_STOPS_YOU, NewBarkTown_TeacherStopsYouTrigger2
-	coord_event  6,  4, SCENE_NEWBARKTOWN_TEACHER_STOPS_YOU, NewBarkTown_LyraIntroTrigger
+	coord_event  8,  4, SCENE_NEWBARKTOWN_TEACHER_STOPS_YOU, NewBarkTown_LyraIntroTrigger
 	coord_event 19,  6, SCENE_NEWBARKTOWN_LYRA_FINAL, NewBarkTown_LyraFinalTrigger1
 	coord_event 19,  7, SCENE_NEWBARKTOWN_LYRA_FINAL, NewBarkTown_LyraFinalTrigger2
 	coord_event 19,  8, SCENE_NEWBARKTOWN_LYRA_FINAL, NewBarkTown_LyraFinalTrigger3
 	coord_event 19,  9, SCENE_NEWBARKTOWN_LYRA_FINAL, NewBarkTown_LyraFinalTrigger4
 
 	def_bg_events
-	bg_event  8,  8, BGEVENT_JUMPTEXT, NewBarkTownSignText
-	bg_event 13,  5, BGEVENT_JUMPTEXT, PlayersHouseSignText
-	bg_event  3,  3, BGEVENT_JUMPTEXT, ElmsLabSignText
-	bg_event  9, 13, BGEVENT_JUMPTEXT, LyrasHouseSignText
-	bg_event  3,  2, BGEVENT_ITEM + POTION, EVENT_NEW_BARK_TOWN_HIDDEN_POTION
+	bg_event 10,  8, BGEVENT_JUMPTEXT, NewBarkTownSignText
+	bg_event 15,  5, BGEVENT_JUMPTEXT, PlayersHouseSignText
+	bg_event  5,  3, BGEVENT_JUMPTEXT, ElmsLabSignText
+	bg_event 11, 13, BGEVENT_JUMPTEXT, LyrasHouseSignText
+	bg_event  5,  2, BGEVENT_ITEM + POTION, EVENT_NEW_BARK_TOWN_HIDDEN_POTION
 
 	def_object_events
-	object_event  3,  2, SPRITE_RIVAL, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, NewBarkTownRivalScript, EVENT_RIVAL_NEW_BARK_TOWN
-	object_event  1,  6, SPRITE_LYRA, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_LYRA_NEW_BARK_TOWN
+	object_event  5,  2, SPRITE_RIVAL, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, NewBarkTownRivalScript, EVENT_RIVAL_NEW_BARK_TOWN
+	object_event  3,  6, SPRITE_LYRA, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_LYRA_NEW_BARK_TOWN
 	object_event  6,  8, SPRITE_POKEFAN_F, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, NewBarkTownTeacherScript, -1
 	object_event 13,  8, SPRITE_FAT_GUY, SPRITEMOVEDATA_WALK_UP_DOWN, 1, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, Text_ElmDiscoveredNewMon, -1
-	object_event  7, 15, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 1, (1 << MORN) | (1 << DAY), 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, Text_GearIsImpressive, -1
+	object_event  7, 14, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 1, (1 << MORN) | (1 << DAY), 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, Text_GearIsImpressive, -1
 
 	object_const_def
 	const NEWBARKTOWN_RIVAL

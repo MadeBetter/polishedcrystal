@@ -484,7 +484,7 @@ IndigoPlateauTeleportGuyScript:
 	playsound SFX_WARP_TO
 	special FadeOutPalettes
 	waitsfx
-	warp NEW_BARK_TOWN, 15, 6
+	warp NEW_BARK_TOWN, 17, 6
 	end
 
 .Text:

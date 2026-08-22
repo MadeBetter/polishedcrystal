@@ -23,6 +23,7 @@ MapGroupRoofGFX:
 	table_width 2
 	farbank "Roof Graphics"
 	fardw NewBarkRoofGFX
+	fardw RedPlusPlusNewBarkRoofGFX
 	fardw VioletRoofGFX
 	fardw AzaleaRoofGFX
 	fardw OlivineRoofGFX
