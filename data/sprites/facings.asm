@@ -63,6 +63,8 @@ Facings:
 	dw FacingBigHoOh2         ; FACING_BIG_HO_OH_2
 	dw FacingBigLugia1        ; FACING_BIG_LUGIA_1
 	dw FacingBigLugia2        ; FACING_BIG_LUGIA_2
+	dw FacingRoute29Berry     ; FACING_ROUTE29_BERRY
+	dw FacingCutTree          ; FACING_CUT_TREE
 	assert_table_length NUM_FACINGS
 	dw 0 ; end
 
@@ -284,6 +286,18 @@ FacingApricorn:
 FacingBerry:
 	db 1 ; #
 	db 10,  3, 0, $04
+
+FacingRoute29Berry:
+	db 1 ; #
+	db  4,  3, 0, $04
+
+FacingCutTree:
+	db 5 ; #
+	db  0,  0, 0, $04
+	db  0,  8, 0, $05
+	db  8,  0, RELATIVE_ATTRIBUTES, $06
+	db  8,  8, RELATIVE_ATTRIBUTES, $07
+	db  7,  4, RELATIVE_ATTRIBUTES | NEXT_PALETTE, $08
 
 FacingPickedFruit:
 	db 1 ; #

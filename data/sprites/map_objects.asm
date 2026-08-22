@@ -99,9 +99,9 @@ SpriteMovementData::
 	db 0 ; palette flags
 
 ; SPRITEMOVEDATA_CUTTABLE_TREE
-	db SPRITEMOVEFN_STANDING ; movement function
+	db SPRITEMOVEFN_CUT_TREE ; movement function
 	db UP ; facing
-	db OBJECT_ACTION_STAND ; action
+	db OBJECT_ACTION_CUT_TREE ; action
 	db FIXED_FACING | SLIDING ; flags1
 	db LOW_PRIORITY ; flags2
 	db BG_ALIGNED ; palette flags

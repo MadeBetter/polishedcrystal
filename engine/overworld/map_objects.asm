@@ -586,6 +586,7 @@ endr
 	dw .MovementTinyWindows          ; SPRITEMOVEFN_TINY_WINDOWS
 	dw .MovementBigHoOh              ; SPRITEMOVEFN_BIG_HO_OH
 	dw .MovementBigLugia             ; SPRITEMOVEFN_BIG_LUGIA
+	dw .MovementCutTree              ; SPRITEMOVEFN_CUT_TREE
 	assert_table_length NUM_SPRITEMOVEFN
 
 .RandomWalkY:
@@ -773,6 +774,10 @@ endr
 
 .MovementFruit:
 	ld a, OBJECT_ACTION_FRUIT
+	jr ._ActionA_StepFunction_Standing
+
+.MovementCutTree:
+	ld a, OBJECT_ACTION_CUT_TREE
 	jr ._ActionA_StepFunction_Standing
 
 .MovementMuseumDrill:

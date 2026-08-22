@@ -4,14 +4,14 @@
 import sys
 
 tileset_maps = {
-'johto_traditional': 'CherrygroveBay CherrygroveCity EcruteakCity MagnetTunnelEast MahoganyTown Route26 Route27 Route29 Route30 Route31 Route32 Route32Coast Route35 Route36 Route37 Route42 Route44 VioletCity VioletOutskirts',
+'johto_traditional': 'CherrygroveBay CherrygroveCity EcruteakCity MagnetTunnelEast MahoganyTown Route26 Route27 Route30 Route31 Route32 Route32Coast Route35 Route36 Route37 Route42 Route44 VioletCity VioletOutskirts',
 'johto_modern': 'GoldenrodCity MagnetTunnelWest Route34 Route34Coast StormyBeach',
 'johto_coast': 'CianwoodCity GoldenrodHarbor OlivineCity OlivineCityRoute35CoastDual Route35CoastNorth Route35CoastSouth Route38 Route39 Route40 Route41',
 'johto_outlands': 'AzaleaTown AzaleaTownRaining BlackthornCity LakeOfRage LakeOfRageFlooded Route33 Route33Raining Route43 Route43Raining Route45 Route46 Route47 Route48 RuggedRoadNorth RuggedRoadSouth SnowtopMountainInside',
 'johto_ancient': 'RuinsOfAlphOutside SinjohRuins',
 'johto_sacred': 'BellchimeTrail DragonsDenB1F EcruteakShrineOutside Route28 SilverCaveOutside',
 'battle_tower_outside': 'BattleTowerOutside',
-'new_bark_cherrygrove': 'NewBarkTown',
+'new_bark_cherrygrove': 'NewBarkTown Route29',
 'kanto': 'CinnabarIsland FuchsiaCity LavenderTown MountMoonSquare PalletTown PewterCity Route1 Route2North Route2South Route3 Route8 Route10South Route12North Route16North Route16West Route18East Route19 Route20 Route21 Route22 Route22Past UragaChannelWest ViridianCity',
 'kanto_north': 'CeruleanCape CeruleanCity Route4 Route5 Route9 Route10North Route24 Route25',
 'kanto_urban': 'CeladonCity Route6 Route7 Route11 Route16East SaffronCity VermilionCity',

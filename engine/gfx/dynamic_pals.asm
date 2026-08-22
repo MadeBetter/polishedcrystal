@@ -327,6 +327,22 @@ MarkUsedPal:
 	jmp PopBCDEHL
 
 CheckDualObjectPals:
+	; Cut trees use adjacent green and brown palettes for their trunk overlay.
+	ld de, wObjectStructs
+	ld b, NUM_OBJECT_STRUCTS
+.cut_tree_loop
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, de
+	ld a, [hl]
+	cp SPRITEMOVEDATA_CUTTABLE_TREE
+	jr z, .cut_tree
+	ld hl, OBJECT_LENGTH
+	add hl, de
+	ld d, h
+	ld e, l
+	dec b
+	jr nz, .cut_tree_loop
+
 	ld a, [wMapGroup]
 	ld d, a
 	ld a, [wMapNumber]
@@ -346,6 +362,9 @@ CheckDualObjectPals:
 	inc hl
 	inc hl
 	jr .loop
+
+.cut_tree
+	ld hl, CutTreeObjectPalettes
 
 .found
 	ld a, %00000110

@@ -72,7 +72,7 @@ ENDM
 	map_attributes Route28, ROUTE_28, $71
 	connection west, SilverCaveOutside, SILVER_CAVE_OUTSIDE, -6
 
-	map_attributes Route29, ROUTE_29, $5
+	map_attributes Route29, ROUTE_29, $f
 	connection north, Route46, ROUTE_46, 10
 	connection west, CherrygroveCity, CHERRYGROVE_CITY, 0
 	connection east, NewBarkTown, NEW_BARK_TOWN, 0

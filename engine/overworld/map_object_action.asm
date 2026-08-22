@@ -31,6 +31,7 @@ ObjectActionPairPointers:
 	dw SetFacingTinyWindows,           SetFacingTinyWindows       ; OBJECT_ACTION_TINY_WINDOWS
 	dw SetFacingBigHoOh,               SetFacingFreezeBigHoOh     ; OBJECT_ACTION_BIG_HO_OH
 	dw SetFacingBigLugia,              SetFacingFreezeBigLugia    ; OBJECT_ACTION_BIG_LUGIA
+	dw SetFacingCutTree,               SetFacingCutTree           ; OBJECT_ACTION_CUT_TREE
 	assert_table_length NUM_OBJECT_ACTIONS
 
 SetFacingStanding:
@@ -39,6 +40,10 @@ SetFacingStanding:
 
 SetFacingShadow:
 	ld a, FACING_SHADOW
+	jr SetFixedFacing
+
+SetFacingCutTree:
+	ld a, FACING_CUT_TREE
 	jr SetFixedFacing
 
 SetFacingCurrent:
@@ -232,6 +237,10 @@ SetFacingFruit:
 	and a ; 0 = show fruit, 1 = hide fruit
 	ld a, FACING_PICKED_FRUIT
 	jr nz, .ok
+	ld a, e
+	cp FRUITTREE_ROUTE_29 - 1
+	ld a, FACING_ROUTE29_BERRY
+	jr z, .ok
 	ld a, e
 	cp FIRST_BERRY_TREE - 1
 	; a = carry ? FACING_APRICORN : FACING_BERRY

@@ -537,7 +537,7 @@ ENDM
 	map_const ROUTE_1_VIRIDIAN_GATE,                       5,  4 ; 17
 
 	newgroup                                                     ; 24
-	map_const ROUTE_29,                                   30,  9 ;  1
+	map_const ROUTE_29,                                   30, 11 ;  1
 	map_const NEW_BARK_TOWN,                              11, 11 ;  2
 	map_const ELMS_LAB,                                    5,  6 ;  3
 	map_const PLAYERS_HOUSE_1F,                            6,  4 ;  4
