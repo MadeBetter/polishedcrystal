@@ -1110,6 +1110,9 @@ INCLUDE "gfx/tilesets/palette-swap/goldenrod-bike-shop.pal"
 GoldenrodCityRoofPalettes::
 INCLUDE "gfx/tilesets/palette-swap/goldenrod-roof.pal"
 
+CherrygroveCherryTreePalettes::
+INCLUDE "gfx/tilesets/palette-swap/cherrygrove-cherry-tree.pal"
+
 GoldenrodHarborPlantVendorAwningPalettes::
 INCLUDE "gfx/tilesets/palette-swap/plant-vendor.pal"
 

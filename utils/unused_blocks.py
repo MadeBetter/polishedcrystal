@@ -11,7 +11,7 @@ tileset_maps = {
 'johto_ancient': 'RuinsOfAlphOutside SinjohRuins',
 'johto_sacred': 'BellchimeTrail DragonsDenB1F EcruteakShrineOutside Route28 SilverCaveOutside',
 'battle_tower_outside': 'BattleTowerOutside',
-'new_bark_cherrygrove': 'NewBarkTown Route29',
+'new_bark_cherrygrove': 'NewBarkTown Route29 CherrygroveCity',
 'kanto': 'CinnabarIsland FuchsiaCity LavenderTown MountMoonSquare PalletTown PewterCity Route1 Route2North Route2South Route3 Route8 Route10South Route12North Route16North Route16West Route18East Route19 Route20 Route21 Route22 Route22Past UragaChannelWest ViridianCity',
 'kanto_north': 'CeruleanCape CeruleanCity Route4 Route5 Route9 Route10North Route24 Route25',
 'kanto_urban': 'CeladonCity Route6 Route7 Route11 Route16East SaffronCity VermilionCity',

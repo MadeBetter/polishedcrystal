@@ -14,8 +14,8 @@ ENDM
 	connection west, Route29, ROUTE_29, 0
 	connection east, Route27, ROUTE_27, 0
 
-	map_attributes CherrygroveCity, CHERRYGROVE_CITY, $5
-	connection north, Route30, ROUTE_30, 4
+	map_attributes CherrygroveCity, CHERRYGROVE_CITY, $f
+	connection north, Route30, ROUTE_30, 5
 	connection west, CherrygroveBay, CHERRYGROVE_BAY, -15
 	connection east, Route29, ROUTE_29, 0
 
@@ -79,7 +79,7 @@ ENDM
 
 	map_attributes Route30, ROUTE_30, $5
 	connection north, Route31, ROUTE_31, -9
-	connection south, CherrygroveCity, CHERRYGROVE_CITY, -4
+	connection south, CherrygroveCity, CHERRYGROVE_CITY, -5
 	connection west, CherrygroveTrainTrackDual, CHERRYGROVE_TRAIN_TRACK_DUAL, 12
 
 	map_attributes Route31, ROUTE_31, $5

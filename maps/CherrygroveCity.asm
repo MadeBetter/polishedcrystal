@@ -6,11 +6,12 @@ CherrygroveCity_MapScriptHeader:
 
 	def_callbacks
 	callback MAPCALLBACK_NEWMAP, CherrygroveCityFlyPoint
+	callback MAPCALLBACK_CMDQUEUE, CherrygroveCitySetUpPaletteSwap
 
 	def_warp_events
 	warp_event 23,  3, CHERRYGROVE_MART, 2
 	warp_event 29,  3, CHERRYGROVE_POKECENTER_1F, 1
-	warp_event 17,  7, CHERRYGROVE_GYM_SPEECH_HOUSE, 1
+	warp_event 17,  8, CHERRYGROVE_GYM_SPEECH_HOUSE, 1
 	warp_event 25,  9, GUIDE_GENTS_HOUSE, 1
 	warp_event 31, 11, CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1
 
@@ -20,10 +21,10 @@ CherrygroveCity_MapScriptHeader:
 	coord_event 33,  7, SCENE_CHERRYGROVECITY_MEET_RIVAL, CherrygroveRivalTriggerSouth
 
 	def_bg_events
-	bg_event 30,  8, BGEVENT_JUMPTEXT, CherrygroveCitySignText
+	bg_event 33,  5, BGEVENT_JUMPTEXT, CherrygroveCitySignText
 	bg_event 23,  9, BGEVENT_JUMPTEXT, GuideGentsHouseSignText
 	bg_event 13,  5, BGEVENT_JUMPTEXT, CherrygroveCityAdvancedTipsSignText
-	bg_event 35,  2, BGEVENT_ITEM + NUGGET, EVENT_CHERRYGROVE_CITY_HIDDEN_NUGGET
+	bg_event 36,  2, BGEVENT_ITEM + NUGGET, EVENT_CHERRYGROVE_CITY_HIDDEN_NUGGET
 
 	def_object_events
 	object_event 32,  6, SPRITE_GRAMPS, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, CherrygroveCityGuideGent, EVENT_GUIDE_GENT_IN_HIS_HOUSE
@@ -32,6 +33,8 @@ CherrygroveCity_MapScriptHeader:
 	object_event 23,  7, SPRITE_YOUNGSTER, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, CherrygroveYoungsterScript, -1
 	object_event  7, 12, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, MysticWaterGuy, -1
 	pokemon_event 26, 13, PIDGEY, SPRITEMOVEDATA_POKEMON, -1, PAL_MON_BROWN, CherrygrovePidgeyText, -1
+	fruittree_event 34,  3, FRUITTREE_CHERRYGROVE_CITY_1, CHERI_BERRY, PAL_NPC_RED
+	fruittree_event 36,  3, FRUITTREE_CHERRYGROVE_CITY_2, SITRUS_BERRY, PAL_NPC_BROWN
 
 	object_const_def
 	const CHERRYGROVECITY_GRAMPS
@@ -40,6 +43,14 @@ CherrygroveCity_MapScriptHeader:
 CherrygroveCityFlyPoint:
 	setflag ENGINE_FLYPOINT_CHERRYGROVE
 	endcallback
+
+CherrygroveCitySetUpPaletteSwap:
+	usepaletteswap .PaletteSwap
+	endcallback
+
+.PaletteSwap:
+	paletteswap 0, 255, 0, 255, PAL_BG_ROOF, NULL, CherrygroveCherryTreePalettes
+	db -1 ; end
 
 CherrygroveGuideGentTrigger:
 	applymovement PLAYER, GuideGentPlayerMovement

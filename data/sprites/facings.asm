@@ -63,7 +63,7 @@ Facings:
 	dw FacingBigHoOh2         ; FACING_BIG_HO_OH_2
 	dw FacingBigLugia1        ; FACING_BIG_LUGIA_1
 	dw FacingBigLugia2        ; FACING_BIG_LUGIA_2
-	dw FacingRoute29Berry     ; FACING_ROUTE29_BERRY
+	dw FacingRedPlusBerry     ; FACING_REDPLUS_BERRY
 	dw FacingCutTree          ; FACING_CUT_TREE
 	assert_table_length NUM_FACINGS
 	dw 0 ; end
@@ -289,7 +289,7 @@ FacingBerry:
 	db 10,  3, 0, $04
 	db 10,  4, FIXED_BROWN_PALETTE, $06
 
-FacingRoute29Berry:
+FacingRedPlusBerry:
 	db 2 ; #
 	db  4,  3, 0, $04
 	db 10,  4, FIXED_BROWN_PALETTE, $06
@@ -304,7 +304,7 @@ FacingCutTree:
 
 FacingPickedFruit:
 	db 1 ; #
-	db  6,  4, FIXED_BROWN_PALETTE, $06
+	db 10,  4, FIXED_BROWN_PALETTE, $06
 
 FacingBigGyarados1:
 	db 16 ; #

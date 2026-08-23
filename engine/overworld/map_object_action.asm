@@ -239,8 +239,15 @@ SetFacingFruit:
 	jr nz, .ok
 	ld a, e
 	cp FRUITTREE_ROUTE_29 - 1
-	ld a, FACING_ROUTE29_BERRY
-	jr z, .ok
+	jr z, .redplus_berry
+	cp FRUITTREE_CHERRYGROVE_CITY_1 - 1
+	jr z, .redplus_berry
+	cp FRUITTREE_CHERRYGROVE_CITY_2 - 1
+	jr nz, .regular_fruit
+.redplus_berry
+	ld a, FACING_REDPLUS_BERRY
+	jr .ok
+.regular_fruit
 	ld a, e
 	cp FIRST_BERRY_TREE - 1
 	; a = carry ? FACING_APRICORN : FACING_BERRY
