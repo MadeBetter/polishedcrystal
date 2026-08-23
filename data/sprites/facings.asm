@@ -280,16 +280,19 @@ FacingSplash2:
 	db  9,  9, ABSOLUTE_TILE_ID | OAM_XFLIP, $6f
 
 FacingApricorn:
-	db 1 ; #
+	db 2 ; #
 	db  0,  4, 0, $05
+	db 10,  4, FIXED_BROWN_PALETTE, $06
 
 FacingBerry:
-	db 1 ; #
+	db 2 ; #
 	db 10,  3, 0, $04
+	db 10,  4, FIXED_BROWN_PALETTE, $06
 
 FacingRoute29Berry:
-	db 1 ; #
+	db 2 ; #
 	db  4,  3, 0, $04
+	db 10,  4, FIXED_BROWN_PALETTE, $06
 
 FacingCutTree:
 	db 5 ; #
@@ -301,7 +304,7 @@ FacingCutTree:
 
 FacingPickedFruit:
 	db 1 ; #
-	db  0,  0, 0, $07
+	db  6,  4, FIXED_BROWN_PALETTE, $06
 
 FacingBigGyarados1:
 	db 16 ; #

@@ -78,10 +78,13 @@ DEF OW_RIGHT EQU RIGHT << 2
 	shift_const BIG_OBJECT       ; 7
 
 ; facing attribute bit flags
+	DEF FIXED_BROWN_PALETTE_F EQU 0
+	DEF FIXED_BROWN_PALETTE   EQU 1 << FIXED_BROWN_PALETTE_F
 	const_def 1
 	shift_const RELATIVE_ATTRIBUTES ; 1
 	shift_const ABSOLUTE_TILE_ID    ; 2
 	shift_const NEXT_PALETTE        ; 3
+	DEF FRUIT_TREE_TRUNK_PAL_SLOT EQU 6
 
 ; map_object struct members (see macros/ram.asm)
 rsreset

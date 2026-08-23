@@ -327,6 +327,8 @@ MarkUsedPal:
 	jmp PopBCDEHL
 
 CheckDualObjectPals:
+	call .CheckFruitTreeTrunkPal
+
 	; Cut trees use adjacent green and brown palettes for their trunk overlay.
 	ld de, wObjectStructs
 	ld b, NUM_OBJECT_STRUCTS
@@ -367,7 +369,8 @@ CheckDualObjectPals:
 	ld hl, CutTreeObjectPalettes
 
 .found
-	ld a, %00000110
+	ld a, [wUsedObjectPals]
+	or %00000110
 	ld [wUsedObjectPals], a
 	; Clear type bits for slots 1 and 2 (these are normal palettes, not mon palettes)
 	ld a, [wLoadedObjPalType]
@@ -384,6 +387,34 @@ CheckDualObjectPals:
 	ld [wLoadedObjPal2], a
 	ld [wNeededPalIndex], a
 	ld de, wOBPals1 + 2 palettes
+	jmp CopySpritePalHandler
+
+.CheckFruitTreeTrunkPal:
+	ld de, wObjectStructs
+	ld b, NUM_OBJECT_STRUCTS
+.fruit_tree_loop
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, de
+	ld a, [hl]
+	cp SPRITEMOVEDATA_FRUIT
+	jr z, .fruit_tree_found
+	ld hl, OBJECT_LENGTH
+	add hl, de
+	ld d, h
+	ld e, l
+	dec b
+	jr nz, .fruit_tree_loop
+	ret
+
+.fruit_tree_found
+	ld hl, wUsedObjectPals
+	set FRUIT_TREE_TRUNK_PAL_SLOT, [hl]
+	ld hl, wLoadedObjPalType
+	res FRUIT_TREE_TRUNK_PAL_SLOT, [hl]
+	ld a, PAL_OW_COPY_BG_BROWN
+	ld [wLoadedObjPal0 + FRUIT_TREE_TRUNK_PAL_SLOT], a
+	ld [wNeededPalIndex], a
+	ld de, wOBPals1 + FRUIT_TREE_TRUNK_PAL_SLOT palettes
 	jmp CopySpritePalHandler
 
 INCLUDE "data/maps/dual_obj_pals.asm"

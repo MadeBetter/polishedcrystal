@@ -3030,6 +3030,11 @@ InitSprites:
 	jr z, .nope3
 	inc a
 .nope3
+	bit FIXED_BROWN_PALETTE_F, e
+	jr z, .nope4
+	and ~OAM_PALETTE
+	or FRUIT_TREE_TRUNK_PAL_SLOT
+.nope4
 	ld [bc], a
 	inc c
 	ld a, c
