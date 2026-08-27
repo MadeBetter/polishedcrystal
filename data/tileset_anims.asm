@@ -22,6 +22,7 @@ MACRO? tileframe
 	dw \1 ; function
 ENDM
 
+TilesetAzaleaBlackthornAnim::
 TilesetNewBarkCherrygroveAnim::
 	tileframe AnimateFarawayWaterTiles,         $0:03
 	tileframe DoNothing

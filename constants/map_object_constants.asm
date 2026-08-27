@@ -84,8 +84,7 @@ DEF OW_RIGHT EQU RIGHT << 2
 	shift_const RELATIVE_ATTRIBUTES ; 1
 	shift_const ABSOLUTE_TILE_ID    ; 2
 	shift_const NEXT_PALETTE        ; 3
-	; Slot 6 is reserved for weather effects such as Cherrygrove's cherry blossoms.
-	DEF FRUIT_TREE_TRUNK_PAL_SLOT EQU 5
+	DEF FRUIT_TREE_TRUNK_PAL_SLOT EQU 6
 
 ; map_object struct members (see macros/ram.asm)
 rsreset
@@ -344,7 +343,7 @@ DEF NUM_OBJECT_ACTIONS EQU const_value
 	const FACING_BIG_HO_OH_2        ; 3b
 	const FACING_BIG_LUGIA_1        ; 3c
 	const FACING_BIG_LUGIA_2        ; 3d
-	const FACING_REDPLUS_BERRY       ; 3e
+	const FACING_ROUTE29_BERRY       ; 3e
 	const FACING_CUT_TREE            ; 3f
 DEF NUM_FACINGS EQU const_value
 

@@ -73,7 +73,7 @@ ENDM
 	connection west, SilverCaveOutside, SILVER_CAVE_OUTSIDE, -6
 
 	map_attributes Route29, ROUTE_29, $f
-	connection north, Route46, ROUTE_46, 10
+	connection north, Route46, ROUTE_46, 8
 	connection west, CherrygroveCity, CHERRYGROVE_CITY, 0
 	connection east, NewBarkTown, NEW_BARK_TOWN, 0
 
@@ -165,8 +165,8 @@ ENDM
 	connection north, BlackthornCity, BLACKTHORN_CITY, 2
 	connection west, Route46, ROUTE_46, 37
 
-	map_attributes Route46, ROUTE_46, $5
-	connection south, Route29, ROUTE_29, -10
+	map_attributes Route46, ROUTE_46, $4d
+	connection south, Route29, ROUTE_29, -8
 	connection east, Route45, ROUTE_45, -37
 
 	map_attributes PewterCity, PEWTER_CITY, $f

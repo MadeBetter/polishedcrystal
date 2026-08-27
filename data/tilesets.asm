@@ -19,6 +19,7 @@ Tilesets::
 	tileset TilesetBattleTowerOutside
 	tileset TilesetSnowtopMountain
 	tileset TilesetNewBarkCherrygrove
+	tileset TilesetAzaleaBlackthorn
 	tileset TilesetKanto
 	tileset TilesetKantoNorth
 	tileset TilesetKantoUrban
@@ -185,6 +186,28 @@ SECTION "Tileset Data - new bark cherrygrove", ROMX
 TilesetNewBarkCherrygroveMeta:: INCBIN "data/tilesets/new_bark_cherrygrove_metatiles.bin.lzp"
 TilesetNewBarkCherrygroveAttr:: INCBIN "data/tilesets/new_bark_cherrygrove_attributes.bin.lzp"
 TilesetNewBarkCherrygroveColl:: INCBIN "data/tilesets/new_bark_cherrygrove_collision.bin.lzp"
+
+
+SECTION "Tileset Graphics - azalea blackthorn vram0", ROMX
+
+TilesetAzaleaBlackthornGFX0:: INCBIN "gfx/tilesets/azalea_blackthorn.2bpp.vram0p.lzp"
+
+
+SECTION "Tileset Graphics - azalea blackthorn vram1", ROMX
+
+TilesetAzaleaBlackthornGFX1:: INCBIN "gfx/tilesets/azalea_blackthorn.2bpp.vram1.lzp"
+
+
+SECTION "Tileset Graphics - azalea blackthorn vram2", ROMX
+
+TilesetAzaleaBlackthornGFX2:: INCBIN "gfx/tilesets/azalea_blackthorn.2bpp.vram2.lzp"
+
+
+SECTION "Tileset Data - azalea blackthorn", ROMX
+
+TilesetAzaleaBlackthornMeta:: INCBIN "data/tilesets/azalea_blackthorn_metatiles.bin.lzp"
+TilesetAzaleaBlackthornAttr:: INCBIN "data/tilesets/azalea_blackthorn_attributes.bin.lzp"
+TilesetAzaleaBlackthornColl:: INCBIN "data/tilesets/azalea_blackthorn_collision.bin.lzp"
 
 
 SECTION "Tileset Graphics - kanto common vram0", ROMX

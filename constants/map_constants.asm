@@ -173,7 +173,7 @@ ENDM
 	map_const BLACKTHORN_POKECENTER_1F,                    6,  4 ;  6
 	map_const MOVE_DELETERS_HOUSE,                         4,  4 ;  7
 	map_const ROUTE_45,                                   12, 46 ;  8
-	map_const ROUTE_46,                                   10, 18 ;  9
+	map_const ROUTE_46,                                   12, 19 ;  9
 	map_const BLACKTHORN_CITY,                            20, 19 ; 10
 
 	newgroup                                                     ;  6
