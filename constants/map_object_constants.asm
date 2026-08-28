@@ -343,8 +343,7 @@ DEF NUM_OBJECT_ACTIONS EQU const_value
 	const FACING_BIG_HO_OH_2        ; 3b
 	const FACING_BIG_LUGIA_1        ; 3c
 	const FACING_BIG_LUGIA_2        ; 3d
-	const FACING_ROUTE29_BERRY       ; 3e
-	const FACING_CUT_TREE            ; 3f
+	const FACING_CUT_TREE           ; 3e
 DEF NUM_FACINGS EQU const_value
 
 ; DoPlayerMovement.DoStep arguments (see engine/overworld/player_movement.asm)

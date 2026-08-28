@@ -238,10 +238,6 @@ SetFacingFruit:
 	ld a, FACING_PICKED_FRUIT
 	jr nz, .ok
 	ld a, e
-	cp FRUITTREE_ROUTE_29 - 1
-	ld a, FACING_ROUTE29_BERRY
-	jr z, .ok
-	ld a, e
 	cp FIRST_BERRY_TREE - 1
 	; a = carry ? FACING_APRICORN : FACING_BERRY
 	assert FACING_APRICORN + 1 == FACING_BERRY
