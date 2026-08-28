@@ -173,12 +173,12 @@ TilesetNewBarkCherrygroveGFX0:: INCBIN "gfx/tilesets/redplusplus_johto_common.2b
 
 SECTION "Tileset Graphics - new bark cherrygrove vram1", ROMX
 
-TilesetNewBarkCherrygroveGFX1:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram0.lzp"
+TilesetNewBarkCherrygroveGFX1:: INCBIN "gfx/tilesets/new_bark_cherrygrove.redplusplus_johto_common.2bpp.vram0.lzp"
 
 
 SECTION "Tileset Graphics - new bark cherrygrove vram2", ROMX
 
-TilesetNewBarkCherrygroveGFX2:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram1.lzp"
+TilesetNewBarkCherrygroveGFX2:: INCBIN "gfx/tilesets/new_bark_cherrygrove.redplusplus_johto_common.2bpp.vram1.lzp"
 
 
 SECTION "Tileset Data - new bark cherrygrove", ROMX
