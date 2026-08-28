@@ -77,13 +77,13 @@ ENDM
 	connection west, CherrygroveCity, CHERRYGROVE_CITY, 0
 	connection east, NewBarkTown, NEW_BARK_TOWN, 0
 
-	map_attributes Route30, ROUTE_30, $5
-	connection north, Route31, ROUTE_31, -9
+	map_attributes Route30, ROUTE_30, $f
+	connection north, Route31, ROUTE_31, -10
 	connection south, CherrygroveCity, CHERRYGROVE_CITY, -5
-	connection west, CherrygroveTrainTrackDual, CHERRYGROVE_TRAIN_TRACK_DUAL, 12
+	connection west, CherrygroveTrainTrackDual, CHERRYGROVE_TRAIN_TRACK_DUAL, 13
 
 	map_attributes Route31, ROUTE_31, $5
-	connection south, Route30, ROUTE_30, 9
+	connection south, Route30, ROUTE_30, 10
 	connection west, VioletCity, VIOLET_CITY, -9
 
 	map_attributes Route32, ROUTE_32, $5
@@ -368,7 +368,7 @@ ENDM
 
 	map_attributes CherrygroveTrainTrackDual, CHERRYGROVE_TRAIN_TRACK_DUAL, $35
 	connection west, CherrygroveBay, CHERRYGROVE_BAY, 0
-	connection east, Route30, ROUTE_30, -12
+	connection east, Route30, ROUTE_30, -13
 
 	map_attributes Route32Coast, ROUTE_32_COAST, $35
 	connection north, CherrygroveBay, CHERRYGROVE_BAY, 0

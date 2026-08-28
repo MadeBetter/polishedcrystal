@@ -5,34 +5,34 @@ Route30_MapScriptHeader:
 	callback MAPCALLBACK_CMDQUEUE, Route30SetUpPaletteSwap
 
 	def_warp_events
-	warp_event  9, 39, ROUTE_30_BERRY_SPEECH_HOUSE, 1
-	warp_event 19,  5, MR_POKEMONS_HOUSE, 1
+	warp_event  7, 41, ROUTE_30_BERRY_SPEECH_HOUSE, 1
+	warp_event 17,  5, MR_POKEMONS_HOUSE, 1
 
 	def_coord_events
 
 	def_bg_events
-	bg_event 11, 43, BGEVENT_JUMPTEXT, Route30SignText
-	bg_event 15, 27, BGEVENT_JUMPTEXT, MrPokemonsHouseDirectionsSignText
-	bg_event 17,  5, BGEVENT_JUMPTEXT, MrPokemonsHouseSignText
-	bg_event  5, 21, BGEVENT_JUMPTEXT, Route30TrainerTipsText
-	bg_event 13,  8, BGEVENT_JUMPTEXT, Route30AdvancedTipsText
-	bg_event 16,  9, BGEVENT_ITEM + POTION, EVENT_ROUTE_30_HIDDEN_POTION
-	bg_event  7, 39, BGEVENT_JUMPTEXT, BerryMastersHouseSignText
+	bg_event  9, 45, BGEVENT_JUMPTEXT, Route30SignText
+	bg_event 13, 31, BGEVENT_JUMPTEXT, MrPokemonsHouseDirectionsSignText
+	bg_event 15,  5, BGEVENT_JUMPTEXT, MrPokemonsHouseSignText
+	bg_event  3, 21, BGEVENT_JUMPTEXT, Route30TrainerTipsText
+	bg_event 15,  9, BGEVENT_JUMPTEXT, Route30AdvancedTipsText
+	bg_event 14,  9, BGEVENT_ITEM + POTION, EVENT_ROUTE_30_HIDDEN_POTION
+	bg_event  5, 41, BGEVENT_JUMPTEXT, BerryMastersHouseSignText
 
 	def_object_events
-	object_event  7, 26, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, YoungsterJoey_ImportantBattleScript, EVENT_ROUTE_30_BATTLE
-	pokemon_event  7, 24, PIDGEY, SPRITEMOVEDATA_POKEMON, -1, PAL_MON_BROWN, ClearText, EVENT_ROUTE_30_BATTLE
-	object_event  7, 25, SPRITE_RATTATA_BACK, SPRITEMOVEDATA_RATTATA_BACK, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_ROUTE_30_BATTLE
-	object_event  4, 28, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 3, TrainerYoungsterJoey, EVENT_ROUTE_30_YOUNGSTER_JOEY
-	object_event  7, 23, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 1, GenericTrainerYoungsterMikey, -1
-	object_event  3,  7, SPRITE_BUG_CATCHER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerBug_catcherDon, -1
-	object_event 10, 31, SPRITE_YOUNGSTER, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 2, -1, PAL_NPC_ORANGE, OBJECTTYPE_COMMAND, jumptextfaceplayer, Route30YoungsterText, -1
-	object_event  4, 13, SPRITE_LASS, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, Route30CooltrainerFText, -1
-	cuttree_event 10,  6, EVENT_ROUTE_30_CUT_TREE_1
-	cuttree_event  3, 29, EVENT_ROUTE_30_CUT_TREE_2
-	fruittree_event 12, 39, FRUITTREE_ROUTE_30_1, ORAN_BERRY, PAL_NPC_BLUE
+	object_event  5, 28, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, YoungsterJoey_ImportantBattleScript, EVENT_ROUTE_30_BATTLE
+	pokemon_event  5, 26, PIDGEY, SPRITEMOVEDATA_POKEMON, -1, PAL_MON_BROWN, ClearText, EVENT_ROUTE_30_BATTLE
+	object_event  5, 27, SPRITE_RATTATA_BACK, SPRITEMOVEDATA_RATTATA_BACK, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_ROUTE_30_BATTLE
+	object_event  2, 30, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 3, TrainerYoungsterJoey, EVENT_ROUTE_30_YOUNGSTER_JOEY
+	object_event  5, 25, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 1, GenericTrainerYoungsterMikey, -1
+	object_event  1,  7, SPRITE_BUG_CATCHER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerBug_catcherDon, -1
+	object_event  8, 33, SPRITE_YOUNGSTER, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 2, -1, PAL_NPC_ORANGE, OBJECTTYPE_COMMAND, jumptextfaceplayer, Route30YoungsterText, -1
+	object_event  2, 13, SPRITE_LASS, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, Route30CooltrainerFText, -1
+	cuttree_event 11,  6, EVENT_ROUTE_30_CUT_TREE_1
+	cuttree_event  1, 32, EVENT_ROUTE_30_CUT_TREE_2
+	fruittree_event 10, 41, FRUITTREE_ROUTE_30_1, ORAN_BERRY, PAL_NPC_BLUE
 	fruittree_event 13,  5, FRUITTREE_ROUTE_30_2, PECHA_BERRY, PAL_NPC_PINK
-	itemball_event 10, 35, ANTIDOTE, 1, EVENT_ROUTE_30_ANTIDOTE
+	itemball_event  8, 37, ANTIDOTE, 1, EVENT_ROUTE_30_ANTIDOTE
 
 	object_const_def
 	const ROUTE30_YOUNGSTER1

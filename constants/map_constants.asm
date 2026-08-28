@@ -575,7 +575,7 @@ ENDM
 	map_const ROUTE_16_NORTH,                             11,  5 ; 21
 
 	newgroup                                                     ; 26
-	map_const ROUTE_30,                                   14, 27 ;  1
+	map_const ROUTE_30,                                   17, 29 ;  1
 	map_const ROUTE_31,                                   22,  9 ;  2
 	map_const CHERRYGROVE_BAY,                            15, 26 ;  3
 	map_const CHERRYGROVE_CITY,                           20, 12 ;  4
