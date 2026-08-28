@@ -166,19 +166,19 @@ TilesetBattleTowerOutsideAttr:: INCBIN "data/tilesets/battle_tower_outside_attri
 TilesetBattleTowerOutsideColl:: INCBIN "data/tilesets/battle_tower_outside_collision.bin.lzp"
 
 
-SECTION "Tileset Graphics - new bark cherrygrove vram0", ROMX
+SECTION "Tileset Graphics - RedPlusPlus Johto common vram0", ROMX
 
-TilesetNewBarkCherrygroveGFX0:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram0p.lzp"
+TilesetNewBarkCherrygroveGFX0:: INCBIN "gfx/tilesets/redplusplus_johto_common.2bpp.vram0p.lzp"
 
 
 SECTION "Tileset Graphics - new bark cherrygrove vram1", ROMX
 
-TilesetNewBarkCherrygroveGFX1:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram1.lzp"
+TilesetNewBarkCherrygroveGFX1:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram0.lzp"
 
 
 SECTION "Tileset Graphics - new bark cherrygrove vram2", ROMX
 
-TilesetNewBarkCherrygroveGFX2:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram2.lzp"
+TilesetNewBarkCherrygroveGFX2:: INCBIN "gfx/tilesets/new_bark_cherrygrove.2bpp.vram1.lzp"
 
 
 SECTION "Tileset Data - new bark cherrygrove", ROMX
