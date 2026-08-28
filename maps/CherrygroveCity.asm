@@ -233,12 +233,12 @@ GuideGentMovement5:
 	step_right
 	step_right
 	step_right
-	step_right
-	step_right
-	step_right
-	step_right
-	step_right
 	step_down
+	step_right
+	step_right
+	step_right
+	step_right
+	step_right
 	step_down
 	step_right
 	step_right
