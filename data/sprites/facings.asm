@@ -290,11 +290,11 @@ FacingBerry:
 
 FacingCutTree:
 	db 5 ; #
-	db  0,  0, 0, $04
-	db  0,  8, 0, $05
-	db  8,  0, RELATIVE_ATTRIBUTES, $06
-	db  8,  8, RELATIVE_ATTRIBUTES, $07
-	db  7,  4, RELATIVE_ATTRIBUTES | NEXT_PALETTE, $08
+	db -3,  0, 0, $04
+	db -3,  8, 0, $05
+	db  5,  0, RELATIVE_ATTRIBUTES, $06
+	db  5,  8, RELATIVE_ATTRIBUTES, $07
+	db  4,  4, RELATIVE_ATTRIBUTES | NEXT_PALETTE, $08
 
 FacingPickedFruit:
 	db 1 ; #
