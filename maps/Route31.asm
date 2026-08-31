@@ -14,7 +14,7 @@ Route31_MapScriptHeader:
 	def_bg_events
 	bg_event  7,  5, BGEVENT_JUMPTEXT, Route31SignText
 	bg_event 31,  5, BGEVENT_JUMPTEXT, DarkCaveSignText
-	bg_event 13, 14, BGEVENT_JUMPTEXT, Route31AdvancedTipsSignText
+	bg_event 15,  9, BGEVENT_JUMPTEXT, Route31AdvancedTipsSignText
 
 	def_object_events
 	object_event 28,  7, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 2, TrainerCooltrainermFinch, -1

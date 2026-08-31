@@ -82,7 +82,7 @@ ENDM
 	connection south, CherrygroveCity, CHERRYGROVE_CITY, -5
 	connection west, CherrygroveTrainTrackDual, CHERRYGROVE_TRAIN_TRACK_DUAL, 13
 
-	map_attributes Route31, ROUTE_31, $5
+	map_attributes Route31, ROUTE_31, $f
 	connection south, Route30, ROUTE_30, 10
 	connection west, VioletCity, VIOLET_CITY, -9
 
