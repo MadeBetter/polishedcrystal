@@ -8,6 +8,7 @@ OptionsDescriptions:
 	dw .Sound
 	dw .BattleEffects
 	dw .BattleStyle
+	dw .BlendShadow
 	dw .Nicknames
 	dw .RunningShoes
 	dw .TurningSpeed
@@ -67,6 +68,12 @@ OptionsDescriptions:
 
 	para "Predict: tells"
 	line "you the next foe."
+	prompt
+
+.BlendShadow:
+	text "Alternates jump"
+	line "shadows on and off"
+	cont "for transparency."
 	prompt
 
 .Nicknames:

@@ -39,6 +39,14 @@ SetFacingStanding:
 	jr SetFixedFacing
 
 SetFacingShadow:
+	ld a, [wOptions3]
+	bit NO_SHADOW_BLENDING, a
+	jr nz, .solid
+	ldh a, [hVBlankCounter]
+	and 1
+	ld a, STANDING
+	jr nz, SetFixedFacing
+.solid
 	ld a, FACING_SHADOW
 	jr SetFixedFacing
 

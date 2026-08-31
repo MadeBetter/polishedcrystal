@@ -39,7 +39,7 @@ OptionsMenu:
 .BGPalettes:
 INCLUDE "gfx/options/options_bg.pal"
 
-DEF NUM_OPTIONS EQU 13
+DEF NUM_OPTIONS EQU 14
 
 OptionsMenu_CallOptionRoutine:
 	ld a, [wMenuSelection]
@@ -56,6 +56,7 @@ OptionsMenu_CallOptionRoutine:
 	dw Options_Sound
 	dw Options_BattleEffects
 	dw Options_BattleStyle
+	dw Options_BlendShadow
 	dw Options_Nicknames
 	dw Options_RunningShoes
 	dw Options_TurningSpeed
@@ -228,6 +229,29 @@ Options_BattleStyle:
 	db "Switch @"
 .Predict:
 	db "Predict@"
+
+Options_BlendShadow:
+	ld hl, wOptions3
+	ldh a, [hJoyPressed]
+	and PAD_LEFT | PAD_RIGHT
+	jr nz, .Toggle
+	bit NO_SHADOW_BLENDING, [hl]
+	jr z, .SetOn
+	jr .SetOff
+
+.Toggle:
+	bit NO_SHADOW_BLENDING, [hl]
+	jr nz, .SetOn
+.SetOff:
+	set NO_SHADOW_BLENDING, [hl]
+	ld de, OffString
+	jr .Display
+
+.SetOn:
+	res NO_SHADOW_BLENDING, [hl]
+	ld de, OnString
+.Display:
+	jmp OptionsShared_PlaceStringAtValueCoord
 
 Options_Nicknames:
 	ld hl, wOptions3
