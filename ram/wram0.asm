@@ -724,6 +724,7 @@ wPokegearRadioChannelAddr:: dw
 wPokegearRadioMusicPlaying:: db
 wPokegearNumberBuffer:: db
 wPokegearMapCursorSpawnpoint:: db
+wPokegearPhoneMaxContact:: db
 
 
 SECTION UNION "Misc 404", WRAM0
