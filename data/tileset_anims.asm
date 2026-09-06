@@ -158,6 +158,18 @@ TilesetGymAnim::
 	tileframe StandingTileFrame8
 	tileframe DoneTileAnimation
 
+TilesetMuseumAnim::
+	tileframe AnimateWaterBubbleTiles,        $1:81
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe StandingTileFrame8
+	tileframe DoneTileAnimation
+
 TilesetTowerAnim::
 	tileframe AnimateTowerPillarTiles1,       $1:20
 	tileframe AnimateTowerPillarTiles2,       $1:24
@@ -187,6 +199,7 @@ TilesetUndergroundAnim::
 
 TilesetCaveAnim::
 TilesetQuietCaveAnim::
+TilesetVolcanoAnim::
 	tileframe FlickeringCaveEntrancePalette
 	tileframe AnimateCaveWaterTile,           $0:25
 	tileframe FlickeringCaveEntrancePalette
@@ -248,7 +261,7 @@ TilesetForestAnim::
 	tileframe DoNothing
 	tileframe DoNothing
 	tileframe AnimateFlowerTile,              $0:03
-	tileframe DoNothing
+	tileframe AnimateKantoFlowerTile,         $0:04
 	tileframe AnimateWaterfallTiles,          $0:42
 	tileframe StandingTileFrame8
 	tileframe DoneTileAnimation
@@ -388,7 +401,6 @@ TilesetBattleTowerInsideAnim::
 TilesetRuinsOfAlphAnim::
 TilesetRadioTowerAnim::
 TilesetDecorAnim::
-TilesetMuseumAnim::
 TilesetHotelAnim::
 TilesetBattleFactoryAnim::
 TilesetHiddenGrottoAnim::

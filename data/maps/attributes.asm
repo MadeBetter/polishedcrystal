@@ -711,6 +711,8 @@ ENDM
 	map_attributes FuchsiaSafariBallHouse, FUCHSIA_SAFARI_BALL_HOUSE, $0
 	map_attributes FuchsiaPokeCenter1F, FUCHSIA_POKECENTER_1F, $0
 	map_attributes SafariZoneWardensHome, SAFARI_ZONE_WARDENS_HOME, $0
+	map_attributes FuchsiaAquarium1F, FUCHSIA_AQUARIUM_1F, $0
+	map_attributes FuchsiaAquarium2F, FUCHSIA_AQUARIUM_2F, $0
 	map_attributes Route12Gate, ROUTE_12_GATE, $0
 	map_attributes Route12Gate2F, ROUTE_12_GATE_2F, $0
 	map_attributes Route15FuchsiaGate, ROUTE_15_FUCHSIA_GATE, $0
@@ -748,7 +750,7 @@ ENDM
 	map_attributes CeladonDeptStore3F, CELADON_DEPT_STORE_3F, $0
 	map_attributes CeladonDeptStore4F, CELADON_DEPT_STORE_4F, $0
 	map_attributes CeladonDeptStore5F, CELADON_DEPT_STORE_5F, $0
-	map_attributes CeladonDeptStore6F, CELADON_DEPT_STORE_6F, $0
+	map_attributes CeladonDeptStoreRoof, CELADON_DEPT_STORE_ROOF, $1
 	map_attributes CeladonDeptStoreElevator, CELADON_DEPT_STORE_ELEVATOR, $0
 	map_attributes CeladonMansion1F, CELADON_MANSION_1F, $0
 	map_attributes CeladonMansion2F, CELADON_MANSION_2F, $0

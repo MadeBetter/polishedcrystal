@@ -174,6 +174,7 @@ HandleMapTimeAndJoypad:
 HandleMapObjects:
 	farcall HandleNPCStep ; engine/map_objects.asm
 	farcall _HandlePlayerStep
+	farcall UpdateObjectGlowPals
 	ld hl, wPlayerStepFlags
 	bit PLAYERSTEP_STOP_F, [hl]
 	ret z
@@ -286,7 +287,7 @@ CheckTileEvent:
 	jr c, .warp_tile
 
 .connections_disabled
-	call HandlePaletteSwap
+	farcall HandlePaletteSwap
 
 	call CheckCoordEventsEnabled
 	jr z, .coord_events_disabled
@@ -1308,10 +1309,8 @@ CanUseSweetHoney::
 	cp HI_NYBBLE_CURRENT
 	jr z, .no
 	ld a, [wEnvironment]
-	cp CAVE
-	jr z, .skip_grass_check
-	cp DUNGEON
-	jr z, .skip_grass_check
+	cp FIRST_DIGGABLE_ENV
+	jr nc, .skip_grass_check
 	farcall CheckGrassCollision
 	jr nc, .no
 .skip_grass_check

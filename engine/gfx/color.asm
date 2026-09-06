@@ -446,7 +446,7 @@ ApplyAttrMap:
 ApplyAttrMapVBank0::
 	ldh a, [hBGMapMode]
 	push af
-	ld a, 2
+	ld a, TRANSFER_ATTRMAP
 	ldh [hBGMapMode], a
 	call Delay2
 	pop af
@@ -917,9 +917,6 @@ endc
 	ret
 
 LoadMapPals:
-	farcall LoadSpecialMapPalette
-	jr c, .got_pals
-
 	; Which palette group is based on whether we're outside or inside
 	ld a, [wEnvironment]
 	and 7
@@ -979,7 +976,9 @@ LoadMapPals:
 	pop af
 	ldh [rWBK], a
 
-.got_pals
+	; special map palettes may overwrite only a subset of the default ones
+	farcall LoadSpecialMapPalette
+
 	ld hl, wPalFlags
 	bit MAP_CONNECTION_PAL_F, [hl]
 	res MAP_CONNECTION_PAL_F, [hl]
@@ -987,6 +986,10 @@ LoadMapPals:
 	farcall ClearSavedObjPals
 .skip_clearing_obj_pals
 
+	; only non-indoor environments load roof palettes
+	ld a, [wEnvironment]
+	cp FIRST_INDOOR_ENV
+	jr nc, .finish
 	; some exceptions to the usual rules which do not load roof palettes
 	ld a, [wMapTileset]
 	cp TILESET_SNOWTOP_MOUNTAIN ; covers map_id SNOWTOP_MOUNTAIN_OUTSIDE
@@ -996,28 +999,14 @@ LoadMapPals:
 	cp TILESET_FARAWAY_ISLAND ; covers map_id FARAWAY_ISLAND_SOUTH
 	jr z, .finish
 
-	; overcast maps have their own roof color table
+	; load a roof palette based on map group and overcast weather
 	farcall GetOvercastIndex
 	and a
-	jr z, .not_overcast
-	; Use map group to select an overcast roof palette (full table per group)
-	ld a, [wMapGroup]
-	ld hl, OvercastRoofPals
-	jr .get_roof_color
-
-.not_overcast
-	; only TOWN, ROUTE, or ISOLATED environments load roof palettes
-	ld a, [wEnvironment]
-	cp TOWN
-	jr z, .outside
-	cp ROUTE
-	jr z, .outside
-	cp ISOLATED
-	jr nz, .finish
-.outside
-	ld a, [wMapGroup]
 	ld hl, RoofPals
-.get_roof_color
+	jr z, .not_overcast
+	ld hl, OvercastRoofPals
+.not_overcast
+	ld a, [wMapGroup]
 	add a
 	add a
 	ld e, a
@@ -1052,8 +1041,9 @@ SwapColorPalette::
 	or e
 	ret z
 
-	; Set `hl` to the `[wTimeOfDayPal]`th palette in the table at `de`.
-	ld a, [wTimeOfDayPal]
+	; Set `hl` to the selected state's time-of-day palette in the table at `de`.
+	ld a, PALSTATE_TIME_OF_DAY
+	farcall GetPalState
 	and 3
 	add a
 	add a
@@ -1062,23 +1052,30 @@ SwapColorPalette::
 	ld h, 0
 	add hl, de
 
-	; Set `de` to the `b`th palette of `wBGPals1`.
+	; Previous-state palettes become active; current-state palettes are the target.
+	; d = [wPalState] == PREV_PALSTATE ? LOW(wBGPals2) : LOW(wBGPals1)
+	ld a, [wPalState]
+	assert PREV_PALSTATE == 0
+	and a
+	ld d, LOW(wBGPals2)
+	jr z, .got_target
+	ld d, LOW(wBGPals1)
+.got_target
+	; Set `de` to the `b`th palette of `wBGPals1` or `wBGPals2`.
 	ld a, b
 	add a
 	add a
 	add a
-	add LOW(wBGPals1)
+	add d ; LOW(wBGPals1) or LOW(wBGPals2)
 	ld e, a
+	assert HIGH(wBGPals1) == HIGH(wBGPals2)
 	adc HIGH(wBGPals1)
 	sub e
 	ld d, a
 
 	; Skip past the regular palettes to the overcast ones if applicable.
-	push hl
-	push de
-	farcall GetOvercastIndex
-	pop de
-	pop hl
+	ld a, PALSTATE_OVERCAST_INDEX
+	farcall GetPalState
 	and a
 	jr z, .not_overcast
 	ld bc, 4 palettes
@@ -1089,82 +1086,84 @@ SwapColorPalette::
 	ld bc, 1 palettes
 	jmp FarCopyColorWRAM
 
-OverworldGreenPalettes::
-INCLUDE "gfx/tilesets/palette-swap/bg-green.pal"
+UpdatePaletteSwapState::
+; wPaletteSwapStates stores the current state of each entry.
+; wPaletteSwapInits records which entries have been initialized.
+; Input: `c` PALETTE_SWAP_INSIDE_F set inside the rectangle,
+;        `e` = this entry's state bit.
+; Output: `c` PALETTE_SWAP_CHANGED_F set on first check or a state change.
+	ld a, [wPaletteSwapStates]
+	ld d, a
+	; Build this entry's new state in `a`.
+	bit PALETTE_SWAP_INSIDE_F, c
+	jr nz, .inside
+	ld a, e
+	cpl
+	and d
+	jr .compare
+.inside
+	or e
 
-GameCornerExteriorPalettes::
-INCLUDE "gfx/tilesets/palette-swap/game-corner.pal"
+	; Store only on first check or if the current state changed.
+.compare
+	cp d
+	jr nz, .changed
+	ld a, [wPaletteSwapInits]
+	and e
+	ret nz
+	jr .finish
+.changed
+	ld [wPaletteSwapStates], a
+.finish
+	ld a, [wPaletteSwapInits]
+	or e
+	ld [wPaletteSwapInits], a
+	set PALETTE_SWAP_CHANGED_F, c
+	ret
 
-OverworldWaterPalettes::
-INCLUDE "gfx/tilesets/palette-swap/bg-water.pal"
+CatchUpPaletteSwapFade::
+; Rebuild BG palette `b` from palette list `de` under the fade's previous and
+; current conditions, then catch its active palette up to the current step.
+	push bc
+	push de
+	ld a, [wPalWhiteState]
+	and a
+	jr z, .swap_previous
 
-PewterCityMuseumRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/pewter-museum.pal"
+	; de = wBGPals2 palette b
+	ld a, b
+	add a
+	add a
+	add a
+	add LOW(wBGPals2)
+	ld e, a
+	adc HIGH(wBGPals2)
+	sub e
+	ld d, a
 
-GoldenrodMuseumRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/goldenrod-museum.pal"
+	farcall CopyWhitePal
+	jr .got_previous
 
-GoldenrodBikeShopRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/goldenrod-bike-shop.pal"
+.swap_previous
+	xor a
+	assert PREV_PALSTATE == 0
+	ld [wPalState], a
+	push bc
+	call SwapColorPalette
+	pop bc
 
-GoldenrodCityRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/goldenrod-roof.pal"
+.got_previous
+	pop de
+	ld a, CURR_PALSTATE
+	ld [wPalState], a
+	call SwapColorPalette
+	pop bc
+	ld a, b
+	farjp CatchUpBGPaletteFade
 
-CherrygroveCherryTreePalettes::
-INCLUDE "gfx/tilesets/palette-swap/cherrygrove-cherry-tree.pal"
-
-GoldenrodHarborPlantVendorAwningPalettes::
-INCLUDE "gfx/tilesets/palette-swap/plant-vendor.pal"
-
-GoldenrodHarborDollVendorAwningPalettes::
-INCLUDE "gfx/tilesets/palette-swap/doll-vendor.pal"
-
-SilphCoRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/silph-co.pal"
-
-FuchsiaCityRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/fuchsia-roof.pal"
-
-SafariZoneRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/safari-zone-roof.pal"
-
-LavenderRadioTowerRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/lavender-radio-tower-roof.pal"
-
-MrPokemonsHouseRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/mr-pokemon-roof.pal"
-
-MrPsychicsHouseRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/mr-psychic-roof.pal"
-
-OverworldYellowPalettes::
-INCLUDE "gfx/tilesets/palette-swap/bg-yellow.pal"
-
-NuggetBridgePalettes::
-INCLUDE "gfx/tilesets/palette-swap/nugget-bridge.pal"
-
-VermilionCityRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/vermilion-roof.pal"
-
-SeagallopFerryRoofPalettes::
-INCLUDE "gfx/tilesets/palette-swap/seagallop-ferry-roof.pal"
+INCLUDE "data/tileset_palettes.asm"
 
 INCLUDE "data/maps/environment_colors.asm"
-
-TilesetBGPalette::
-	table_width 1 palettes
-INCLUDE "gfx/tilesets/bg_tiles.pal"
-	assert_table_length 8 * 5 + 4 ; morn, day, nite, eve, indoor, water
-
-RoofPals:
-	table_width COLOR_SIZE * 2 * 3
-INCLUDE "gfx/tilesets/roofs.pal"
-	assert_table_length NUM_MAP_GROUPS + 1
-
-OvercastRoofPals:
-	table_width COLOR_SIZE * 2 * 3
-INCLUDE "gfx/tilesets/roofs_overcast.pal"
-	assert_table_length NUM_MAP_GROUPS + 1
 
 INCLUDE "data/pokemon/palettes.asm"
 

@@ -66,26 +66,33 @@ DEF NUM_OW_TIME_OF_DAY_PALS EQU const_value
 	ow_npc_pal_const EMOTE_RED         ; 21
 	ow_npc_pal_const EMOTE_ORANGE      ; 22
 	ow_npc_pal_const EMOTE_BLUE        ; 23
-	ow_npc_pal_const ELECTRIC_FENCE    ; 24
-	ow_npc_pal_const LIGHTNING_CRYSTAL ; 25
-	ow_npc_pal_const ROCK_CRYSTAL      ; 26
-	ow_npc_pal_const N64               ; 27
-	ow_npc_pal_const POKECOM_SIGN      ; 28
-	ow_npc_pal_const RANGI             ; 29
-	ow_npc_pal_const EMI               ; 2a
-	ow_npc_pal_const DRILL             ; 2b
-	ow_npc_pal_const PEARL             ; 2c
-	ow_npc_pal_const TINY_WINDOW       ; 2d
+	ow_npc_pal_const AQUA_RED          ; 24
+	ow_npc_pal_const AQUA_BLUE         ; 25
+	ow_npc_pal_const AQUA_BROWN        ; 26
+	ow_npc_pal_const AQUA_PURPLE       ; 27
+	ow_npc_pal_const ELECTRIC_FENCE    ; 28
+	ow_npc_pal_const LIGHTNING_CRYSTAL ; 29
+	ow_npc_pal_const ROCK_CRYSTAL      ; 2a
+	ow_npc_pal_const N64               ; 2b
+	ow_npc_pal_const POKECOM_SIGN      ; 2c
+	ow_npc_pal_const RANGI             ; 2d
+	ow_npc_pal_const EMI               ; 2e
+	ow_npc_pal_const MOLTRES           ; 2f
+	ow_npc_pal_const DRILL             ; 30
+	ow_npc_pal_const PEARL             ; 31
+	ow_npc_pal_const CAMPFIRE          ; 32
+	ow_npc_pal_const TINY_WINDOW       ; 33
 DEF NUM_OW_INDIVIDUAL_PALS EQU const_value - NUM_OW_TIME_OF_DAY_PALS
 DEF FIRST_COPY_BG_PAL EQU const_value
-	ow_npc_pal_const COPY_BG_GRAY      ; 2e
-	ow_npc_pal_const COPY_BG_RED       ; 2f
-	ow_npc_pal_const COPY_BG_GREEN     ; 30
-	ow_npc_pal_const COPY_BG_WATER     ; 31
-	ow_npc_pal_const COPY_BG_YELLOW    ; 32
-	ow_npc_pal_const COPY_BG_BROWN     ; 33
-	ow_npc_pal_const COPY_BG_ROOF      ; 34
-	ow_npc_pal_const COPY_BG_TEXT      ; 35
+	ow_npc_pal_const COPY_BG_GRAY      ; 34
+	ow_npc_pal_const COPY_BG_RED       ; 35
+	ow_npc_pal_const COPY_BG_GREEN     ; 36
+	ow_npc_pal_const COPY_BG_WATER     ; 37
+	ow_npc_pal_const COPY_BG_YELLOW    ; 38
+	ow_npc_pal_const COPY_BG_BROWN     ; 39
+	ow_npc_pal_const COPY_BG_ROOF      ; 3a
+	ow_npc_pal_const COPY_BG_TEXT      ; 3b
+	ow_npc_pal_const COPY_BG_WHITE     ; 3c
 DEF NUM_OW_BG_COPY_PALS EQU const_value - NUM_OW_INDIVIDUAL_PALS
 DEF NUM_OW_PALS EQU const_value
 

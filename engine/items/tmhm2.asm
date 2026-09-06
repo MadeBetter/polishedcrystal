@@ -12,6 +12,7 @@ TMHMPocket:
 
 TMHM_PocketLoop:
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call TMHM_DisplayPocketItems
 	ld a, 2
@@ -58,6 +59,7 @@ TMHM_JoypadLoop:
 	ld [hl], a
 	pop hl
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	ld a, [w2DMenuFlags2]
 	bit 7, a
@@ -338,18 +340,29 @@ InnerCheckTMHM:
 
 PrintMoveDesc:
 	push hl
-	ld hl, MoveDescriptions
 	ld a, [wCurSpecies]
+	call GetMoveDesc
+	ld d, h
+	ld e, l
+	pop hl
+	rst PlaceString
+	ret
+
+; input: a = move ID
+PrintMoveDescInBattle:
+	call GetMoveDesc
+	jmp BattleTextbox
+
+GetMoveDesc:
 	dec a
 	ld c, a
 	ld b, 0
+	ld hl, MoveDescriptions
 	add hl, bc
 	add hl, bc
 	ld a, [hli]
-	ld e, a
-	ld d, [hl]
-	pop hl
-	rst PlaceString
+	ld h, [hl]
+	ld l, a
 	ret
 
 AskTeachTMHM:

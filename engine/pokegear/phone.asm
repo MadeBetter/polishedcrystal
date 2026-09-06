@@ -193,12 +193,14 @@ PokegearPhone_GetDPad:
 
 .done_joypad_same_page
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call PokegearPhone_UpdateCursor
 	jmp ApplyTilemapInVBlank
 
 .done_joypad_update_page
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call PokegearPhone_UpdateDisplayList
 	jmp ApplyTilemapInVBlank
@@ -322,6 +324,7 @@ PokegearPhoneContactSubmenu:
 	ld de, .CallCancelStrings
 .got_menu_data
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	push hl
 	push de
@@ -389,9 +392,10 @@ PokegearPhoneContactSubmenu:
 
 .a_b
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call PokegearPhone_UpdateDisplayList
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	pop hl
 	ldh a, [hJoyPressed]
@@ -414,6 +418,7 @@ PokegearPhoneContactSubmenu:
 	jr c, .CancelDelete
 	call PokegearPhone_DeletePhoneNumber
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call PokegearPhone_UpdateDisplayList
 	ld hl, PokegearText_WhomToCall

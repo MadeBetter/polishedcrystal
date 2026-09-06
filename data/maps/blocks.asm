@@ -1245,9 +1245,9 @@ SECTION "CeladonDeptStore5F_BlockData", ROMX
 CeladonDeptStore5F_BlockData:
 	INCBIN "maps/CeladonDeptStore5F.ablk.lzp"
 
-SECTION "CeladonDeptStore6F_BlockData", ROMX
-CeladonDeptStore6F_BlockData:
-	INCBIN "maps/CeladonDeptStore6F.ablk.lzp"
+SECTION "CeladonDeptStoreRoof_BlockData", ROMX
+CeladonDeptStoreRoof_BlockData:
+	INCBIN "maps/CeladonDeptStoreRoof.ablk.lzp"
 
 SECTION "CeladonDeptStoreElevator_BlockData", ROMX
 CeladonDeptStoreElevator_BlockData:
@@ -1437,6 +1437,14 @@ FuchsiaGym_BlockData:
 SECTION "FuchsiaCity_BlockData", ROMX
 FuchsiaCity_BlockData:
 	INCBIN "maps/FuchsiaCity.ablk.lzp"
+
+SECTION "FuchsiaAquarium1F_BlockData", ROMX
+FuchsiaAquarium1F_BlockData:
+	INCBIN "maps/FuchsiaAquarium1F.ablk.lzp"
+
+SECTION "FuchsiaAquarium2F_BlockData", ROMX
+FuchsiaAquarium2F_BlockData:
+	INCBIN "maps/FuchsiaAquarium2F.ablk.lzp"
 
 SECTION "LuckyIsland_BlockData", ROMX
 LuckyIsland_BlockData:

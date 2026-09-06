@@ -132,7 +132,7 @@ ENDM
 	map_const DARK_CAVE_BLACKTHORN_ENTRANCE,              15, 15 ; 70
 	map_const DRAGONS_DEN_1F,                             10,  4 ; 71
 	map_const DRAGONS_DEN_B1F,                            20, 18 ; 72
-	map_const DRAGON_SHRINE,                               5,  5 ; 73
+	map_const DRAGON_SHRINE,                               5,  7 ; 73
 	map_const TOHJO_FALLS,                                15,  9 ; 74
 	map_const GIOVANNIS_CAVE,                              5,  5 ; 75
 	map_const DIGLETTS_CAVE,                              21, 19 ; 76
@@ -389,6 +389,8 @@ ENDM
 	map_const ROUTE_12_SUPER_ROD_HOUSE,                    4,  4 ; 19
 	map_const LUCKY_ISLAND,                               26, 19 ; 20
 	map_const ROUTE_14_LUCKY_ISLAND_DUAL,                 35,  3 ; 21
+	map_const FUCHSIA_AQUARIUM_1F,                         9,  5 ; 22
+	map_const FUCHSIA_AQUARIUM_2F,                         9,  5 ; 23
 
 	newgroup                                                     ; 18
 	map_const ROUTE_8,                                    26, 11 ;  1
@@ -451,12 +453,12 @@ ENDM
 	map_const CELADON_DEPT_STORE_3F,                       8,  4 ; 10
 	map_const CELADON_DEPT_STORE_4F,                       8,  4 ; 11
 	map_const CELADON_DEPT_STORE_5F,                       8,  4 ; 12
-	map_const CELADON_DEPT_STORE_6F,                       8,  4 ; 13
+	map_const CELADON_DEPT_STORE_ROOF,                    13,  6 ; 13
 	map_const CELADON_DEPT_STORE_ELEVATOR,                 2,  2 ; 14
 	map_const CELADON_MANSION_1F,                          4,  5 ; 15
 	map_const CELADON_MANSION_2F,                          4,  5 ; 16
 	map_const CELADON_MANSION_3F,                          4,  5 ; 17
-	map_const CELADON_MANSION_ROOF,                        4,  7 ; 18
+	map_const CELADON_MANSION_ROOF,                        9,  7 ; 18
 	map_const CELADON_MANSION_ROOF_HOUSE,                  4,  4 ; 19
 	map_const CELADON_POKECENTER_1F,                       6,  4 ; 20
 	map_const CELADON_GAME_CORNER,                        10,  7 ; 21
@@ -622,7 +624,7 @@ ENDM
 	map_const RUINS_OF_ALPH_AERODACTYL_CHAMBER,            4,  5 ;  5
 	map_const RUINS_OF_ALPH_ENTRANCE_CHAMBER,              4,  4 ;  6
 	map_const RUINS_OF_ALPH_INNER_CHAMBER,                10, 14 ;  7
-	map_const RUINS_OF_ALPH_RESEARCH_CENTER,               4,  4 ;  8
+	map_const RUINS_OF_ALPH_RESEARCH_CENTER,               5,  4 ;  8
 	map_const RUINS_OF_ALPH_HO_OH_ITEM_ROOM,               4,  5 ;  9
 	map_const RUINS_OF_ALPH_KABUTO_ITEM_ROOM,              4,  5 ; 10
 	map_const RUINS_OF_ALPH_OMANYTE_ITEM_ROOM,             4,  5 ; 11
@@ -704,7 +706,7 @@ ENDM
 
 	newgroup                                                     ; 37
 	map_const ECRUTEAK_SHRINE_OUTSIDE,                     8, 11 ;  1
-	map_const ECRUTEAK_SHRINE_INSIDE,                      6,  6 ;  2
+	map_const ECRUTEAK_SHRINE_INSIDE,                      6,  5 ;  2
 
 	newgroup                                                     ; 38
 	map_const CERULEAN_CAPE,                              25, 19 ;  1

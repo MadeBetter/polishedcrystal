@@ -149,7 +149,7 @@ ENDM
 
 MACRO setmonval ; pseudo-command for loading mons into hScriptVar
 	db setval16_command
-	dp \1 ; mon value
+	dp \# ; mon value
 ENDM
 
 	const addval_command
@@ -336,7 +336,7 @@ ENDM
 	const checkpoke_command
 MACRO checkpoke
 	db checkpoke_command
-	dp \1 ; pkmn
+	dp \# ; pkmn
 ENDM
 
 	const givepoke_command
@@ -1471,6 +1471,7 @@ ENDM
 
 	const usepaletteswap_command
 MACRO usepaletteswap
+	def _NUM_PALETTE_SWAPS = 0
 	db usepaletteswap_command
 	dw \1 ; paletteswap_pointer
 ENDM
