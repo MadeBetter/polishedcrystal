@@ -767,10 +767,17 @@ LoadTrainerSpriteAsMapObject1::
 	ld a, [hl]
 LoadSpriteAsMapObject1::
 	ld [wMap1ObjectSprite], a
-	ldh [hUsedSpriteIndex], a
-	ld a, 24
-	ldh [hUsedSpriteTile], a
-	farjp GetUsedSprite
+	; If already active, rebind this object through the shared allocator.
+	; Otherwise CopyObjectStruct will acquire its graphics when it appears.
+	push af
+	ld a, 1
+	call CheckObjectVisibility
+	pop de ; d = new sprite; preserve visibility carry
+	ret c
+	ld hl, OBJECT_SPRITE
+	add hl, bc
+	ld [hl], d
+	farjp RefreshSprites
 
 INCLUDE "data/trainers/sprites.asm"
 

@@ -2918,6 +2918,8 @@ InitSprites:
 	ld hl, OBJECT_SPRITE_TILE
 	add hl, bc
 	ld a, [hl]
+	cp UNALLOCATED_SPRITE_TILE
+	ret z
 	and ~(1 << 7)
 	ldh [hCurSpriteTile], a
 	xor a

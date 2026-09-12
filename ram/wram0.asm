@@ -1502,3 +1502,13 @@ wResolvedObjectPals:: ds NUM_OBJECT_STRUCTS
 ; Invalidate the selected map rectangle palettes across text/menu rendering.
 wPaletteSwapNeedsReload:: db
 wPaletteSwapReloadMask:: db
+
+
+SECTION "Shared Overworld Sprite Graphics RAM", WRAM0
+
+; Transient graphics ownership: deliberately outside the saved Game Data.
+; Each key is ROM bank, pointer (little endian), tile count/placement flags.
+wSpriteGfxKeys:: ds NUM_SPRITE_GFX_SLOTS * SPRITE_GFX_KEY_LENGTH
+wSpriteGfxUsed:: ds NUM_SPRITE_GFX_SLOTS
+wSpriteGfxRequest:: ds SPRITE_GFX_KEY_LENGTH
+wSpriteGfxSlot:: db

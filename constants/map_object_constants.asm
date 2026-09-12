@@ -36,7 +36,13 @@ DEF OBJECT_RANGE            rb ; 20
 DEF OBJECT_PAL_INDEX        rb ; 21
 DEF OBJECT_LENGTH EQU _RS
 DEF NUM_OBJECT_STRUCTS EQU 13 ; see wObjectStructs
-DEF FIRST_VRAM1_OBJECT_STRUCT EQU 8
+; Graphics slots are independent of object-structure indexes.
+DEF NUM_SPRITE_GFX_SLOTS EQU 12 ; excludes the dedicated player allocation
+DEF FIRST_VRAM1_SPRITE_GFX_SLOT EQU 7
+DEF SPECIAL_SPRITE_GFX_SLOT EQU NUM_SPRITE_GFX_SLOTS - 1
+DEF SPRITE_GFX_KEY_LENGTH EQU 4 ; ROM bank, pointer, tile count/placement
+DEF SPRITE_GFX_SPECIAL_F EQU 7 ; tile count also encodes the final-slot constraint
+DEF UNALLOCATED_SPRITE_TILE EQU $ff
 
 ; object_struct OBJECT_MAP_OBJECT_INDEX values
 DEF UNASSOCIATED_OBJECT EQU -1

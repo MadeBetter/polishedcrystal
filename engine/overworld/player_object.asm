@@ -154,6 +154,7 @@ CopyObjectStruct::
 	ld e, l
 	dec de
 	call CopyMapObjectToObjectStruct
+	ret c
 	ld hl, wStateFlags
 	bit SCRIPTED_MOVEMENT_STATE_F, [hl]
 	ret z
@@ -166,11 +167,6 @@ CopyObjectStruct::
 CopyMapObjectToObjectStruct:
 	ld a, TRUE
 	ldh [hIsMapObject], a
-	ldh a, [hObjectStructIndexBuffer]
-	ld hl, MAPOBJECT_OBJECT_STRUCT_ID
-	add hl, bc
-	ld [hl], a
-
 	ldh a, [hMapObjectIndexBuffer]
 	ld [wTempObjectCopyMapObjectIndex], a
 
@@ -180,8 +176,15 @@ CopyMapObjectToObjectStruct:
 	ld [wTempObjectCopySprite], a
 
 	call GetSpriteVTile
+	ret c ; leave the map object unassociated if graphics cannot be allocated
 	ld [wTempObjectCopySpriteVTile], a
 
+	push hl
+	ldh a, [hObjectStructIndexBuffer]
+	ld hl, MAPOBJECT_OBJECT_STRUCT_ID
+	add hl, bc
+	ld [hl], a
+	pop hl
 	ld a, [hl]
 	call GetSpritePalette
 	ld [wTempObjectCopyPalette], a
@@ -221,7 +224,9 @@ CopyMapObjectToObjectStruct:
 	ld a, [hl]
 	ld [wTempObjectCopyRadius], a
 
-	jmp CopyTempObjectToObjectStruct
+	call CopyTempObjectToObjectStruct
+	and a ; graphics allocation and object creation succeeded
+	ret
 
 InitializeVisibleSprites:
 	ld bc, wMapObjects + MAPOBJECT_LENGTH

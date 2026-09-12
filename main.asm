@@ -14,6 +14,11 @@ INCLUDE "engine/events/hidden_power_guru.asm"
 INCLUDE "engine/events/haircut_etc.asm"
 
 
+SECTION "Shared Overworld Sprite Graphics", ROMX
+
+INCLUDE "engine/overworld/shared_sprite_gfx.asm"
+
+
 SECTION "Special Events", ROMX
 
 INCLUDE "engine/events/shiny_ditto.asm"

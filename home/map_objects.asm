@@ -8,53 +8,13 @@ GetSpritePalette::
 	jmp PopBCDEHL
 
 GetSpriteVTile::
+; Return the shared graphics allocation in a; carry means no compatible slot.
+; Keep the caller's map/object pointer intact for palette and object setup.
 	push hl
 	push de
 	push bc
 	ldh [hUsedSpriteIndex], a
-	push bc
-	farcall GetSprite
-	pop bc
-	ld hl, wSpriteFlags
-	res 5, [hl]
-	; SPRITE_BIG_GYARADOS, SPRITE_ALOLAN_EXEGGUTOR, and SPRITE_SAILBOAT
-	; use the last object_struct
-	; (SPRITE_BIG_GYARADOS has more than 12 tiles, and SPRITE_SAILBOAT and
-	; SPRITE_ALOLAN_EXEGGUTOR need to be in VRAM1 so text won't overwrite
-	; their tiles)
-	ldh a, [hUsedSpriteIndex]
-	cp SPRITE_BIG_GYARADOS
-	jr z, .use_last_struct
-	cp SPRITE_ALOLAN_EXEGGUTOR
-	jr z, .use_last_struct
-	cp SPRITE_SAILBOAT
-	ldh a, [hObjectStructIndexBuffer]
-	jr nz, .got_sprite_tile
-.use_last_struct
-	ld a, NUM_OBJECT_STRUCTS - 1
-.got_sprite_tile
-	cp FIRST_VRAM1_OBJECT_STRUCT
-	jr c, .continue
-	set 5, [hl]
-	sub FIRST_VRAM1_OBJECT_STRUCT
-.continue
-	add a
-	add a
-	ld d, a
-	add d
-	add d
-	ldh [hUsedSpriteTile], a
-	push af
-	farcall GetUsedSprite
-	pop af
-	ld d, a
-	xor a
-	ld a, d
-	ld hl, wSpriteFlags
-	bit 5, [hl]
-	jr nz, .using_vbk1
-	or $80
-.using_vbk1
+	farcall AcquireSharedSprite
 	jmp PopBCDEHL
 
 GetPlayerStandingTile::

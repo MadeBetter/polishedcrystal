@@ -46,12 +46,18 @@ RefreshSprites::
 	jmp PopBCDEHL
 
 ReloadSpriteIndex::
-; Reloads sprites using hUsedSpriteIndex.
-; Used to reload variable sprites
+; Rebuild every allocation, including when a variable sprite changes.
+; A font/menu may have overwritten VRAM even when the resource key matches.
+; Detach all normal objects first so old keys cannot be mistaken for restored
+; graphics, then load each distinct resource once. Temporary effects retain
+; their absolute tile IDs and never participate in shared allocation.
+	ldh a, [hOAMUpdate]
+	push af
+	ld a, 1
+	ldh [hOAMUpdate], a
+	farcall DetachSharedSprites
 	ld hl, wObjectStructs
 	ld de, OBJECT_LENGTH
-	ldh a, [hUsedSpriteIndex]
-	ld b, a
 	xor a
 	ldh [hIsMapObject], a
 .loop
@@ -59,11 +65,11 @@ ReloadSpriteIndex::
 	ld a, [hl]
 	and a
 	jr z, .done
-	bit 7, b
-	jr z, .continue
-	cp b
-	jr nz, .done
-.continue
+	inc hl
+	ld a, [hld] ; OBJECT_MAP_OBJECT_INDEX
+	cp TEMP_OBJECT
+	jr z, .done
+	ld a, [hl]
 	push hl
 	; hl points to an object_struct; we want bc to point to a map_object,
 	; to get the radius (actually the SPRITE_MON_ICON species).
@@ -73,6 +79,7 @@ ReloadSpriteIndex::
 	call GetSpriteVTile
 	pop bc
 	pop hl
+	jr c, .done ; incompatible special resources stay hidden, never aliased
 	push hl
 	inc hl ; skip OBJECT_SPRITE
 	inc hl ; skip OBJECT_MAP_OBJECT_INDEX
@@ -84,6 +91,10 @@ ReloadSpriteIndex::
 	inc a
 	cp NUM_OBJECT_STRUCTS
 	jr nz, .loop
+	; Tile bases may have changed. Refresh OAM without taking another step.
+	farcall _UpdateSprites
+	pop af
+	ldh [hOAMUpdate], a
 	ret
 
 LoadOverworldGFX::
@@ -284,6 +295,9 @@ _GetSpritePalette::
 GetUsedSprite::
 	ldh a, [hUsedSpriteIndex]
 	call SafeGetSprite
+LoadUsedSpriteGFX::
+; b:de = resolved compressed graphics; c = 8, 12, or 15 tiles per group.
+; Shared allocations call here directly, avoiding a second sprite lookup.
 	ldh a, [hUsedSpriteTile]
 	call .GetTileAddr
 	push bc
@@ -315,9 +329,9 @@ endr
 	bit 6, a
 	ret nz
 
-	ldh a, [hUsedSpriteIndex]
-	call DoesSpriteHaveFacings
-	ret c
+	ld a, c
+	cp 8 ; resolved Pokemon icons have no second group, including variable icons
+	ret z
 
 	ld a, [wSpriteFlags]
 	bit 5, a
