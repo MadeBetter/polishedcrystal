@@ -43,6 +43,9 @@ DEF SPECIAL_SPRITE_GFX_SLOT EQU NUM_SPRITE_GFX_SLOTS - 1
 DEF SPRITE_GFX_KEY_LENGTH EQU 4 ; ROM bank, pointer, tile count/placement
 DEF SPRITE_GFX_SPECIAL_F EQU 7 ; tile count also encodes the final-slot constraint
 DEF UNALLOCATED_SPRITE_TILE EQU $ff
+DEF STATIONARY_BALL_TILES EQU 3
+DEF STATIONARY_BALL_VRAM1_TILE EQU $3c ; tail after the ordinary bank-1 blocks
+DEF SPRITE_GFX_PARTIAL EQU 2 ; only the last three tiles are owned by balls
 
 ; object_struct OBJECT_MAP_OBJECT_INDEX values
 DEF UNASSOCIATED_OBJECT EQU -1
@@ -82,6 +85,9 @@ DEF OW_RIGHT EQU RIGHT << 2
 	shift_const SWIMMING         ; 5
 	shift_const STRENGTH_BOULDER ; 6
 	shift_const BIG_OBJECT       ; 7
+
+; Shared field-animation scratch: Fly and Headbutt reload this area before use.
+DEF FISHING_ROD_TILE EQU $65 ; vertical, then horizontal
 
 ; facing attribute bit flags
 	DEF FIXED_BROWN_PALETTE_F EQU 0
@@ -354,6 +360,8 @@ DEF NUM_OBJECT_ACTIONS EQU const_value
 	const FACING_BIG_LUGIA_1        ; 3c
 	const FACING_BIG_LUGIA_2        ; 3d
 	const FACING_CUT_TREE           ; 3e
+	const FACING_FARAWAY_ROCK       ; 3f
+	const FACING_STATIONARY_BALL    ; 40
 DEF NUM_FACINGS EQU const_value
 
 ; DoPlayerMovement.DoStep arguments (see engine/overworld/player_movement.asm)

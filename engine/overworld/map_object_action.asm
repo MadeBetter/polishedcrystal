@@ -51,10 +51,24 @@ SetFacingShadow:
 	jr SetFixedFacing
 
 SetFacingCutTree:
+	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_BALL_CUT_TREE
 	ld a, FACING_CUT_TREE
+	jr z, SetFixedFacing
+	ld a, FACING_FARAWAY_ROCK
 	jr SetFixedFacing
 
 SetFacingCurrent:
+	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_BALL_CUT_TREE
+	jr nz, .normal
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	ld a, FACING_STATIONARY_BALL
+	jr z, SetFixedFacing
+.normal
 	call GetSpriteDirection
 	jr SetFixedFacing
 
@@ -146,7 +160,7 @@ SetFacingSkyfall:
 	ld hl, OBJECT_FLAGS1
 	add hl, bc
 	bit SLIDING_F, [hl]
-	jr nz, SetFacingCurrent
+	jmp nz, SetFacingCurrent
 
 	ld hl, OBJECT_STEP_FRAME
 	add hl, bc

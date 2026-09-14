@@ -542,6 +542,9 @@ RattataBackSpriteGFX:: INCBIN "gfx/sprites/rattata_back.2bpp.lzp"
 SECTION "WeirdTreeSpriteGFX", ROMX
 WeirdTreeSpriteGFX:: INCBIN "gfx/sprites/weird_tree.2bpp.lzp"
 
+SECTION "StationaryBallSpriteGFX", ROMX
+StationaryBallSpriteGFX:: INCBIN "gfx/sprites/ball.2bpp.lzp"
+
 SECTION "BallCutTreeSpriteGFX", ROMX
 BallCutTreeSpriteGFX:: INCBIN "gfx/sprites/ball_cut_tree.2bpp.lzp"
 

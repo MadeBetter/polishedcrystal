@@ -23,6 +23,9 @@ BuildingSignGFX:: INCBIN "gfx/signs/building.2bpp.lzp"
 SECTION "Overworld Effect Graphics", ROMX
 
 OverworldEffectGFX:: INCBIN "gfx/overworld/overworld.2bpp.lzp"
+OverworldTrunkGFX::
+	INCBIN "gfx/overworld/trunks.2bpp"
+	assert @ - OverworldTrunkGFX == 2 tiles
 HeadbuttTreeGFX::    INCBIN "gfx/overworld/headbutt_tree.2bpp.lzp"
 HeadbuttTree2GFX::   INCBIN "gfx/overworld/headbutt_tree_2.2bpp.lzp"
 
@@ -41,6 +44,10 @@ CoastSandTileGFX:: INCBIN "gfx/tilesets/animations/coast_sand.2bpp.lzp"
 
 
 SECTION "Fishing Graphics", ROMX
+
+FishingRodGFX::
+	INCBIN "gfx/overworld/fishing_rod.2bpp"
+	assert @ - FishingRodGFX == 2 tiles
 
 ChrisFishingGFX::     INCBIN "gfx/overworld/chris_fish.2bpp"
 KrisFishingGFX::      INCBIN "gfx/overworld/kris_fish.2bpp"

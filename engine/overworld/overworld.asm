@@ -38,11 +38,18 @@ RefreshSprites::
 	push hl
 	push de
 	push bc
+	; Atlas-backed objects must not reach OAM before their tiles are restored.
+	ldh a, [hOAMUpdate]
+	push af
+	ld a, 1
+	ldh [hOAMUpdate], a
 	call GetPlayerSprite
 	xor a
 	ldh [hUsedSpriteIndex], a
 	call ReloadSpriteIndex
 	call LoadOverworldGFX
+	pop af
+	ldh [hOAMUpdate], a
 	jmp PopBCDEHL
 
 ReloadSpriteIndex::
@@ -98,10 +105,52 @@ ReloadSpriteIndex::
 	ret
 
 LoadOverworldGFX::
+	; Select in the map's WRAM bank before entering the decompression bank.
+	call UsesHealingMachineGFX
+	ld bc, 0 ; keep the healing tiles already in the compressed atlas
+	jr c, .load
+	ld bc, OverworldTrunkGFX
+.load
+	call RunFunctionInWRA6
+
+	push bc
 	ld hl, OverworldEffectGFX
-	lb bc, BANK(OverworldEffectGFX), 17
-	ld de, vTiles0 tile $6f
-	jmp DecompressRequest2bpp
+	ld b, BANK(OverworldEffectGFX)
+	call FarDecompressInB
+	pop hl
+	ld a, h ; a ROMX source has a nonzero high byte; zero means keep healing
+	and a
+	jr z, .ready
+	; Replace $78-$79 in scratch so only the selected atlas reaches VRAM.
+	ld a, BANK(OverworldTrunkGFX)
+	ld de, wDecompressScratch + ($78 - $6f) tiles
+	ld bc, 2 tiles
+	call FarCopyBytes
+.ready
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	ld hl, vTiles0 tile $6f
+	ld de, wDecompressScratch
+	; Fruit at $7a-$7b makes the effects atlas contiguous again.
+	lb bc, BANK(LoadOverworldGFX), $80 - $6f
+	call Get2bpp
+	pop af
+	ldh [rVBK], a
+	ret
+
+UsesHealingMachineGFX:
+	assert wMapNumber == wMapGroup + 1
+	ld hl, wMapGroup
+	ld a, [hli]
+	ld b, [hl]
+	ld c, a
+	ld hl, HealingMachineMaps
+	ld de, 2
+	jmp IsInWordArray
+
+INCLUDE "data/maps/healing_machine_maps.asm"
 
 SafeGetSprite:
 	push hl
@@ -296,7 +345,7 @@ GetUsedSprite::
 	ldh a, [hUsedSpriteIndex]
 	call SafeGetSprite
 LoadUsedSpriteGFX::
-; b:de = resolved compressed graphics; c = 8, 12, or 15 tiles per group.
+; b:de = compressed graphics; c = 3 (ball), 8 (icon), 12, or 15 tiles.
 ; Shared allocations call here directly, avoiding a second sprite lookup.
 	ldh a, [hUsedSpriteTile]
 	call .GetTileAddr
@@ -330,8 +379,8 @@ endr
 	ret nz
 
 	ld a, c
-	cp 8 ; resolved Pokemon icons have no second group, including variable icons
-	ret z
+	cp 12 ; three-tile balls and eight-tile icons have no alternate group
+	ret c
 
 	ld a, [wSpriteFlags]
 	bit 5, a

@@ -29,6 +29,13 @@ LoadFishingGFX:
 	ld hl, vTiles0 tile $0a
 	call .LoadGFX
 
+	; Every cast (including retries) restores rods after refreshmap. Fly and
+	; Headbutt are separate scripts and reload their own overlapping graphics.
+	ld hl, vTiles0 tile FISHING_ROD_TILE
+	ld de, FishingRodGFX
+	lb bc, BANK(FishingRodGFX), 2
+	call Get2bpp
+
 	pop af
 	ldh [rVBK], a
 	ret

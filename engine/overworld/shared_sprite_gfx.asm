@@ -17,6 +17,40 @@ AcquireSharedSprite:
 	ret
 
 .npc
+	; Select graphics by use: atlas trees, three-tile stationary balls, or
+	; the original sheet for decorations. Pearl rocks also retain their sheet.
+	ldh a, [hUsedSpriteIndex]
+	cp SPRITE_BALL_CUT_TREE
+	jr z, .get_movement
+	cp SPRITE_BLANK_FRUIT
+	jr nz, .resolve
+.get_movement
+	ldh a, [hIsMapObject]
+	and a
+	ld hl, MAPOBJECT_MOVEMENT
+	jr nz, .movement
+	ld hl, OBJECT_MOVEMENT_TYPE
+.movement
+	add hl, bc
+	ld d, [hl]
+	ldh a, [hUsedSpriteIndex]
+	cp SPRITE_BLANK_FRUIT
+	ld a, d
+	jr z, .fruit
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jp z, AcquireStationaryBall
+	cp SPRITEMOVEDATA_CUTTABLE_TREE
+	jr nz, .resolve
+.atlas
+	ld a, $80 ; bank 0, no shared graphics slot; facing uses absolute tiles
+	and a
+	ret
+
+.fruit
+	; BlankFruit also supplies decorations; only actual fruit trees use atlas.
+	cp SPRITEMOVEDATA_FRUIT
+	jr z, .atlas
+.resolve
 	ldh a, [hUsedSpriteIndex]
 	farcall GetSprite
 	; Resolve aliases and Pokemon forms before comparing the actual ROM data.
@@ -58,6 +92,10 @@ AcquireSharedSprite:
 	jr .allocate
 
 .special_slot
+	; The three-tile tail overlaps a 15-tile resource's base pose.
+	call RelocateStationaryBallForSpecial
+	ret c
+	call MarkUsedSpriteGfx
 	ld a, [wSpriteGfxUsed + SPECIAL_SPRITE_GFX_SLOT]
 	and a
 	ld a, SPECIAL_SPRITE_GFX_SLOT
@@ -201,13 +239,20 @@ MarkUsedSpriteGfx:
 	inc c
 	jr .divide
 .slot
-	cp -12 ; ignore non-slot tile bases
+	ld d, 1
+	cp -12
+	jr z, .claim
+	; A relocated ball occupies the last three tiles of an ordinary block.
+	; Its other nine tiles and its alternate region are never uploaded.
+	cp -STATIONARY_BALL_TILES
 	jr nz, .restore
+	ld d, SPRITE_GFX_PARTIAL
+.claim
 	ld a, c
 	cp NUM_SPRITE_GFX_SLOTS
 	jr nc, .restore
 	call SpriteGfxUsed
-	ld [hl], 1
+	ld [hl], d
 .restore
 	pop de
 	pop bc
@@ -223,13 +268,14 @@ MarkUsedSpriteGfx:
 	ret
 
 FindSharedSpriteGfx:
-; Only live slots can hit: unreferenced graphics may have been overwritten by
-; another screen. Palette and animation state deliberately are not key fields.
+; Only complete, live slots can hit. A ball's partial occupancy blocks a
+; 12-tile allocation but must never match that block's obsolete resource key.
 	ld c, 0
 .loop
 	ld a, c
 	call SpriteGfxUsed
-	jr z, .next
+	dec a
+	jr nz, .next
 	ld a, c
 	call SpriteGfxKey
 	ld de, wSpriteGfxRequest
@@ -344,3 +390,120 @@ DetachSharedSprites:
 	dec d
 	jr nz, .loop
 	ret
+
+AcquireStationaryBall:
+	call FindLiveStationaryBall
+	jr nc, .new
+	and a ; sharing hit: no decompression or transfer
+	ret
+.new
+	call MarkUsedSpriteGfx
+	ld a, [wSpriteGfxUsed + SPECIAL_SPRITE_GFX_SLOT]
+	dec a
+	jr nz, .tail
+	ld a, SPECIAL_SPRITE_GFX_SLOT
+	call SpriteGfxKey
+	inc hl
+	inc hl
+	inc hl
+	bit SPRITE_GFX_SPECIAL_F, [hl]
+	jr z, .tail
+	; A large sprite occupies $30-$3e. Use three tiles at the end of a
+	; free ordinary block instead; no full-block or alternate copy is made.
+	ld b, SPECIAL_SPRITE_GFX_SLOT
+	call FindFreeSpriteGfx
+	ret c
+	call SpriteGfxTile
+	add 12 - STATIONARY_BALL_TILES
+	jr LoadStationaryBallGFX
+.tail
+	ld a, STATIONARY_BALL_VRAM1_TILE
+	assert STATIONARY_BALL_VRAM1_TILE + STATIONARY_BALL_TILES == $3f
+	; fallthrough
+
+LoadStationaryBallGFX:
+; a = encoded three-tile base; return it with carry clear.
+	push af
+	ld hl, wSpriteFlags
+	res 5, [hl]
+	bit 7, a
+	jr nz, .bank_set
+	set 5, [hl]
+.bank_set
+	and $7f
+	ldh [hUsedSpriteTile], a
+	ld de, StationaryBallSpriteGFX
+	lb bc, BANK(StationaryBallSpriteGFX), STATIONARY_BALL_TILES
+	farcall LoadUsedSpriteGFX
+	pop af
+	and a
+	ret
+
+FindLiveStationaryBall:
+; Carry and a = existing encoded base. Ignore the object being rebound and
+; detached objects so menu restoration never mistakes stale VRAM for a hit.
+	ld bc, wObject1Struct
+	ld e, 1
+.loop
+	ldh a, [hObjectStructIndexBuffer]
+	cp e
+	jr z, .next
+	ld a, [bc]
+	cp SPRITE_BALL_CUT_TREE
+	jr nz, .next
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hli]
+	cp TEMP_OBJECT
+	jr z, .next
+	ld a, [hli] ; OBJECT_SPRITE_TILE
+	cp UNALLOCATED_SPRITE_TILE
+	jr z, .next
+	ld d, a
+	ld a, [hl] ; OBJECT_MOVEMENT_TYPE
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr nz, .next
+	ld a, d
+	scf
+	ret
+.next
+	ld hl, OBJECT_LENGTH
+	add hl, bc
+	ld b, h
+	ld c, l
+	inc e
+	ld a, e
+	cp NUM_OBJECT_STRUCTS
+	jr nz, .loop
+	and a
+	ret
+
+RelocateStationaryBallForSpecial:
+	call FindLiveStationaryBall
+	jr nc, .done
+	cp STATIONARY_BALL_VRAM1_TILE
+	jr nz, .done
+	push af ; old encoded base
+	ld b, SPECIAL_SPRITE_GFX_SLOT
+	call FindFreeSpriteGfx
+	jr c, .full
+	call SpriteGfxTile
+	add 12 - STATIONARY_BALL_TILES
+	call LoadStationaryBallGFX
+	pop de ; d = old encoded base
+	ld e, a
+	call RepointSharedSprites
+	; Publish every new ball reference before the special overwrites $3c-$3e.
+	farcall _UpdateSprites
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
+	jr z, .done
+	ldh a, [hOAMUpdate]
+	and a
+	call z, DelayFrame
+.done
+	and a
+	ret
+.full
+	pop de
+	ret ; preserve allocation failure carry

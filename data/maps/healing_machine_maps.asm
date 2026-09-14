@@ -1,0 +1,35 @@
+; Maps that call HealMachineAnim, directly or through pokecenternurse.
+; Other maps use trunks in bank-0 atlas tiles $78-$79. Add new healing-machine
+; locations here, including nurses outside Pokemon Centers.
+HealingMachineMaps:
+	map_id AZALEA_POKECENTER_1F
+	map_id BATTLE_FACTORY_1F
+	map_id BATTLE_TOWER_1F
+	map_id BLACKTHORN_POKECENTER_1F
+	map_id CELADON_POKECENTER_1F
+	map_id CERULEAN_POKECENTER_1F
+	map_id CHERRYGROVE_POKECENTER_1F
+	map_id CIANWOOD_POKECENTER_1F
+	map_id CINNABAR_POKECENTER_1F
+	map_id ECRUTEAK_POKECENTER_1F
+	map_id ELMS_LAB
+	map_id FUCHSIA_POKECENTER_1F
+	map_id GOLDENROD_POKECOM_CENTER_1F
+	map_id HALL_OF_FAME
+	map_id INDIGO_PLATEAU_POKECENTER_1F
+	map_id IVYS_LAB
+	map_id LAVENDER_POKECENTER_1F
+	map_id MAHOGANY_POKECENTER_1F
+	map_id OLIVINE_POKECENTER_1F
+	map_id PEWTER_POKECENTER_1F
+	map_id ROUTE_10_POKECENTER_1F
+	map_id ROUTE_32_POKECENTER_1F
+	map_id ROUTE_3_POKECENTER_1F
+	map_id SAFFRON_POKECENTER_1F
+	map_id SHAMOUTI_POKECENTER_1F
+	map_id SILVER_CAVE_POKECENTER_1F
+	map_id SNOWTOP_POKECENTER_1F
+	map_id VERMILION_POKECENTER_1F
+	map_id VIOLET_POKECENTER_1F
+	map_id VIRIDIAN_POKECENTER_1F
+	dw -1

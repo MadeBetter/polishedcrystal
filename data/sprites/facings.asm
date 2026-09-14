@@ -64,6 +64,8 @@ Facings:
 	dw FacingBigLugia1        ; FACING_BIG_LUGIA_1
 	dw FacingBigLugia2        ; FACING_BIG_LUGIA_2
 	dw FacingCutTree          ; FACING_CUT_TREE
+	dw FacingFarawayRock      ; FACING_FARAWAY_ROCK
+	dw FacingStationaryBall   ; FACING_STATIONARY_BALL
 	assert_table_length NUM_FACINGS
 	dw 0 ; end
 
@@ -156,7 +158,7 @@ FacingFishDown:
 	db  0,  8, 0, $01
 	db  8,  0, RELATIVE_ATTRIBUTES, $02
 	db  8,  8, RELATIVE_ATTRIBUTES, $03
-	db 16,  0, ABSOLUTE_TILE_ID, $7a
+	db 16,  0, ABSOLUTE_TILE_ID, FISHING_ROD_TILE
 
 FacingFishUp:
 	db 5 ; #
@@ -164,7 +166,7 @@ FacingFishUp:
 	db  0,  8, 0, $05
 	db  8,  0, RELATIVE_ATTRIBUTES, $06
 	db  8,  8, RELATIVE_ATTRIBUTES, $07
-	db -8,  0, ABSOLUTE_TILE_ID, $7a
+	db -8,  0, ABSOLUTE_TILE_ID, FISHING_ROD_TILE
 
 FacingFishLeft:
 	db 5 ; #
@@ -172,7 +174,7 @@ FacingFishLeft:
 	db  0,  8, 0, $09
 	db  8,  0, RELATIVE_ATTRIBUTES, $0a
 	db  8,  8, RELATIVE_ATTRIBUTES, $0b
-	db  5, -8, ABSOLUTE_TILE_ID | OAM_XFLIP, $7b
+	db  5, -8, ABSOLUTE_TILE_ID | OAM_XFLIP, FISHING_ROD_TILE + 1
 
 FacingFishRight:
 	db 5 ; #
@@ -180,7 +182,7 @@ FacingFishRight:
 	db  0,  0, OAM_XFLIP, $09
 	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $0a
 	db  8,  0, RELATIVE_ATTRIBUTES | OAM_XFLIP, $0b
-	db  5, 16, ABSOLUTE_TILE_ID, $7b
+	db  5, 16, ABSOLUTE_TILE_ID, FISHING_ROD_TILE + 1
 
 FacingEmote:
 	db 4 ; #
@@ -280,15 +282,31 @@ FacingSplash2:
 
 FacingApricorn:
 	db 2 ; #
-	db  0,  4, 0, $05
-	db 10,  4, FIXED_BROWN_PALETTE, $06
+	db  0,  4, ABSOLUTE_TILE_ID, $7b
+	db 10,  4, ABSOLUTE_TILE_ID | FIXED_BROWN_PALETTE, $79
 
 FacingBerry:
 	db 2 ; #
-	db  4,  3, 0, $04
-	db 10,  4, FIXED_BROWN_PALETTE, $06
+	db  4,  3, ABSOLUTE_TILE_ID, $7a
+	db 10,  4, ABSOLUTE_TILE_ID | FIXED_BROWN_PALETTE, $79
+
+FacingStationaryBall:
+	db 4 ; #
+	db  0,  0, 0, $00
+	db  0,  8, 0, $01
+	db  8,  0, RELATIVE_ATTRIBUTES, $02
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $02
 
 FacingCutTree:
+	db 5 ; #
+	db -3,  0, ABSOLUTE_TILE_ID, $74
+	db -3,  8, ABSOLUTE_TILE_ID, $75
+	db  5,  0, ABSOLUTE_TILE_ID | RELATIVE_ATTRIBUTES, $76
+	db  5,  8, ABSOLUTE_TILE_ID | RELATIVE_ATTRIBUTES, $77
+	db  4,  4, ABSOLUTE_TILE_ID | RELATIVE_ATTRIBUTES | NEXT_PALETTE, $78
+
+; These Pearl objects borrow cut-tree movement, but retain relative graphics.
+FacingFarawayRock:
 	db 5 ; #
 	db -3,  0, 0, $04
 	db -3,  8, 0, $05
@@ -298,7 +316,7 @@ FacingCutTree:
 
 FacingPickedFruit:
 	db 1 ; #
-	db 10,  4, FIXED_BROWN_PALETTE, $06
+	db 10,  4, ABSOLUTE_TILE_ID | FIXED_BROWN_PALETTE, $79
 
 FacingBigGyarados1:
 	db 16 ; #
