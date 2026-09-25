@@ -1424,9 +1424,7 @@ endr
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	ld a, 19 * 4  ; Clear only sprites 19-39, protect Chris color layer (slots 0-18)
-	ldh [hUsedOAMIndex], a
-	call ClearNormalSprites
+	call ClearOAMSprites_PreserveColorLayer
 
 	ld a, [wBattleMode]
 	dec a
@@ -1439,9 +1437,7 @@ endr
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	ld a, 19 * 4  ; Clear only sprites 19-39, protect Chris color layer (slots 0-18)
-	ldh [hUsedOAMIndex], a
-	call ClearNormalSprites
+	call ClearOAMSprites_PreserveColorLayer
 
 .send_out_player_mon
 	call SendOutPlayerMon
@@ -2863,8 +2859,7 @@ SlideBattlePicOut:
 	; Clear flag indicating enemy trainer sprite is no longer visible
 	xor a
 	ld [wTrainerSpriteVisible], a
-	call FinishBattleAnim  ; Refresh palette to match new visibility state
-	ret
+	jmp FinishBattleAnim  ; Refresh palette to match new visibility state
 
 .player_slide
 	; Player slide: Clear player back pic flag
@@ -2878,12 +2873,11 @@ SlideBattlePicOut:
 	push bc
 	push hl
 	ld hl, wShadowOAM + 1  ; Start at X coordinate of first sprite (offset +1)
-	ld b, 19  ; 19 color layer sprites
+	ld b, PLAYER_COLOR_LAYER_OAM_COUNT
 .color_slide_loop
 	ld a, [hl]  ; Get current X coordinate
 	sub 8       ; Move left by 8 pixels
-	ld [hl], a  ; Store new X coordinate
-	inc hl
+	ld [hli], a ; Store new X coordinate
 	inc hl
 	inc hl
 	inc hl      ; Move to next sprite (+4 bytes)
@@ -2898,13 +2892,12 @@ SlideBattlePicOut:
 	; Affects slots 19-39 (21 sprites for trainer color layer)
 	push bc
 	push hl
-	ld hl, wShadowOAM + 19 * 4 + 1  ; Start at X coord of slot 19 (byte offset +1)
-	ld b, 21  ; 21 trainer color layer sprites
+	ld hl, wShadowOAM + TRAINER_COLOR_LAYER_OAM_START * OBJ_SIZE + OAMA_X
+	ld b, TRAINER_COLOR_LAYER_OAM_COUNT
 .trainer_color_slide_loop
 	ld a, [hl]  ; Get current X coordinate
 	add 8       ; Move RIGHT by 8 pixels (trainer slides off right edge)
-	ld [hl], a  ; Store new X coordinate
-	inc hl
+	ld [hli], a ; Store new X coordinate
 	inc hl
 	inc hl
 	inc hl      ; Move to next sprite (+4 bytes)
@@ -6502,13 +6495,12 @@ BattleWinSlideInEnemyTrainerFrontpic:
 	; This prevents visible flicker before slide-in animation begins
 	; (OAM sprites already created by LoadTrainerColorSprites_Far above)
 	; Starting position: +64 pixels (8 tiles right) for proper alignment
-	ld hl, wShadowOAM + 19 * 4 + 1  ; Start at X coord of slot 19
-	ld b, 21  ; Process 21 OAM slots (trainer color layer range)
+	ld hl, wShadowOAM + TRAINER_COLOR_LAYER_OAM_START * OBJ_SIZE + OAMA_X
+	ld b, TRAINER_COLOR_LAYER_OAM_COUNT
 .position_oam_offscreen
 	ld a, [hl]  ; Get current X coordinate
 	add 64      ; Move right by 64 pixels (8 tiles off-screen)
-	ld [hl], a  ; Store new X coordinate
-	inc hl
+	ld [hli], a ; Store new X coordinate
 	inc hl
 	inc hl
 	inc hl      ; Move to next sprite (+4 bytes per OAM entry)
@@ -6578,13 +6570,12 @@ BattleWinSlideInEnemyTrainerFrontpic:
 	; Affects slots 19-39 (21 sprites for trainer color layer)
 	push bc
 	push hl
-	ld hl, wShadowOAM + 19 * 4 + 1  ; Start at X coord of slot 19 (byte offset +1)
-	ld b, 21  ; 21 trainer color layer OAM slots
+	ld hl, wShadowOAM + TRAINER_COLOR_LAYER_OAM_START * OBJ_SIZE + OAMA_X
+	ld b, TRAINER_COLOR_LAYER_OAM_COUNT
 .trainer_color_slide_left_loop
 	ld a, [hl]  ; Get current X coordinate
 	sub 8       ; Move LEFT by 8 pixels (trainer slides in from right)
-	ld [hl], a  ; Store new X coordinate
-	inc hl
+	ld [hli], a ; Store new X coordinate
 	inc hl
 	inc hl
 	inc hl      ; Move to next sprite (+4 bytes)
@@ -8284,15 +8275,7 @@ BattleIntro:
 	hlcoord 0, 0
 	lb bc, 4, 12
 	call ClearBox
-	; Check if trainer sprite visible before clearing slots 19-39
-	ld a, [wTrainerSpriteVisible]
-	and a
-	jr nz, .skip_clear_normal_sprites  ; Trainer visible - don't clear slots 19-39
-	; No trainer - safe to clear animation sprites (slots 19-39)
-	ld a, 19 * 4  ; Clear only sprites 19-39, protect Chris color layer (slots 0-18)
-	ldh [hUsedOAMIndex], a
-	call ClearNormalSprites
-.skip_clear_normal_sprites
+	call ClearOAMSprites_PreserveColorLayer
 	; Clear ball icon tilemap positions to prevent visual glitch
 	hlcoord 11, 10
 	lb bc, 1, 6  ; 1 row, 6 columns (the 6 ball positions)
@@ -10045,7 +10028,7 @@ LoadTrainerColorSprites_Far::
 CreateTrainerColorOAM:
 	; Create trainer color layer OAM sprites using table-driven lookup
 	; Uses OBJ slots 19-39 (21 sprites available, 7x7 grid = 49 positions)
-	ld hl, wShadowOAM + 19 * 4  ; Start at slot 19
+	ld hl, wShadowOAM + TRAINER_COLOR_LAYER_OAM_START * OBJ_SIZE
 	xor a
 	ldh [hBattleTurn], a  ; Grid position counter (0-48 for 7x7)
 	ld b, $7   ; 7 rows

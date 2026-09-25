@@ -578,7 +578,15 @@ wTrickRoom:: db
 
 wBattleLowHealthAlarm:: db
 
-	ds 3 ; unused
+; Keep battle trainer visibility in unbanked WRAM: battle animations select
+; WRAM bank 5 while using these flags to derive their available OAM range.
+wPlayerBackpicVisible::
+; TRUE while the player's trainer backpic and color layer are on screen.
+	db
+wTrainerSpriteVisible::
+; TRUE while the enemy trainer frontpic and color layer are on screen.
+	db
+	ds 1 ; unused
 
 wPlayerHazards::
 ; bit

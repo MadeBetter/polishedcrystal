@@ -81,57 +81,41 @@ RestoreSprites::
 	ret
 
 UpdateSprites_PreserveColorLayer::
-; Wrapper for _UpdateSprites that preserves color layer OAM (slots 0-18) during battle
-; When player's back pic is visible, this skips OAM rebuild to avoid clearing color layer
-; Otherwise calls _UpdateSprites normally for overworld sprite updates
+; Skip overworld OAM rebuilds while either trainer color layer is visible.
 	ld a, [wPlayerBackpicVisible]
 	and a
-	ret nz  ; If back pic visible, skip _UpdateSprites to preserve color layer
-	farcall _UpdateSprites
-	ret
+	ret nz
+	ld a, [wTrainerSpriteVisible]
+	and a
+	ret nz
+	farjp _UpdateSprites
 
 ClearOAMSprites_PreserveColorLayer::
-; Check if Pokemon are battling first (most common case)
-; If both species loaded: clear all OAM for animations
-; Otherwise: check visibility flags for intro sequences
-
-	; Check if both Pokemon are on screen (species != 0)
-	ld a, [wBattleMonSpecies]
-	and a
-	jr z, .check_visibility_flags  ; Player Pokemon not on screen
-
-	ld a, [wEnemyMonSpecies]
-	and a
-	jr z, .check_visibility_flags  ; Enemy Pokemon not on screen
-
-	; Both Pokemon battling - clear all OAM
-	jmp ClearSprites
-
-.check_visibility_flags
-	; Intro/transition - check visibility flags
+; Clear only the contiguous OAM range not occupied by visible trainer layers.
 	ld a, [wPlayerBackpicVisible]
 	and a
-	jr z, .check_trainer
+	jr z, .player_hidden
 
-	; Player is visible, so we must preserve OAM slots 0-18.
-	; Battle animations use slots 19-39, so those should be cleared.
-	; The trainer color layer also uses slots 19-39, but if a battle
-	; animation was just playing, it would have overwritten the trainer's
-	; graphics anyway, so it's safe to clear.
-	ld hl, wShadowOAM + 19 * 4
-	ld bc, (OAM_COUNT - 19) * 4
+	; Both layers fill OAM, so there is no animation range to clear.
+	ld a, [wTrainerSpriteVisible]
+	and a
+	ret nz
+
+	; Only the player layer is visible: clear the range after it.
+	ld hl, wShadowOAM + PLAYER_COLOR_LAYER_OAM_COUNT * OBJ_SIZE
+	ld bc, TRAINER_COLOR_LAYER_OAM_COUNT * OBJ_SIZE
 	xor a
 	rst ByteFill
 	ret
 
-.check_trainer
+.player_hidden
 	ld a, [wTrainerSpriteVisible]
 	and a
 	jr z, .clear_all
 
-	; Only trainer - clear 0-18
+	; Only the enemy trainer layer is visible: clear the range before it.
 	ld hl, wShadowOAM
-	ld bc, 19 * 4
+	ld bc, PLAYER_COLOR_LAYER_OAM_COUNT * OBJ_SIZE
 	xor a
 	rst ByteFill
 	ret

@@ -135,9 +135,8 @@ RunBattleAnimScript:
 	bit 3, a
 	ret nz
 
-	; Clear OAM sprites, preserving color layer if player back pic is visible
-	call ClearOAMSprites_PreserveColorLayer
-	ret
+	; Clear OAM sprites without touching either visible trainer color layer.
+	jmp ClearOAMSprites_PreserveColorLayer
 
 BattleAnimClearHUD:
 	call DelayFrame
@@ -1312,14 +1311,25 @@ BattleAnim_SetOBPals:
 	ret
 
 BattleAnim_UpdateOAM_All:
-	; Check if player back pic is visible (color layer present)
+	; Derive the contiguous animation range from the visible trainer layers.
+	; player/foe visible: both = 19..19, player = 19..40,
+	; foe = 0..19, neither = 0..40.
 	ld a, [wPlayerBackpicVisible]
 	and a
-	ld a, 19 * 4  ; Start after color layer (slot 19) if visible
+	ld a, PLAYER_COLOR_LAYER_OAM_COUNT * OBJ_SIZE
 	jr nz, .got_start
-	xor a  ; Start from slot 0 if no color layer
+	xor a
 .got_start
 	ld [wBattleAnimOAMPointerLo], a
+
+	ld a, [wTrainerSpriteVisible]
+	and a
+	ld a, TRAINER_COLOR_LAYER_OAM_START * OBJ_SIZE
+	jr nz, .got_end
+	ld a, OAM_SIZE
+.got_end
+	ld [wBattleAnimOAMEnd], a
+
 	ld hl, wActiveAnimObjects
 	ld e, NUM_ANIM_OBJECTS
 .loop
@@ -1345,9 +1355,9 @@ BattleAnim_UpdateOAM_All:
 	ld l, a
 	ld h, HIGH(wShadowOAM)
 .loop2
-	ld a, l
-	cp LOW(wShadowOAMEnd)
-	ret nc
+	ld a, [wBattleAnimOAMEnd]
+	cp l
+	ret z
 	xor a
 	ld [hli], a
 	jr .loop2

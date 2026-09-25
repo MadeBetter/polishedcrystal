@@ -107,6 +107,11 @@ BattleAnimOAMUpdate:
 	ld e, a
 	ld d, HIGH(wShadowOAM)
 .loop
+	; The range bounds and OAM writes are OBJ-aligned, so equality is reached
+	; before an animation can enter a visible trainer's reserved range.
+	ld a, [wBattleAnimOAMEnd]
+	cp e
+	jr z, .exit_set_carry
 	ld a, [wBattleAnimTempYCoord]
 	ld b, a
 	ld a, [wBattleAnimTempYOffset]
@@ -170,8 +175,6 @@ BattleAnimOAMUpdate:
 	inc de
 	ld a, e
 	ld [wBattleAnimOAMPointerLo], a
-	cp $a0
-	jr nc, .exit_set_carry
 	dec c
 	jr nz, .loop
 	pop bc
@@ -347,4 +350,3 @@ _ExecuteBGEffects:
 
 _QueueBGEffect:
 	farjp QueueBGEffect
-

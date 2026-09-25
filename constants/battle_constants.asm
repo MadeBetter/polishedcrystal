@@ -6,6 +6,12 @@ DEF EGG_LEVEL EQU 1
 ; maximum moves known per mon
 DEF NUM_MOVES EQU 4
 
+; Trainer color layers occupy opposite ends of OAM so battle animations can
+; use the contiguous range between the layers that are currently visible.
+DEF PLAYER_COLOR_LAYER_OAM_COUNT EQU 19
+DEF TRAINER_COLOR_LAYER_OAM_START EQU PLAYER_COLOR_LAYER_OAM_COUNT
+DEF TRAINER_COLOR_LAYER_OAM_COUNT EQU OAM_COUNT - TRAINER_COLOR_LAYER_OAM_START
+
 ; significant stat values
 DEF BASE_STAT_LEVEL EQU 7
 DEF MAX_STAT_LEVEL EQU 13

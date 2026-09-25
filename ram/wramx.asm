@@ -637,17 +637,6 @@ wBattleMode::
 ; 2: trainer battle
 	db
 
-wPlayerBackpicVisible::
-; TRUE if player's back pic is currently visible on screen during battle
-; Used to preserve color layer OAM sprites (slots 0-18)
-	db
-
-wTrainerSpriteVisible::
-; TRUE if enemy trainer sprite is currently visible on screen during battle
-; FALSE if enemy Pokemon is visible or trainer has slid off screen
-; Used to determine which palettes to load (trainer color layers vs Pokemon)
-	db
-
 wBT_TrainerTextIndex::
 wTempWildMonSpecies:: db
 
@@ -1729,6 +1718,7 @@ wBattleAnimLoops:: db
 wBattleAnimVar:: db
 wBattleAnimByte:: db
 wBattleAnimOAMPointerLo:: db
+wBattleAnimOAMEnd:: db
 wBattleAnimTempOAMFlags::
 wBattleAnimTemp0:: db
 wBattleAnimTemp1:: db
