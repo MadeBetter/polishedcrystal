@@ -295,40 +295,8 @@ gfx/player/kris_back_color.2bpp: gfx/player/kris_back_color.png
 gfx/player/crys_back_color.2bpp: gfx/player/crys_back_color.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
-# Lyra1 trainer color layer OAM
-gfx/trainers/lyra1/oam.2bpp: gfx/trainers/lyra1/oam.png
-	$Q$(RGBGFX) -c dmg -u -o $@ $<
-
-# Rival1 trainer color layer OAM
-gfx/trainers/rival1/oam.2bpp: gfx/trainers/rival1/oam.png
-	$Q$(RGBGFX) -c dmg -u -o $@ $<
-
-# Youngster trainer color layer OAM
-gfx/trainers/youngster/oam.2bpp: gfx/trainers/youngster/oam.png
-	$Q$(RGBGFX) -c dmg -u -o $@ $<
-
-# BugCatcher trainer color layer OAM
-gfx/trainers/bug_catcher/oam.2bpp: gfx/trainers/bug_catcher/oam.png
-	$Q$(RGBGFX) -c dmg -u -o $@ $<
-
-# CooltrainerM trainer color layer OAM
-gfx/trainers/cooltrainer_m/oam.2bpp: gfx/trainers/cooltrainer_m/oam.png
-	$Q$(RGBGFX) -c dmg -u -o $@ $<
-
-# Sage trainer color layer OAM
-gfx/trainers/sage/oam.2bpp: gfx/trainers/sage/oam.png
-	$Q$(RGBGFX) -c dmg -u -o $@ $<
-
-# Elder trainer color layer OAM
-gfx/trainers/elder/oam.2bpp: gfx/trainers/elder/oam.png
-	$Q$(RGBGFX) -c dmg -u -o $@ $<
-
-# Schoolgirl trainer color layer OAM
-gfx/trainers/schoolgirl/oam.2bpp: gfx/trainers/schoolgirl/oam.png
-	$Q$(RGBGFX) -c dmg -u -o $@ $<
-
-# BirdKeeper trainer color layer OAM
-gfx/trainers/bird_keeper/oam.2bpp: gfx/trainers/bird_keeper/oam.png
+# Trainer color layer OAM
+gfx/trainers/colorized/%/oam.2bpp: gfx/trainers/colorized/%/oam.png
 	$Q$(RGBGFX) -c dmg -u -o $@ $<
 
 %.2bpp: %.png

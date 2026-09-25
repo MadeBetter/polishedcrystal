@@ -83,22 +83,22 @@ LeafPic: INCBIN "gfx/trainers/leaf.2bpp.lz"
 
 SECTION "Rival0Pic", ROMX
 Rival0Pic:
-Rival1Pic: INCBIN "gfx/trainers/rival1/bg.2bpp.lz"
+Rival1Pic: INCBIN "gfx/trainers/colorized/rival1/bg.2bpp.lz"
 
 SECTION "Rival2Pic", ROMX
 Rival2Pic: INCBIN "gfx/trainers/rival2.2bpp.lz"
 
 SECTION "Lyra1Pic", ROMX
-Lyra1Pic: INCBIN "gfx/trainers/lyra1/bg.2bpp.lz"
+Lyra1Pic: INCBIN "gfx/trainers/colorized/lyra1/bg.2bpp.lz"
 
 SECTION "Lyra2Pic", ROMX
 Lyra2Pic: INCBIN "gfx/trainers/lyra2.2bpp.lz"
 
 SECTION "YoungsterPic", ROMX
-YoungsterPic: INCBIN "gfx/trainers/youngster/bg.2bpp.lz"
+YoungsterPic: INCBIN "gfx/trainers/colorized/youngster/bg.2bpp.lz"
 
 SECTION "BugCatcherPic", ROMX
-BugCatcherPic: INCBIN "gfx/trainers/bug_catcher/bg.2bpp.lz"
+BugCatcherPic: INCBIN "gfx/trainers/colorized/bug_catcher/bg.2bpp.lz"
 
 SECTION "CamperPic", ROMX
 CamperPic: INCBIN "gfx/trainers/camper.2bpp.lz"
@@ -113,7 +113,7 @@ SECTION "FisherPic", ROMX
 FisherPic: INCBIN "gfx/trainers/fisher.2bpp.lz"
 
 SECTION "BirdKeeperPic", ROMX
-BirdKeeperPic: INCBIN "gfx/trainers/bird_keeper/bg.2bpp.lz"
+BirdKeeperPic: INCBIN "gfx/trainers/colorized/bird_keeper/bg.2bpp.lz"
 
 SECTION "HikerPic", ROMX
 HikerPic: INCBIN "gfx/trainers/hiker.2bpp.lz"
@@ -170,7 +170,7 @@ SECTION "SchoolboyPic", ROMX
 SchoolboyPic: INCBIN "gfx/trainers/schoolboy.2bpp.lz"
 
 SECTION "SchoolgirlPic", ROMX
-SchoolgirlPic: INCBIN "gfx/trainers/schoolgirl/bg.2bpp.lz"
+SchoolgirlPic: INCBIN "gfx/trainers/colorized/schoolgirl/bg.2bpp.lz"
 
 SECTION "PsychicTPic", ROMX
 PsychicTPic: INCBIN "gfx/trainers/psychic_t.2bpp.lz"
@@ -179,7 +179,7 @@ SECTION "HexManiacPic", ROMX
 HexManiacPic: INCBIN "gfx/trainers/hex_maniac.2bpp.lz"
 
 SECTION "SagePic", ROMX
-SagePic: INCBIN "gfx/trainers/sage/bg.2bpp.lz"
+SagePic: INCBIN "gfx/trainers/colorized/sage/bg.2bpp.lz"
 
 SECTION "MediumPic", ROMX
 MediumPic: INCBIN "gfx/trainers/medium.2bpp.lz"
@@ -188,7 +188,7 @@ SECTION "KimonoGirlPic", ROMX
 KimonoGirlPic: INCBIN "gfx/trainers/kimono_girl.2bpp.lz"
 
 SECTION "ElderPic", ROMX
-ElderPic: INCBIN "gfx/trainers/elder/bg.2bpp.lz"
+ElderPic: INCBIN "gfx/trainers/colorized/elder/bg.2bpp.lz"
 
 SECTION "SrAndJrPic", ROMX
 SrAndJrPic: INCBIN "gfx/trainers/sr_and_jr.2bpp.lz"
@@ -297,7 +297,7 @@ SECTION "SightseersPic", ROMX
 SightseersPic: INCBIN "gfx/trainers/sightseers.2bpp.lz"
 
 SECTION "CooltrainermPic", ROMX
-CooltrainermPic: INCBIN "gfx/trainers/cooltrainer_m/bg.2bpp.lz"
+CooltrainermPic: INCBIN "gfx/trainers/colorized/cooltrainer_m/bg.2bpp.lz"
 
 SECTION "CooltrainerfPic", ROMX
 CooltrainerfPic: INCBIN "gfx/trainers/cooltrainer_f.2bpp.lz"

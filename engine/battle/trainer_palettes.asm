@@ -240,201 +240,121 @@ SetEnemyTrainerOAMPalettes_Far::
 	jmp FarCopyBytesToColorWRAM
 
 Lyra1BGColor2Palette:
-INCLUDE "gfx/trainers/lyra1/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/lyra1/bg_secondary.pal"
 
 Lyra1OAMColorPalette:
-INCLUDE "gfx/trainers/lyra1/oam_color.pal"
-
-Lyra1OAMColor2Palette:
-INCLUDE "gfx/trainers/lyra1/oam_color2.pal"
-
-Lyra1OAMColor3Palette:
-INCLUDE "gfx/trainers/lyra1/oam_color3.pal"
-
-Lyra1OAMColor4Palette:
-INCLUDE "gfx/trainers/lyra1/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/lyra1/oam.pal"
 
 Rival1BGColor2Palette:
-INCLUDE "gfx/trainers/rival1/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/rival1/bg_secondary.pal"
 
 Rival1OAMColorPalette:
-INCLUDE "gfx/trainers/rival1/oam_color.pal"
-
-Rival1OAMColor2Palette:
-INCLUDE "gfx/trainers/rival1/oam_color2.pal"
-
-Rival1OAMColor3Palette:
-INCLUDE "gfx/trainers/rival1/oam_color3.pal"
-
-Rival1OAMColor4Palette:
-INCLUDE "gfx/trainers/rival1/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/rival1/oam.pal"
 
 YoungsterBGColor2Palette:
-INCLUDE "gfx/trainers/youngster/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/youngster/bg_secondary.pal"
 
 YoungsterOAMColorPalette:
-INCLUDE "gfx/trainers/youngster/oam_color.pal"
-
-YoungsterOAMColor2Palette:
-INCLUDE "gfx/trainers/youngster/oam_color2.pal"
-
-YoungsterOAMColor3Palette:
-INCLUDE "gfx/trainers/youngster/oam_color3.pal"
-
-YoungsterOAMColor4Palette:
-INCLUDE "gfx/trainers/youngster/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/youngster/oam.pal"
 
 BugCatcherBGColor2Palette:
-INCLUDE "gfx/trainers/bug_catcher/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/bug_catcher/bg_secondary.pal"
 
 BugCatcherOAMColorPalette:
-INCLUDE "gfx/trainers/bug_catcher/oam_color.pal"
-
-BugCatcherOAMColor2Palette:
-INCLUDE "gfx/trainers/bug_catcher/oam_color2.pal"
-
-BugCatcherOAMColor3Palette:
-INCLUDE "gfx/trainers/bug_catcher/oam_color3.pal"
-
-BugCatcherOAMColor4Palette:
-INCLUDE "gfx/trainers/bug_catcher/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/bug_catcher/oam.pal"
 
 CooltrainerMOAMColorPalette:
-INCLUDE "gfx/trainers/cooltrainer_m/oam_color.pal"
-
-CooltrainerMOAMColor2Palette:
-INCLUDE "gfx/trainers/cooltrainer_m/oam_color2.pal"
-
-CooltrainerMOAMColor3Palette:
-INCLUDE "gfx/trainers/cooltrainer_m/oam_color3.pal"
-
-CooltrainerMOAMColor4Palette:
-INCLUDE "gfx/trainers/cooltrainer_m/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/cooltrainer_m/oam.pal"
 
 CooltrainerMBGColor2Palette:
-INCLUDE "gfx/trainers/cooltrainer_m/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/cooltrainer_m/bg_secondary.pal"
 
 SageBGColor2Palette:
-INCLUDE "gfx/trainers/sage/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/sage/bg_secondary.pal"
 
 SageOAMColorPalette:
-INCLUDE "gfx/trainers/sage/oam_color.pal"
-
-SageOAMColor2Palette:
-INCLUDE "gfx/trainers/sage/oam_color2.pal"
-
-SageOAMColor3Palette:
-INCLUDE "gfx/trainers/sage/oam_color3.pal"
-
-SageOAMColor4Palette:
-INCLUDE "gfx/trainers/sage/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/sage/oam.pal"
 
 ElderBGColor2Palette:
-INCLUDE "gfx/trainers/elder/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/elder/bg_secondary.pal"
 
 ElderOAMColorPalette:
-INCLUDE "gfx/trainers/elder/oam_color.pal"
-
-ElderOAMColor2Palette:
-INCLUDE "gfx/trainers/elder/oam_color2.pal"
-
-ElderOAMColor3Palette:
-INCLUDE "gfx/trainers/elder/oam_color3.pal"
-
-ElderOAMColor4Palette:
-INCLUDE "gfx/trainers/elder/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/elder/oam.pal"
 
 SchoolgirlBGColor2Palette:
-INCLUDE "gfx/trainers/schoolgirl/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/schoolgirl/bg_secondary.pal"
 
 SchoolgirlOAMColorPalette:
-INCLUDE "gfx/trainers/schoolgirl/oam_color.pal"
-
-SchoolgirlOAMColor2Palette:
-INCLUDE "gfx/trainers/schoolgirl/oam_color2.pal"
-
-SchoolgirlOAMColor3Palette:
-INCLUDE "gfx/trainers/schoolgirl/oam_color3.pal"
-
-SchoolgirlOAMColor4Palette:
-INCLUDE "gfx/trainers/schoolgirl/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/schoolgirl/oam.pal"
 
 BirdKeeperBGColor2Palette:
-INCLUDE "gfx/trainers/bird_keeper/bg_color2.pal"
+INCLUDE "gfx/trainers/colorized/bird_keeper/bg_secondary.pal"
 
 BirdKeeperOAMColorPalette:
-INCLUDE "gfx/trainers/bird_keeper/oam_color.pal"
-
-BirdKeeperOAMColor2Palette:
-INCLUDE "gfx/trainers/bird_keeper/oam_color2.pal"
-
-BirdKeeperOAMColor3Palette:
-INCLUDE "gfx/trainers/bird_keeper/oam_color3.pal"
-
-BirdKeeperOAMColor4Palette:
-INCLUDE "gfx/trainers/bird_keeper/oam_color4.pal"
+INCLUDE "gfx/trainers/colorized/bird_keeper/oam.pal"
 
 TrainerOAMPaletteSetTable:
 ; Format: db trainer_class, bank, dw pal1, dw pal2, dw pal3, dw pal4
 ; Each entry is 10 bytes: 1 byte class + 1 byte bank + 8 bytes (4 pointers)
+; Each trainer's oam.pal stores those four palettes consecutively.
 	db LYRA1, BANK(Lyra1OAMColorPalette)
 	dw Lyra1OAMColorPalette
-	dw Lyra1OAMColor2Palette
-	dw Lyra1OAMColor3Palette
-	dw Lyra1OAMColor4Palette
+	dw Lyra1OAMColorPalette + 1 palettes
+	dw Lyra1OAMColorPalette + 2 palettes
+	dw Lyra1OAMColorPalette + 3 palettes
 
 	db RIVAL0, BANK(Rival1OAMColorPalette)
 	dw Rival1OAMColorPalette
-	dw Rival1OAMColor2Palette
-	dw Rival1OAMColor3Palette
-	dw Rival1OAMColor4Palette
+	dw Rival1OAMColorPalette + 1 palettes
+	dw Rival1OAMColorPalette + 2 palettes
+	dw Rival1OAMColorPalette + 3 palettes
 
 	db RIVAL1, BANK(Rival1OAMColorPalette)
 	dw Rival1OAMColorPalette
-	dw Rival1OAMColor2Palette
-	dw Rival1OAMColor3Palette
-	dw Rival1OAMColor4Palette
+	dw Rival1OAMColorPalette + 1 palettes
+	dw Rival1OAMColorPalette + 2 palettes
+	dw Rival1OAMColorPalette + 3 palettes
 
 	db YOUNGSTER, BANK(YoungsterOAMColorPalette)
 	dw YoungsterOAMColorPalette
-	dw YoungsterOAMColor2Palette
-	dw YoungsterOAMColor3Palette
-	dw YoungsterOAMColor4Palette
+	dw YoungsterOAMColorPalette + 1 palettes
+	dw YoungsterOAMColorPalette + 2 palettes
+	dw YoungsterOAMColorPalette + 3 palettes
 
 	db BUG_CATCHER, BANK(BugCatcherOAMColorPalette)
 	dw BugCatcherOAMColorPalette
-	dw BugCatcherOAMColor2Palette
-	dw BugCatcherOAMColor3Palette
-	dw BugCatcherOAMColor4Palette
+	dw BugCatcherOAMColorPalette + 1 palettes
+	dw BugCatcherOAMColorPalette + 2 palettes
+	dw BugCatcherOAMColorPalette + 3 palettes
 
 	db COOLTRAINERM, BANK(CooltrainerMOAMColorPalette)
 	dw CooltrainerMOAMColorPalette
-	dw CooltrainerMOAMColor2Palette
-	dw CooltrainerMOAMColor3Palette
-	dw CooltrainerMOAMColor4Palette
+	dw CooltrainerMOAMColorPalette + 1 palettes
+	dw CooltrainerMOAMColorPalette + 2 palettes
+	dw CooltrainerMOAMColorPalette + 3 palettes
 
 	db SAGE, BANK(SageOAMColorPalette)
 	dw SageOAMColorPalette
-	dw SageOAMColor2Palette
-	dw SageOAMColor3Palette
-	dw SageOAMColor4Palette
+	dw SageOAMColorPalette + 1 palettes
+	dw SageOAMColorPalette + 2 palettes
+	dw SageOAMColorPalette + 3 palettes
 
 	db ELDER, BANK(ElderOAMColorPalette)
 	dw ElderOAMColorPalette
-	dw ElderOAMColor2Palette
-	dw ElderOAMColor3Palette
-	dw ElderOAMColor4Palette
+	dw ElderOAMColorPalette + 1 palettes
+	dw ElderOAMColorPalette + 2 palettes
+	dw ElderOAMColorPalette + 3 palettes
 
 	db SCHOOLGIRL, BANK(SchoolgirlOAMColorPalette)
 	dw SchoolgirlOAMColorPalette
-	dw SchoolgirlOAMColor2Palette
-	dw SchoolgirlOAMColor3Palette
-	dw SchoolgirlOAMColor4Palette
+	dw SchoolgirlOAMColorPalette + 1 palettes
+	dw SchoolgirlOAMColorPalette + 2 palettes
+	dw SchoolgirlOAMColorPalette + 3 palettes
 
 	db BIRD_KEEPER, BANK(BirdKeeperOAMColorPalette)
 	dw BirdKeeperOAMColorPalette
-	dw BirdKeeperOAMColor2Palette
-	dw BirdKeeperOAMColor3Palette
-	dw BirdKeeperOAMColor4Palette
+	dw BirdKeeperOAMColorPalette + 1 palettes
+	dw BirdKeeperOAMColorPalette + 2 palettes
+	dw BirdKeeperOAMColorPalette + 3 palettes
 
 	db $FF  ; Terminator

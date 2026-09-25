@@ -101,15 +101,15 @@ LyraBackpicSkin::  INCBIN "gfx/battle/lyra_back_skin.2bpp.lz"
 LyraBackpicColor:: INCBIN "gfx/battle/lyra_back_color.2bpp.lz"
 
 ; Trainer color layer OAM graphics
-Lyra1TrainerOAM:: INCBIN "gfx/trainers/lyra1/oam.2bpp.lz"
-Rival1TrainerOAM:: INCBIN "gfx/trainers/rival1/oam.2bpp.lz"
-YoungsterTrainerOAM:: INCBIN "gfx/trainers/youngster/oam.2bpp.lz"
-BugCatcherTrainerOAM:: INCBIN "gfx/trainers/bug_catcher/oam.2bpp.lz"
-CooltrainerMTrainerOAM:: INCBIN "gfx/trainers/cooltrainer_m/oam.2bpp.lz"
-SageTrainerOAM:: INCBIN "gfx/trainers/sage/oam.2bpp.lz"
-ElderTrainerOAM:: INCBIN "gfx/trainers/elder/oam.2bpp.lz"
-SchoolgirlTrainerOAM:: INCBIN "gfx/trainers/schoolgirl/oam.2bpp.lz"
-BirdKeeperTrainerOAM:: INCBIN "gfx/trainers/bird_keeper/oam.2bpp.lz"
+Lyra1TrainerOAM:: INCBIN "gfx/trainers/colorized/lyra1/oam.2bpp.lz"
+Rival1TrainerOAM:: INCBIN "gfx/trainers/colorized/rival1/oam.2bpp.lz"
+YoungsterTrainerOAM:: INCBIN "gfx/trainers/colorized/youngster/oam.2bpp.lz"
+BugCatcherTrainerOAM:: INCBIN "gfx/trainers/colorized/bug_catcher/oam.2bpp.lz"
+CooltrainerMTrainerOAM:: INCBIN "gfx/trainers/colorized/cooltrainer_m/oam.2bpp.lz"
+SageTrainerOAM:: INCBIN "gfx/trainers/colorized/sage/oam.2bpp.lz"
+ElderTrainerOAM:: INCBIN "gfx/trainers/colorized/elder/oam.2bpp.lz"
+SchoolgirlTrainerOAM:: INCBIN "gfx/trainers/colorized/schoolgirl/oam.2bpp.lz"
+BirdKeeperTrainerOAM:: INCBIN "gfx/trainers/colorized/bird_keeper/oam.2bpp.lz"
 
 
 SECTION "Emote Graphics", ROMX

@@ -1,7 +1,7 @@
 ; Skin palette used for all players in battle (not part of TrainerPalettes table)
 if !DEF(MONOCHROME)
 SkinPalette:
-INCLUDE "gfx/trainers/skin.pal"
+INCLUDE "gfx/trainers/colorized/common/skin.pal"
 endc
 
 TrainerPalettes:
@@ -38,19 +38,19 @@ INCLUDE "gfx/trainers/blaine.pal"
 INCLUDE "gfx/trainers/blue.pal"
 INCLUDE "gfx/trainers/red.pal"
 INCLUDE "gfx/trainers/leaf.pal"
-INCLUDE "gfx/trainers/rival1/bg_color.pal"  ; RIVAL0
-INCLUDE "gfx/trainers/rival1/bg_color.pal"  ; RIVAL1
+INCLUDE "gfx/trainers/colorized/rival1/bg_primary.pal"  ; RIVAL0
+INCLUDE "gfx/trainers/colorized/rival1/bg_primary.pal"  ; RIVAL1
 INCLUDE "gfx/trainers/rival2.pal"
 Lyra1Palette:
-INCLUDE "gfx/trainers/lyra1/bg_color.pal"
+INCLUDE "gfx/trainers/colorized/lyra1/bg_primary.pal"
 INCLUDE "gfx/trainers/lyra2.pal"
-INCLUDE "gfx/trainers/youngster/bg_color.pal"
-INCLUDE "gfx/trainers/bug_catcher/bg_color.pal"
+INCLUDE "gfx/trainers/colorized/youngster/bg_primary.pal"
+INCLUDE "gfx/trainers/colorized/bug_catcher/bg_primary.pal"
 INCLUDE "gfx/trainers/camper.pal"
 INCLUDE "gfx/trainers/picnicker.pal"
 INCLUDE "gfx/trainers/twins.pal"
 INCLUDE "gfx/trainers/fisher.pal"
-INCLUDE "gfx/trainers/bird_keeper/bg_color.pal"
+INCLUDE "gfx/trainers/colorized/bird_keeper/bg_primary.pal"
 INCLUDE "gfx/trainers/hiker.pal"
 INCLUDE "gfx/trainers/grunt_m.pal"
 INCLUDE "gfx/trainers/grunt_f.pal"
@@ -69,13 +69,13 @@ INCLUDE "gfx/trainers/ruin_maniac.pal"
 INCLUDE "gfx/trainers/firebreather.pal"
 INCLUDE "gfx/trainers/juggler.pal"
 INCLUDE "gfx/trainers/schoolboy.pal"
-INCLUDE "gfx/trainers/schoolgirl/bg_color.pal"
+INCLUDE "gfx/trainers/colorized/schoolgirl/bg_primary.pal"
 INCLUDE "gfx/trainers/psychic_t.pal"
 INCLUDE "gfx/trainers/hex_maniac.pal"
-INCLUDE "gfx/trainers/sage/bg_color.pal"
+INCLUDE "gfx/trainers/colorized/sage/bg_primary.pal"
 INCLUDE "gfx/trainers/medium.pal"
 INCLUDE "gfx/trainers/kimono_girl_naoko.pal"
-INCLUDE "gfx/trainers/elder/bg_color.pal"
+INCLUDE "gfx/trainers/colorized/elder/bg_primary.pal"
 INCLUDE "gfx/trainers/sr_and_jr.pal"
 INCLUDE "gfx/trainers/couple.pal"
 INCLUDE "gfx/trainers/gentleman.pal"
@@ -112,7 +112,7 @@ INCLUDE "gfx/trainers/waitress.pal"
 INCLUDE "gfx/trainers/sightseer_m.pal"
 INCLUDE "gfx/trainers/sightseer_f.pal"
 INCLUDE "gfx/trainers/sightseers.pal"
-INCLUDE "gfx/trainers/cooltrainer_m/bg_color.pal"
+INCLUDE "gfx/trainers/colorized/cooltrainer_m/bg_primary.pal"
 INCLUDE "gfx/trainers/cooltrainer_f.pal"
 INCLUDE "gfx/trainers/ace_duo.pal"
 INCLUDE "gfx/trainers/veteran_m.pal"

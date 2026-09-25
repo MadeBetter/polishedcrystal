@@ -1,0 +1,37 @@
+; Four palettes in OBJ slot order: 0, 2, 6, 7.
+
+if !DEF(MONOCHROME)
+	RGB 31, 31, 31   ; Color 0: White
+	RGB 00, 13, 17   ; Color 1: Turquoise
+	RGB 26, 07, 00   ; Color 2: Red
+	RGB 21, 14, 05   ; Color 1: Light Brown
+else
+	MONOCHROME_RGB_FOUR
+endc
+
+if !DEF(MONOCHROME)
+	RGB 31, 31, 31   ; Color 0: White
+	RGB 31, 10, 00   ; Color 1: light Red
+	RGB 28, 07, 00   ; Color 2: Red
+	RGB 19, 06, 01   ; Color 3: Dark Red
+else
+	MONOCHROME_RGB_FOUR
+endc
+
+if !DEF(MONOCHROME)
+	RGB 31, 31, 31   ; Color 0: White
+	RGB 31, 10, 00   ; Color 1: light Red
+	RGB 21, 21, 21   ; Color 2: Light Grey
+	RGB 11, 10, 11   ; Color 3: Dark Grey
+else
+	MONOCHROME_RGB_FOUR
+endc
+
+if !DEF(MONOCHROME)
+	RGB 31, 31, 31   ; Color 0: White
+	RGB 21, 14, 05   ; Color 1: Light Brown
+	RGB 17, 11, 05   ; Color 2: Brown
+	RGB 14, 09, 05   ; Color 2: Dark Brown
+else
+	MONOCHROME_RGB_FOUR
+endc

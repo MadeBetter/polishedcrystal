@@ -150,7 +150,7 @@ LyraColor5Palette:
 INCLUDE "gfx/battle/lyra_color5.pal"
 
 TrainerSkinPalette:
-INCLUDE "gfx/trainers/skin.pal"
+INCLUDE "gfx/trainers/colorized/common/skin.pal"
 
 GetDefaultBattlePalette:
 	ld a, BANK(wTempBattleMonSpecies)
