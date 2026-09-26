@@ -3,8 +3,8 @@
 MACRO trainer_color_descriptor
 	db \1
 	db BANK(\2)
-	dw \2
 	db \3
+	dw \2
 	dw \4
 	dw \5
 	dw \6
@@ -13,7 +13,8 @@ ENDM
 
 TrainerColorDescriptors:
 	table_width TRAINER_COLOR_DESCRIPTOR_SIZE
-	; class, OAM graphics, tile count, OAM grid, BG map, secondary BG palette, OAM palettes
+	; class, OAM graphics bank, tile count, OAM graphics, OAM grid,
+	; BG map, secondary BG palette, OAM palettes
 	trainer_color_descriptor LYRA1, Lyra1TrainerOAM, 18, Lyra1GridData, Lyra1BGPaletteMap, Lyra1BGColor2Palette, Lyra1OAMColorPalette
 	trainer_color_descriptor RIVAL0, Rival1TrainerOAM, 19, Rival1GridData, Rival1BGPaletteMap, Rival1BGColor2Palette, Rival1OAMColorPalette
 	trainer_color_descriptor RIVAL1, Rival1TrainerOAM, 19, Rival1GridData, Rival1BGPaletteMap, Rival1BGColor2Palette, Rival1OAMColorPalette

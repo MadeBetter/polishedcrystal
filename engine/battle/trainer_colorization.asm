@@ -1,7 +1,7 @@
 DEF TRAINER_COLOR_CLASS            EQU 0
 DEF TRAINER_COLOR_GFX_BANK         EQU 1
-DEF TRAINER_COLOR_GFX_POINTER      EQU 2
-DEF TRAINER_COLOR_TILE_COUNT       EQU 4
+DEF TRAINER_COLOR_TILE_COUNT       EQU 2
+DEF TRAINER_COLOR_GFX_POINTER      EQU 3
 DEF TRAINER_COLOR_GRID_POINTER     EQU 5
 DEF TRAINER_COLOR_BG_MAP_POINTER   EQU 7
 DEF TRAINER_COLOR_BG2_POINTER      EQU 9
@@ -91,8 +91,7 @@ endc
 
 SetBattlePal_EnemyBG_Far::
 ; Default: use enemy Pokemon palette.
-	farcall SetBattlePal_Enemy
-	ret
+	farjp SetBattlePal_Enemy
 
 
 SetBattlePal2_EnemyBG_Far::
@@ -109,8 +108,7 @@ SetBattlePal2_EnemyBG_Far::
 
 .default
 	pop de
-	farcall SetBattlePal_Status
-	ret
+	farjp SetBattlePal_Status
 
 
 SetEnemyTrainerOAMPalettes_Far::
@@ -214,11 +212,11 @@ SetTrainerBGPalettes_Far::
 	dec c
 	jr nz, .column_loop
 
-	ld a, l
-	add SCREEN_WIDTH - 7
+	ld a, SCREEN_WIDTH - 7
+	add l
 	ld l, a
-	ld a, h
-	adc 0
+	adc h
+	sub l
 	ld h, a
 	dec b
 	jr nz, .row_loop
@@ -241,16 +239,15 @@ LoadTrainerColorSprites_Far::
 	xor a
 	ldh [rVBK], a
 
-	; Read the graphics bank, pointer, and tile count from the descriptor.
-	inc hl
-	ld b, [hl]
+	; Read the graphics bank, tile count, and pointer from the descriptor.
 	inc hl
 	ld a, [hli]
-	ld d, [hl]
-	inc hl
-	ld c, [hl]
+	ld b, a
+	ld a, [hli]
+	ld c, a
+	ld a, [hli]
+	ld h, [hl]
 	ld l, a
-	ld h, d
 	ld de, vTiles0 tile $69
 	call DecompressRequest2bpp
 
