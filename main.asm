@@ -190,6 +190,11 @@ INCLUDE "engine/battle/core.asm"
 INCLUDE "engine/battle/evolve_battle.asm"
 
 
+SECTION "Trainer Colorization", ROMX
+
+INCLUDE "engine/battle/trainer_colorization.asm"
+
+
 SECTION "Battle Endturn", ROMX
 
 INCLUDE "engine/battle/endturn.asm"
@@ -327,8 +332,6 @@ INCLUDE "engine/overworld/variables.asm"
 INCLUDE "data/text/battle.asm"
 INCLUDE "engine/battle/final_text.asm"
 INCLUDE "engine/battle/abilities.asm"
-INCLUDE "engine/battle/trainer_bg_palettes.asm"
-INCLUDE "engine/battle/trainer_palettes.asm"
 INCLUDE "engine/battle/text.asm"
 
 
