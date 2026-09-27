@@ -64,6 +64,8 @@ SetFacingCurrent:
 	ld a, [bc] ; OBJECT_SPRITE
 	cp SPRITE_CAMPFIRE
 	jr z, .compact_2x2
+	cp SPRITE_FLOATING_BALL
+	jr z, .floating_ball
 	cp SPRITE_ICE_BOULDER_FOSSILS
 	jr z, .ice_boulder_fossils
 	cp SPRITE_BOULDER_ROCK
@@ -75,6 +77,16 @@ SetFacingCurrent:
 	cp SPRITE_BOOK_PAPER_POKEDEX
 	jr z, .book_paper_pokedex
 	jr .normal
+.floating_ball
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_POKECOM_NEWS
+	jr z, .compact_2x2
+	cp SPRITEMOVEDATA_POKEMON
+	jr nz, .normal
+	ld a, FACING_COMPACT_FLOATING_BALL_0
+	jp SetFixedFacing
 .ball_cut_tree
 	ld hl, OBJECT_MOVEMENT_TYPE
 	add hl, bc
@@ -328,10 +340,16 @@ SetFacingBounce:
 	ld a, [bc] ; OBJECT_SPRITE
 	cp SPRITE_CAMPFIRE
 	jp z, SetFacingCampfire
+	cp SPRITE_FLOATING_BALL
+	jp z, SetFacingFloatingBall
 	call AlternateStepFrame
 	ld a, FACING_STEP_UP_0
 	jmp nz, SetFixedFacing
 SetFacingFreezeBounce:
+	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_FLOATING_BALL
+	ld a, FACING_COMPACT_FLOATING_BALL_0
+	jmp z, SetFixedFacing
 	xor a ; FACING_STEP_DOWN_0
 	jmp SetFixedFacing
 SetFacingCampfire:
@@ -339,6 +357,12 @@ SetFacingCampfire:
 	ld a, FACING_COMPACT_CAMPFIRE_FLIP
 	jmp nz, SetFixedFacing
 	ld a, FACING_COMPACT_2X2
+	jmp SetFixedFacing
+SetFacingFloatingBall:
+	call AlternateStepFrame
+	ld a, FACING_COMPACT_FLOATING_BALL_1
+	jmp nz, SetFixedFacing
+	ld a, FACING_COMPACT_FLOATING_BALL_0
 	jmp SetFixedFacing
 
 SetFacingFruit:

@@ -360,6 +360,26 @@ sheet while retaining both animation frames, position, palette, and interaction.
 Multiple campfires share one compact allocation, and a full refresh uploads the
 resource once.
 
+## Compact floating balls and PokéCom news
+
+The former 12-tile `gfx/sprites/floating_ball.png` sheet served two unrelated
+movement types. `SPRITEMOVEDATA_POKEMON` uses two four-entry bounce frames, while
+`SPRITEMOVEDATA_POKECOM_NEWS` uses the final four tiles as a stationary display.
+They now select separate compact resources by sprite ID and movement type.
+
+`gfx/overworld/floating_ball.png` contains six unique tiles. Each bounce frame
+uses two unique upper tiles and one lower-left tile; the lower-right OAM entry
+reuses that third tile with horizontal flipping. The two compact facings therefore
+reproduce the former `$00-$07` animation with six tiles and a 96-byte upload.
+All eight outdoor floating-ball objects share the resource when present.
+
+`gfx/overworld/pokecom_news.png` contains the former `$08-$0b` display as four
+unique tiles. It uses the normal compact 2x2 facing and a 64-byte upload. In the
+Goldenrod PokéCom Center, it coexists with the separate four-tile PokéCom sign
+for a combined eight compact-pool tiles. A full refresh uploads each live resource
+once, and unsupported movement types cannot read either compact descriptor as a
+12-tile standing sheet.
+
 ## Three-tile stationary balls
 
 `SPRITE_BALL_CUT_TREE` with `SPRITEMOVEDATA_STANDING_DOWN` uses exactly the three
@@ -408,9 +428,10 @@ relocation path between two unrelated allocators. Strength boulders, smashable
 rocks, stationary balls, arch trees, and Silver Cave arch decorations use
 fifteen tiles when all five resources are live. Books, papers, overworld Pokédex
 objects, the PokéCom sign, ice boulders, and both fossils use four tiles apiece.
-The campfire also uses four tiles. The pool allocates only the resources present
-on the current map, so duplicate objects share the same tiles and absent object
-types consume no space.
+The campfire also uses four tiles. Floating balls use six tiles, and the PokéCom
+news display uses four. The pool allocates only the resources present on the
+current map, so duplicate objects share the same tiles and absent object types
+consume no space.
 
 Facing selection uses the object's sprite and movement type, not its assigned
 tile address. This lets allocations move between maps and spawn orders while all
@@ -487,11 +508,11 @@ through two open/close cycles with out-of-order graphics allocations. Legacy
 `CloseText` still exercises full reload. All 23,578 RAM symbols retain their
 pre-dialogue addresses, and the assembly optimizer reports no findings.
 
-The compact-object revisions raise the suite to 74 tests. They check exact-size
+The compact-object revisions raise the suite to 75 tests. They check exact-size
 transfers, backward packing, deduplication, gap reuse, twelve simultaneous objects
 sharing one upload, overworld and naming-screen OAM behavior, zero-OAM object
 collision and emote anchoring, compact book/paper/Pokédex selection, the real
-map-object path,
+map-object path, compact floating-ball animation and PokéCom-news selection,
 coexistence with special sprites, compact Ice Path boulders and Mount Moon
 fossils, flipped compact campfire animation, and separation from Mount Moon
 Square's N64-sheet rock.

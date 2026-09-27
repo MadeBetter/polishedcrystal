@@ -1280,6 +1280,95 @@ class CampfireTests(unittest.TestCase):
         self.assertEqual(m.loads, [(*SYMBOLS['CompactCampfireSpriteGFX'], 4)])
 
 
+class FloatingBallTests(unittest.TestCase):
+    def setUp(self):
+        self.m = Machine()
+        self.floating_ball = (ROOT / 'gfx/overworld/floating_ball.2bpp').read_bytes()
+        self.pokecom_news = (ROOT / 'gfx/overworld/pokecom_news.2bpp').read_bytes()
+        self.assertEqual(len(self.floating_ball), 96)
+        self.assertEqual(len(self.pokecom_news), 64)
+
+    def tearDown(self):
+        self.m.close()
+
+    def test_split_resources_reproduce_animation_and_deduplicate(self):
+        m = self.m
+        for index in range(1, 9):
+            result = m.spawn(index, 'SPRITE_FLOATING_BALL', movement=0x10, palette=1)
+            self.assertFalse(result['F'] & 0x10)
+            self.assertEqual(m.tile(index), 0x3a)
+        self.assertEqual(m.loads, [(*SYMBOLS['CompactFloatingBallSpriteGFX'], 6)])
+        self.assertEqual(m.graphics(1, 6)[0], self.floating_ball)
+
+        ptr = m.obj(1)
+        m.p.memory[ptr + 0xc] = 31
+        m.call('SetFacingBounce', bc=ptr)
+        self.assertEqual(m.draw(1), [
+            (12, 8, 0x3a, 9), (12, 16, 0x3b, 9),
+            (20, 8, 0x3c, 9), (20, 16, 0x3c, 0x29),
+        ])
+
+        m.p.memory[ptr + 0xc] = 15
+        m.call('SetFacingBounce', bc=ptr)
+        self.assertEqual(m.draw(1), [
+            (12, 8, 0x3d, 9), (12, 16, 0x3e, 9),
+            (20, 8, 0x3f, 9), (20, 16, 0x3f, 0x29),
+        ])
+
+        m.call('SetFacingFreezeBounce', bc=ptr)
+        self.assertEqual([entry[2] for entry in m.draw(1)],
+                         [0x3a, 0x3b, 0x3c, 0x3c])
+
+        for index in (9, 10):
+            result = m.spawn(index, 'SPRITE_FLOATING_BALL', movement=0x25, palette=1)
+            self.assertFalse(result['F'] & 0x10)
+            self.assertEqual(m.tile(index), 0x36)
+            m.call('SetFacingCurrent', bc=m.obj(index))
+        self.assertEqual(m.loads, [
+            (*SYMBOLS['CompactFloatingBallSpriteGFX'], 6),
+            (*SYMBOLS['PokecomNewsSpriteGFX'], 4),
+        ])
+        self.assertEqual(m.graphics(9, 4)[0], self.pokecom_news)
+        self.assertEqual(m.draw(9), [
+            (12, 8, 0x36, 9), (12, 16, 0x37, 9),
+            (20, 8, 0x38, 9), (20, 16, 0x39, 9),
+        ])
+
+        m.loads.clear()
+        m.call('RefreshSprites')
+        self.assertEqual(sum(load == (*SYMBOLS['CompactFloatingBallSpriteGFX'], 6)
+                             for load in m.loads), 1)
+        self.assertEqual(sum(load == (*SYMBOLS['PokecomNewsSpriteGFX'], 4)
+                             for load in m.loads), 1)
+        self.assertEqual([m.tile(i) for i in range(1, 9)], [0x3a] * 8)
+        self.assertEqual([m.tile(i) for i in (9, 10)], [0x36, 0x36])
+
+        source = '\n'.join(path.read_text() for path in (ROOT / 'maps').glob('*.asm'))
+        movements = re.findall(
+            r'object_event[^\n]*SPRITE_FLOATING_BALL,\s*(SPRITEMOVEDATA_\w+)', source)
+        self.assertEqual(movements.count('SPRITEMOVEDATA_POKEMON'), 8)
+        self.assertEqual(movements.count('SPRITEMOVEDATA_POKECOM_NEWS'), 1)
+        self.assertEqual(len(movements), 9)
+
+        for index in range(1, 11):
+            m.remove(index)
+        m.loads.clear()
+        for index, movement, symbol, tile in (
+                (1, 0x10, 'CompactFloatingBallSpriteGFX', 0x3a),
+                (2, 0x25, 'PokecomNewsSpriteGFX', 0x36)):
+            map_object = m.addr('wMapObjects') + index * 14
+            m.p.memory[map_object:map_object + 14] = [
+                255, SPRITES['SPRITE_FLOATING_BALL'], 5, 5, movement,
+                0, 0, 255, 0, 0, 0, 0, 255, 255,
+            ]
+            m.put('hObjectStructIndexBuffer', index)
+            m.put('hMapObjectIndexBuffer', index)
+            result = m.call('CopyMapObjectToObjectStruct', bc=map_object, de=m.obj(index))
+            self.assertFalse(result['F'] & 0x10)
+            self.assertEqual(m.tile(index), tile)
+            self.assertIn((*SYMBOLS[symbol], 6 if movement == 0x10 else 4), m.loads)
+
+
 class SmashableRockTests(unittest.TestCase):
     def setUp(self):
         self.m = Machine()

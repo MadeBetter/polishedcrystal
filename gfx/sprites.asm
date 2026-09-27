@@ -653,8 +653,11 @@ BetaSurfSpriteGFX:: INCBIN "gfx/sprites/beta_surf.2bpp.lzp"
 SECTION "BetaRunSpriteGFX", ROMX
 BetaRunSpriteGFX:: INCBIN "gfx/sprites/beta_run.2bpp.lzp"
 
-SECTION "FloatingBallSpriteGFX", ROMX
-FloatingBallSpriteGFX:: INCBIN "gfx/sprites/floating_ball.2bpp.lzp"
+SECTION "CompactFloatingBallSpriteGFX", ROMX
+CompactFloatingBallSpriteGFX:: INCBIN "gfx/overworld/floating_ball.2bpp.lzp"
+
+SECTION "PokecomNewsSpriteGFX", ROMX
+PokecomNewsSpriteGFX:: INCBIN "gfx/overworld/pokecom_news.2bpp.lzp"
 
 SECTION "SpinarakCartSpriteGFX", ROMX
 SpinarakCartSpriteGFX:: INCBIN "gfx/sprites/spinarak_cart.2bpp.lzp"

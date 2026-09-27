@@ -74,6 +74,8 @@ Facings:
 	dw FacingCompactSilverCaveArchRight ; FACING_COMPACT_SILVER_CAVE_ARCH_RIGHT
 	dw FacingStepDown0        ; FACING_COMPACT_2X2
 	dw FacingCompactCampfireFlip ; FACING_COMPACT_CAMPFIRE_FLIP
+	dw FacingCompactFloatingBall0 ; FACING_COMPACT_FLOATING_BALL_0
+	dw FacingCompactFloatingBall1 ; FACING_COMPACT_FLOATING_BALL_1
 	assert_table_length NUM_FACINGS
 	dw 0 ; end
 
@@ -510,6 +512,20 @@ FacingCompactCampfireFlip:
 	db  0,  8, OAM_XFLIP, $00
 	db  8,  0, RELATIVE_ATTRIBUTES | OAM_XFLIP, $03
 	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $02
+
+FacingCompactFloatingBall0:
+	db 4 ; #
+	db  0,  0, 0, $00
+	db  0,  8, 0, $01
+	db  8,  0, RELATIVE_ATTRIBUTES, $02
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $02
+
+FacingCompactFloatingBall1:
+	db 4 ; #
+	db  0,  0, 0, $03
+	db  0,  8, 0, $04
+	db  8,  0, RELATIVE_ATTRIBUTES, $05
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $05
 
 FacingSailboatTop:
 	db 8 ; #

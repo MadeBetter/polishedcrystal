@@ -78,6 +78,8 @@ AcquireSharedSprite:
 	ldh a, [hUsedSpriteIndex]
 	cp SPRITE_CAMPFIRE
 	jp z, AcquireCampfire
+	cp SPRITE_FLOATING_BALL
+	jr z, .get_movement
 	cp SPRITE_BALL_CUT_TREE
 	jr z, .get_movement
 	cp SPRITE_BOULDER_ROCK
@@ -98,6 +100,8 @@ AcquireSharedSprite:
 	add hl, bc
 	ld d, [hl]
 	ldh a, [hUsedSpriteIndex]
+	cp SPRITE_FLOATING_BALL
+	jr z, .floating_ball
 	cp SPRITE_ICE_BOULDER_FOSSILS
 	jr z, .ice_boulder_fossils
 	cp SPRITE_BOOK_PAPER_POKEDEX
@@ -136,6 +140,14 @@ AcquireSharedSprite:
 	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
 	jp z, AcquireSilverCaveArch
 	; Every supported use has an atlas or compact resource.
+	scf
+	ret
+.floating_ball
+	ld a, d
+	cp SPRITEMOVEDATA_POKEMON
+	jp z, AcquireFloatingBall
+	cp SPRITEMOVEDATA_POKECOM_NEWS
+	jp z, AcquirePokecomNews
 	scf
 	ret
 .ice_boulder_fossils
@@ -509,13 +521,13 @@ AcquireStationaryBall:
 	ld a, OVERWORLD_OBJECT_GFX_STATIONARY_BALL
 	ld de, StationaryBallSpriteGFX
 	lb bc, BANK(StationaryBallSpriteGFX), STATIONARY_BALL_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireArchTree:
 	ld a, OVERWORLD_OBJECT_GFX_ARCH_TREE
 	ld de, ArchTreeSpriteGFX
 	lb bc, BANK(ArchTreeSpriteGFX), ARCH_TREE_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireSilverCaveArch:
 	ld a, OVERWORLD_OBJECT_GFX_SILVER_CAVE_ARCH
@@ -569,6 +581,18 @@ AcquireCampfire:
 	ld a, OVERWORLD_OBJECT_GFX_CAMPFIRE
 	ld de, CompactCampfireSpriteGFX
 	lb bc, BANK(CompactCampfireSpriteGFX), CAMPFIRE_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquireFloatingBall:
+	ld a, OVERWORLD_OBJECT_GFX_FLOATING_BALL
+	ld de, CompactFloatingBallSpriteGFX
+	lb bc, BANK(CompactFloatingBallSpriteGFX), FLOATING_BALL_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquirePokecomNews:
+	ld a, OVERWORLD_OBJECT_GFX_POKECOM_NEWS
+	ld de, PokecomNewsSpriteGFX
+	lb bc, BANK(PokecomNewsSpriteGFX), POKECOM_NEWS_TILES
 	jr AcquireOverworldObjectGFX
 
 AcquireSmashableRock:
@@ -745,6 +769,8 @@ GetOverworldObjectGFXResource:
 	ld a, [bc] ; OBJECT_SPRITE
 	cp SPRITE_CAMPFIRE
 	jr z, .campfire
+	cp SPRITE_FLOATING_BALL
+	jr z, .floating_ball
 	cp SPRITE_BOULDER_ROCK
 	jp z, .boulder
 	cp SPRITE_BALL_CUT_TREE
@@ -758,6 +784,24 @@ GetOverworldObjectGFXResource:
 	jp .no
 .campfire
 	ld a, OVERWORLD_OBJECT_GFX_CAMPFIRE
+	scf
+	ret
+.floating_ball
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_POKEMON
+	jr z, .floating_ball_graphics
+	cp SPRITEMOVEDATA_POKECOM_NEWS
+	jr z, .pokecom_news
+	and a
+	ret
+.pokecom_news
+	ld a, OVERWORLD_OBJECT_GFX_POKECOM_NEWS
+	scf
+	ret
+.floating_ball_graphics
+	ld a, OVERWORLD_OBJECT_GFX_FLOATING_BALL
 	scf
 	ret
 .ball_cut_tree
@@ -888,4 +932,6 @@ OverworldObjectGFXTileCount:
 	db HELIX_FOSSIL_TILES
 	db DOME_FOSSIL_TILES
 	db CAMPFIRE_TILES
+	db FLOATING_BALL_TILES
+	db POKECOM_NEWS_TILES
 	assert_table_length NUM_OVERWORLD_OBJECT_GFX

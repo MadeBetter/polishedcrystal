@@ -273,6 +273,14 @@ gfx/overworld/campfire.2bpp.lzp: gfx/overworld/campfire.2bpp
 	@test "$$(wc -c < $<)" -eq 64
 	$Qtools/lzpcompress -- $< $@
 
+gfx/overworld/floating_ball.2bpp.lzp: gfx/overworld/floating_ball.2bpp
+	@test "$$(wc -c < $<)" -eq 96
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/pokecom_news.2bpp.lzp: gfx/overworld/pokecom_news.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
 gfx/overworld/overworld.2bpp: gfx/overworld/puddle_splash.2bpp gfx/overworld/cut_grass.2bpp gfx/overworld/cut_tree.2bpp gfx/overworld/heal_machine.2bpp gfx/overworld/fruit.2bpp gfx/overworld/shadow.2bpp gfx/overworld/shaking_grass.2bpp gfx/overworld/boulder_dust.2bpp
 	@test "$$(wc -c < gfx/overworld/fruit.2bpp)" -eq 32
 	$Qcat $^ > $@
