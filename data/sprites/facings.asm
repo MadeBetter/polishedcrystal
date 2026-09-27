@@ -65,6 +65,8 @@ Facings:
 	dw FacingBigLugia2        ; FACING_BIG_LUGIA_2
 	dw FacingCutTree          ; FACING_CUT_TREE
 	dw FacingFarawayRock      ; FACING_FARAWAY_ROCK
+	dw FacingStepDown0        ; FACING_STRENGTH_BOULDER
+	dw FacingStepDown0        ; FACING_SMASHABLE_ROCK
 	dw FacingStationaryBall   ; FACING_STATIONARY_BALL
 	assert_table_length NUM_FACINGS
 	dw 0 ; end
@@ -119,6 +121,95 @@ FacingStepUp3:
 	db  0,  0, OAM_XFLIP, $85
 	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $86
 	db  8,  0, RELATIVE_ATTRIBUTES | OAM_XFLIP, $87
+
+; Chris's vertical alternate step mirrors the body but keeps his asymmetric
+; head tiles in the same left/right positions as the unmirrored step.
+FacingChrisStepDown3:
+	db 4 ; #
+	db  0,  0, 0, $80
+	db  0,  8, 0, $81
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $82
+	db  8,  0, RELATIVE_ATTRIBUTES | OAM_XFLIP, $83
+
+FacingChrisStepUp3:
+	db 4 ; #
+	db  0,  0, 0, $84
+	db  0,  8, 0, $85
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $86
+	db  8,  0, RELATIVE_ATTRIBUTES | OAM_XFLIP, $87
+
+ChrisOverlayFacings:
+; entries correspond to the ordinary FACING_STEP_* constants
+	table_width 2
+	dw ChrisOverlayDownStatic  ; FACING_STEP_DOWN_0
+	dw ChrisOverlayDownWalk    ; FACING_STEP_DOWN_1
+	dw ChrisOverlayDownStatic  ; FACING_STEP_DOWN_2
+	dw ChrisOverlayDownWalkFlip ; FACING_STEP_DOWN_3
+	dw ChrisOverlayUpStatic    ; FACING_STEP_UP_0
+	dw ChrisOverlayUpWalk      ; FACING_STEP_UP_1
+	dw ChrisOverlayUpStatic    ; FACING_STEP_UP_2
+	dw ChrisOverlayUpWalk      ; FACING_STEP_UP_3
+	dw ChrisOverlayLeftStatic  ; FACING_STEP_LEFT_0
+	dw ChrisOverlayLeftWalk    ; FACING_STEP_LEFT_1
+	dw ChrisOverlayLeftStatic  ; FACING_STEP_LEFT_2
+	dw ChrisOverlayLeftWalk    ; FACING_STEP_LEFT_3
+	dw ChrisOverlayRightStatic ; FACING_STEP_RIGHT_0
+	dw ChrisOverlayRightWalk   ; FACING_STEP_RIGHT_1
+	dw ChrisOverlayRightStatic ; FACING_STEP_RIGHT_2
+	dw ChrisOverlayRightWalk   ; FACING_STEP_RIGHT_3
+	assert_table_length FACING_FISH_DOWN
+
+ChrisOverlayDownStatic:
+	db 3 ; #
+	db 0, 0, ABSOLUTE_TILE_ID, $74
+	db 0, 8, ABSOLUTE_TILE_ID, $75
+	db 8, 4, ABSOLUTE_TILE_ID, $76
+
+ChrisOverlayDownWalk:
+	db 3 ; #
+	db 1, 0, ABSOLUTE_TILE_ID, $74
+	db 1, 8, ABSOLUTE_TILE_ID, $75
+	db 9, 4, ABSOLUTE_TILE_ID, $7c
+
+ChrisOverlayDownWalkFlip:
+	db 3 ; #
+	db 1, 0, ABSOLUTE_TILE_ID, $74
+	db 1, 8, ABSOLUTE_TILE_ID, $75
+	db 9, 4, ABSOLUTE_TILE_ID | OAM_XFLIP, $7c
+
+ChrisOverlayUpStatic:
+	db 2 ; #
+	db -1, 4, ABSOLUTE_TILE_ID, $77
+	db  8, 4, ABSOLUTE_TILE_ID, $78
+
+ChrisOverlayUpWalk:
+	db 2 ; #
+	db 0, 4, ABSOLUTE_TILE_ID, $77
+	db 8, 4, ABSOLUTE_TILE_ID, $7d
+
+ChrisOverlayLeftStatic:
+	db 3 ; #
+	db 0, 0, ABSOLUTE_TILE_ID, $79
+	db 0, 8, ABSOLUTE_TILE_ID, $7a
+	db 8, 7, ABSOLUTE_TILE_ID, $7b
+
+ChrisOverlayRightStatic:
+	db 3 ; #
+	db 0, 8, ABSOLUTE_TILE_ID | OAM_XFLIP, $79
+	db 0, 0, ABSOLUTE_TILE_ID | OAM_XFLIP, $7a
+	db 8, 1, ABSOLUTE_TILE_ID | OAM_XFLIP, $7b
+
+ChrisOverlayLeftWalk:
+	db 3 ; #
+	db 1, 0, ABSOLUTE_TILE_ID, $7e
+	db 1, 8, ABSOLUTE_TILE_ID, $7a
+	db 9, 5, ABSOLUTE_TILE_ID, $7f
+
+ChrisOverlayRightWalk:
+	db 3 ; #
+	db 1, 8, ABSOLUTE_TILE_ID | OAM_XFLIP, $7e
+	db 1, 0, ABSOLUTE_TILE_ID | OAM_XFLIP, $7a
+	db 9, 3, ABSOLUTE_TILE_ID | OAM_XFLIP, $7f
 
 FacingStepLeft0:
 FacingStepLeft2:
@@ -283,12 +374,12 @@ FacingSplash2:
 FacingApricorn:
 	db 2 ; #
 	db  0,  4, ABSOLUTE_TILE_ID, $7b
-	db 10,  4, ABSOLUTE_TILE_ID | FIXED_BROWN_PALETTE, $79
+	db 10,  4, ABSOLUTE_TILE_ID | TREE_TRUNK_PALETTE, $79
 
 FacingBerry:
 	db 2 ; #
 	db  4,  3, ABSOLUTE_TILE_ID, $7a
-	db 10,  4, ABSOLUTE_TILE_ID | FIXED_BROWN_PALETTE, $79
+	db 10,  4, ABSOLUTE_TILE_ID | TREE_TRUNK_PALETTE, $79
 
 FacingStationaryBall:
 	db 4 ; #
@@ -303,7 +394,7 @@ FacingCutTree:
 	db -3,  8, ABSOLUTE_TILE_ID, $75
 	db  5,  0, ABSOLUTE_TILE_ID | RELATIVE_ATTRIBUTES, $76
 	db  5,  8, ABSOLUTE_TILE_ID | RELATIVE_ATTRIBUTES, $77
-	db  4,  4, ABSOLUTE_TILE_ID | RELATIVE_ATTRIBUTES | NEXT_PALETTE, $78
+	db  4,  4, ABSOLUTE_TILE_ID | RELATIVE_ATTRIBUTES | TREE_TRUNK_PALETTE, $78
 
 ; These Pearl objects borrow cut-tree movement, but retain relative graphics.
 FacingFarawayRock:
@@ -316,7 +407,7 @@ FacingFarawayRock:
 
 FacingPickedFruit:
 	db 1 ; #
-	db 10,  4, ABSOLUTE_TILE_ID | FIXED_BROWN_PALETTE, $79
+	db 10,  4, ABSOLUTE_TILE_ID | TREE_TRUNK_PALETTE, $79
 
 FacingBigGyarados1:
 	db 16 ; #

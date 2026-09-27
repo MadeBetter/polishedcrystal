@@ -39,7 +39,10 @@ HidePlayerSprite::
 	ld a, [wPlayerCurrentOAMSlot]
 	ld l, a
 	ld de, OBJ_SIZE
-	ld b, 4
+	ld a, [wPlayerCurrentOAMCount]
+	and a
+	ret z
+	ld b, a
 	ld a, OAM_YCOORD_HIDDEN
 .loop
 	ld [hl], a

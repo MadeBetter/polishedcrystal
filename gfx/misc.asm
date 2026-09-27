@@ -30,6 +30,13 @@ HeadbuttTreeGFX::    INCBIN "gfx/overworld/headbutt_tree.2bpp.lzp"
 HeadbuttTree2GFX::   INCBIN "gfx/overworld/headbutt_tree_2.2bpp.lzp"
 
 
+SECTION "Player Overlay Graphics", ROMX
+
+ChrisPlayerOverlayGFX::
+	INCBIN "gfx/overlays/chris.2bpp"
+	assert @ - ChrisPlayerOverlayGFX == PLAYER_OVERLAY_TILES tiles
+
+
 SECTION "Overworld Weather Graphics", ROMX
 
 RainGFX::          INCBIN "gfx/overworld/rain_splash.2bpp"

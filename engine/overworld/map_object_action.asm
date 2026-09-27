@@ -59,15 +59,20 @@ SetFacingCutTree:
 	jr SetFixedFacing
 
 SetFacingCurrent:
-	ld a, [bc] ; OBJECT_SPRITE
-	cp SPRITE_BALL_CUT_TREE
-	jr nz, .normal
-	ld hl, OBJECT_MOVEMENT_TYPE
+	assert SMASHABLE_ROCK_VRAM1_TILE == STRENGTH_BOULDER_VRAM1_TILE + 4
+	assert STATIONARY_BALL_VRAM1_TILE == STRENGTH_BOULDER_VRAM1_TILE + 8
+	assert FACING_SMASHABLE_ROCK == FACING_STRENGTH_BOULDER + 1
+	assert FACING_STATIONARY_BALL == FACING_STRENGTH_BOULDER + 2
+	ld hl, OBJECT_SPRITE_TILE
 	add hl, bc
 	ld a, [hl]
-	cp SPRITEMOVEDATA_STANDING_DOWN
-	ld a, FACING_STATIONARY_BALL
-	jr z, SetFixedFacing
+	sub STRENGTH_BOULDER_VRAM1_TILE
+	rrca
+	rrca ; divide the four-tile stride; other offsets rotate above this range
+	cp 3
+	jr nc, .normal
+	add FACING_STRENGTH_BOULDER
+	jr SetFixedFacing
 .normal
 	call GetSpriteDirection
 	jr SetFixedFacing

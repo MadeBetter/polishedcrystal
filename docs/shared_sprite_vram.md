@@ -1,8 +1,9 @@
 # Shared overworld sprite graphics
 
 The object engine keeps its 13 active structures and its original split pose
-regions. NPC structures now reference graphics allocations independently of their
-structure indexes. Identical resolved graphics share one allocation, even when
+regions, with ten shared graphics allocations (slots 0-9) plus the private player.
+NPC structures reference graphics allocations independently of their structure
+indexes. Identical resolved graphics share one allocation, even when
 objects have different palettes, directions, movement phases, or scripts.
 
 ## Building and testing
@@ -46,14 +47,80 @@ clear means bank 1. `$ff` means no allocation and is not rendered.
 | --- | --- | --- | --- |
 | Player (private) | 0 | `$00–$0b` | `$80–$8b` |
 | Shared slots 0–6 | 0 | `$0c–$5f` | `$8c–$df` |
-| Shared slots 7–11 | 1 | `$00–$3b` | `$40–$7b` |
-| Final slot with a 15-tile sprite | 1 | `$30–$3e` | `$70–$7e` |
+| Shared slots 7–9 | 1 | `$00–$23` | `$40–$63` |
+| Slot 9 with a 15-tile sprite | 1 | `$18–$26` | `$58–$66` |
+| Strength/stationary boulders (fixed, on demand) | 1 | `$35–$38` | None |
+| Smashable rocks (fixed, on demand) | 1 | `$39–$3c` | None |
+| Stationary balls (fixed, on demand) | 1 | `$3d–$3f` | None |
 
 Ordinary allocations retain the 12-tile stride. Pokemon icons copy eight base
-tiles and no alternate group. Stationary balls use a separate three-tile shared
-allocation, described below. Other resources retain the existing paired-copy
+tiles and no alternate group. Boulders, smashable rocks, and stationary balls use compact
+fixed allocations, described below. Other resources retain the existing paired-copy
 behavior; their short standing-sprite assets have not been compacted. The effects area beginning at bank-0 `$60`, the `$6f–$7f`
 effects, and map-name/UI graphics at `$e0+` are not available to this allocator.
+
+The final allocation is slot 9. Big Gyarados and Alolan Exeggutor upload
+15 base tiles at bank 1 `$8180` and 15 alternate tiles at `$8580`. The sailboat
+uses the same slot with 12 tiles per group. Ordinary resources can still use
+slot 9 until a special sprite needs it, at which point live ordinary owners
+are relocated together into a free earlier allocation.
+
+The existing Alolan Exeggutor asset contains 24 tiles, although its descriptor
+requests two groups of 15. This layout change preserves that loader behavior;
+six trailing alternate tiles come from decompression scratch beyond the asset.
+Tests verify its valid source pixels and exact destination boundaries without
+assuming contents for those six tiles. Asset/upload sizing remains separate work.
+
+The following bank-1 ranges remain available outside all shared allocations and
+the player-overlay region, even with a 15-tile special sprite present.
+
+| Available tiles | VRAM addresses | Count |
+| --- | --- | --- |
+| `$27-$34` | `$8270-$834f` | 14 |
+| `$67-$73` | `$8670-$873f` | 13 |
+
+Bank-1 tiles `$74-$7f` are a fixed 12-tile player-overlay region. Every
+`LoadOverworldGFX` call uploads `gfx/overlays/chris.png` there, after restoring
+the bank-0 effects atlas, and restores the caller's original VRAM bank. The
+current asset is raw 2bpp data in ROM because its exact 192-byte size is small
+and avoids decompression scratch or persistent WRAM.
+
+Chris's normal, running, biking, and surfing sprites use a player-only vertical
+step layout. On the mirrored down/up frame, the lower body keeps the standard
+horizontal flip while the two head tiles retain their unmirrored positions and
+attributes. Other player characters and NPCs using Chris graphics keep the
+generic facing layout.
+
+Only the regular `SPRITE_CHRIS` state currently renders the bank-1 overlay;
+running, biking, surfing, fishing, other player characters, and NPC Chris
+sprites do not. The overlay uses `PAL_OW_CHRIS_OVERLAY` through the dynamic
+object-palette loader, independently of the base player's palette. Hardware OBJ
+palette slot 0 is permanently assigned to the current player palette, and slot
+1 is permanently assigned to `PAL_OW_CHRIS_OVERLAY`; dynamic allocation cannot
+replace either slot, although an exact matching palette may safely share one.
+The overlay adds three OAM objects to down and side facings and two to up facings. The overlay
+records are rendered after the base four objects, giving them foreground OAM
+priority. If the complete overlay record does not fit, none of its objects are
+written and the four-object base player remains valid.
+
+The static mappings are `$74/$75/$76` over down `$00/$01/$02`, `$77/$78`
+over up `$04/$06`, and `$79/$7a/$7b` over side `$08/$09/$0b`. Walking uses
+`$74/$75/$7c` over down `$80/$81/$82`, `$77/$7d` over up `$84/$86`, and
+`$7e/$7a/$7f` over side `$88/$89/$8a`. Horizontal offsets and X flips reflect
+with right-facing frames; for example, `$7f` moves from x+5 over left-facing
+`$8a` to x-5 over its mirrored right-facing position.
+
+Two additional transient WRAM0 bytes remember the dynamically selected shared
+tree-trunk palette slot and the current total player OAM count.
+`HidePlayerSprite` therefore hides all six or seven player objects when an overlay is active, while retaining
+the original four-object behavior for every other state. These bytes are outside
+saved Game Data.
+
+Ten distinct shared resources can coexist; duplicate objects share them, and
+atlas trees, fixed rocks, and fixed balls consume no shared slots. A new incompatible resource
+fails allocation when no slot is available, without overwriting live graphics.
+The object-structure limit remains 13, including the player. Future maps and
+scripts must respect the reduced resource capacity.
 
 ## Ownership and loading
 
@@ -73,7 +140,7 @@ and marks their graphics slots in use. The object being rebound and temporary
 effects are excluded. A matching live key is reused without decompression or a
 VRAM transfer. Otherwise, an unused compatible slot is loaded and assigned.
 
-This uses 65 bytes of transient WRAM0: 48 bytes of resource keys, 12 live-use
+This uses 55 bytes of transient WRAM0: 40 bytes of resource keys, 10 live-use
 bytes, four request bytes, and one selected-slot byte. Nothing is inserted into
 the saved Game Data or object structures. There are no persistent reference
 counts, so deletion, direct structure clearing, and map-connection reassociation
@@ -87,15 +154,37 @@ its graphics. Temporary effects keep their existing absolute tile references.
 
 ## Restore and replacement paths
 
-`RefreshSprites` / `ReloadSpriteIndex` detach ordinary NPC graphics before
-rebuilding. Each distinct resource is restored once, including after a font,
-menu, or battle has overwritten VRAM. OAM DMA is held during the rebuild, and
-OAM references are regenerated without advancing object movement before the
-previous DMA setting is restored.
+Ordinary scripted dialogue closes through `CloseDialogueText`, which calls
+`RestoreTextSpriteGFX`. It preserves every allocation, graphics key, and object
+tile reference. Only the private player's alternate group and live bank-0 shared
+alternate groups are restored, once per resource, at their existing addresses.
+Bank-1 graphics, bank-0 base poses, atlas objects, fixed rocks/balls, and eight-tile
+Pokemon icons are not uploaded. Unused allocation keys are ignored and gaps
+are retained. The caller keeps text poses active until restoration completes.
 
-Variable changes therefore cannot overwrite graphics still needed by an
-unrelated object. `LoadSpriteAsMapObject1` also rebinds the active object through
-the normal restore path; an inactive object loads its new graphics when spawned.
+This prevents the woman/bird flash caused by rebuilding allocations on text
+close: holding OAM DMA leaves hardware OAM visible, so changing a base tile's
+owner while holding DMA can briefly display another sprite. The dialogue path
+avoids changing those pixels or references at all. It also avoids the separate
+full player reload previously performed after every textbox.
+
+`CloseText` remains the full restore entry point for menu and other legacy
+callers. Map transitions, picture-screen cleanup, and variable-sprite changes
+retain their existing `RefreshSprites` / `ReloadSpriteIndex` calls. A changed
+player graphics resource detected during dialogue restoration also falls back
+to `RefreshSprites`. New scripted screens that overwrite base graphics must use
+one of these full restore paths; the dialogue path only repairs the font overlap.
+
+Full refreshes detach and rebuild shared allocations, then rebuild shadow OAM.
+They can change tile addresses and are not made atomic by the dialogue fix.
+The existing special-slot relocation separately publishes new OAM references
+before overwriting its old location. `LoadSpriteAsMapObject1` continues to rebind
+an active object through the full restore path.
+
+Dialogue restoration reuses the live-allocation scan and the loader's existing
+skip-base flag. It adds no RAM and preserves the caller's sprite flags, object
+index, registers, and VRAM/WRAM banks. Normal restores scan only the seven bank-0
+shared slots after handling the private player.
 
 Berry/apricorn trees use the effects atlas without owning a shared NPC allocation.
 Each object's fruit flag still selects its own fruit/picked facing. Picking one
@@ -160,8 +249,13 @@ facing tile IDs: berry `$7a`, apricorn `$7b`, and trunk `$79`. The fruit pair
 comes from the two tiles in `gfx/overworld/fruit.png`; the build checks that it
 is exactly 32 bytes. The trunk is the second tile in `gfx/overworld/trunks.png`.
 
-Fruit and picked facings retain their positions and palette rules, including
-the fixed brown trunk palette. Picking removes only the fruit OAM entry;
+Fruit and picked facings retain their positions and palette rules. Cut-tree
+green now goes through the normal identity-based object palette allocator, so
+all visible cut trees share one non-glowing `PAL_OW_COPY_BG_GREEN` entry. Cut
+and fruit trunks make one normal `PAL_OW_COPY_BG_BROWN` request and store its
+selected hardware slot in transient WRAM; every trunk OAM entry reads that same
+slot. The slot is not fixed and remains available on maps without either tree
+type. Picking removes only the fruit OAM entry;
 daily regrowth restores it without changing the shared pixels. Any number of
 active fruit-tree objects needs no NPC graphics block or sprite-sheet upload.
 The atlas uses two more tiles than the rod-only change, returning to a single
@@ -200,39 +294,63 @@ sequences. They also verify that fishing preserves the fruit at `$7a-$7b`.
 These are routine and graphics tests, rather than a complete playthrough of
 the field scripts.
 
+## Four-tile Strength boulders
+
+`SPRITE_BOULDER_ROCK` with `SPRITEMOVEDATA_STRENGTH_BOULDER` uses exactly the
+four tiles in `gfx/overworld/strength_boulder.png`. Stationary/fallen boulders
+using the same graphics group also select this path. Together, all 41 authored
+placements share fixed bank-1 tiles `$35-$38`, consume no shared allocation,
+and have no alternate-pose reservation.
+
+The first live boulder uploads 64 bytes and later boulders reuse them. A full
+refresh uploads the resource once when needed. The build rejects an asset that
+is not exactly four tiles. The Pokécom information sign keeps the original
+`boulder_rock.png` sheet, and Ice Path's boulders retain their distinct
+`ice_boulder_fossils.png` resource.
+
+## Four-tile smashable rocks
+
+`SPRITE_BOULDER_ROCK` with `SPRITEMOVEDATA_SMASHABLE_ROCK` uses exactly the four
+tiles in `gfx/overworld/smashable_rock.png`. Its position, palette, and lower-half
+relative priority are unchanged. The Pokécom information sign retains the
+original `boulder_rock.png` shared resource.
+Mount Moon Square's special N64-sheet rock also retains its separate appearance.
+
+All live ordinary smashable rocks share four fixed tiles in bank 1 `$39-$3c`.
+They consume no shared graphics slot and have no alternate-pose reservation.
+Only 64 bytes reach VRAM. The first live rock loads the asset; subsequent rocks
+reuse it, and a full refresh loads it once when such rocks are present. The build
+rejects an asset that is not exactly four tiles.
+
 ## Three-tile stationary balls
 
 `SPRITE_BALL_CUT_TREE` with `SPRITEMOVEDATA_STANDING_DOWN` uses exactly the three
-tiles in `gfx/sprites/ball.png`. The bottom-left OAM entry uses tile 2, and the
+tiles in `gfx/overworld/ball.png`. The bottom-left OAM entry uses tile 2, and the
 bottom-right entry uses the same tile with horizontal flipping. Positions,
 palettes, and the lower-half relative priority are unchanged. Item balls,
 key-item balls, TM/HM balls, starter balls, and the existing stationary scripted
 ball objects all select this path without changes to map IDs or saved data.
 
-All live stationary balls share a single three-tile allocation. Normally it is
-bank 1 `$3c-$3e`, immediately after the ordinary twelve-tile blocks; none of those
-blocks is consumed. There is no alternate-pose reservation or upload. Only 48
-bytes reach VRAM, and the build rejects an asset that is not exactly three tiles.
+All live stationary balls share three fixed tiles in bank 1 `$3d-$3f`.
+They do not consume any of the ten shared allocations and never overlap the
+special-sprite ranges. There is no alternate-pose reservation or upload. Only
+48 bytes reach VRAM, and the build rejects an asset that is not exactly three tiles.
 
-The final large-sprite allocation overlaps that tail. When it is in use, balls
-instead occupy the last three tiles of a free ordinary block. Only those three
-tiles are copied; the other nine tiles and the alternate region are untouched.
-This partial occupancy prevents an overlapping twelve-tile allocation and cannot
-match an obsolete ordinary resource key. The current allocator does not yet pack
-additional small resources into the remaining nine tiles.
+Uploads remain on demand: the first live ball loads the asset, and further balls
+share it. A full refresh reloads it once if balls are present, and does not touch
+these tiles when none are present. Live object scans handle sharing and deletion;
+detached objects cannot produce false hits during a refresh. No new persistent
+RAM or reference count is needed.
 
-If a large sprite appears after balls, their three tiles are copied to the safe
-location and all ball references are repointed. Active OAM DMA publishes the new
-references before the large sprite overwrites the old tail. Existing ordinary
-resource relocation still works when both moves are necessary. Live object scans
-handle sharing and deletion without additional persistent RAM or reference counts;
-detached objects cannot produce false hits during a refresh.
+Balls never relocate, including when a special sprite appears. Their former
+fallback allocation, partial-block ownership, and relocation routines have been
+removed. Ordinary resource relocation out of the special slot still publishes
+new OAM references before replacing the old graphics.
 
 The old sheet remains available for other uses, including Silver Cave arch-tree
-decorations. This is a targeted three-tile resource allocation, not a general
-variable-size rewrite of all NPC graphics. Tests verify exact VRAM writes in both
-banks, all twelve balls sharing, mirrored OAM, map creation, menu restoration,
-stale-key rejection, full-population relocation, and hardware OAM publication.
+decorations. Tests verify exact fixed uploads, all twelve balls sharing, mirrored
+OAM, map creation, on-demand/menu restoration, special coexistence in both spawn
+orders, full shared capacity with balls, and stable hardware OAM.
 
 ## Optimization review
 
@@ -257,7 +375,8 @@ time. This does not increase the active-object or hardware OAM limits.
 ## Verification scope
 
 The regression suite covers duplicate NPCs with independent OAM frames/palettes,
-all twelve distinct allocations, bank-1 alternate offsets, protected VRAM ranges,
+all ten distinct allocations, capacity exhaustion, bank-1 alternate offsets,
+protected VRAM ranges,
 shared-owner deletion, fruit picking, actual font overwrite/restoration, variable
 rebinding, Pokemon species/forms, private player state changes, temporary effects,
 map-object creation/failure, direct trainer replacement, special relocation,
@@ -268,3 +387,25 @@ downstairs home maps, Mom's dialogue, and the outdoor map, with menu open/close.
 A symbol comparison against the base build confirmed all 1,079 saved player-data
 symbols and the player/Pokemon save boundaries retained their original addresses.
 This is targeted regression coverage, not a full playthrough of every event.
+
+The ten-slot revision passes 48 compiled-ROM regression tests and the assembly
+optimizer reports no findings. Ownership scratch shrinks from 65 to 55 bytes;
+all 1,616 symbols within the saved Game Data range retain their prior addresses.
+The map visibility/resource audit estimates at most nine simultaneous shared
+resources in the current maps, below the ten-slot limit. This estimate is not
+an exhaustive execution of every script or dynamic sprite substitution.
+
+The dialogue revision passes 55 compiled-ROM regression tests. New checks cover
+exact alternate-only writes, duplicate resources, stale keys and preserved gaps,
+all player gender/state combinations, bank-1 exclusion, player-change fallback,
+and the real `OpenText` / `Script_closetext` flow on a synthetic Cherrygrove map
+setup. VBlank samples verify visible teacher OAM and unchanged base graphics
+through two open/close cycles with out-of-order graphics allocations. Legacy
+`CloseText` still exercises full reload. All 23,578 RAM symbols retain their
+pre-dialogue addresses, and the assembly optimizer reports no findings.
+
+The compact boulder revisions raise the suite to 68 tests. They check exact
+four-tile transfers to bank 1 `$39-$3c`, twelve simultaneous rocks sharing one
+upload, OAM tile/palette behavior, the real map-object path, coexistence with
+fixed balls and special sprites, and preservation of the other boulder-sheet
+uses and Mount Moon Square's N64-sheet rock.

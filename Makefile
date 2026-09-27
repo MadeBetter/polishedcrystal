@@ -220,8 +220,16 @@ gfx/music_player/music_player.2bpp: gfx/music_player/bg.2bpp gfx/music_player/ob
 gfx/new_game/shrink1.2bpp: RGBGFXFLAGS += -Z
 gfx/new_game/shrink2.2bpp: RGBGFXFLAGS += -Z
 
-# Stationary balls must stay a three-tile resource, without sprite-sheet padding.
-gfx/sprites/ball.2bpp.lzp: gfx/sprites/ball.2bpp
+# Fixed overworld objects must stay compact, without sprite-sheet padding.
+gfx/overworld/strength_boulder.2bpp.lzp: gfx/overworld/strength_boulder.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/smashable_rock.2bpp.lzp: gfx/overworld/smashable_rock.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/ball.2bpp.lzp: gfx/overworld/ball.2bpp
 	@test "$$(wc -c < $<)" -eq 48
 	$Qtools/lzpcompress -- $< $@
 

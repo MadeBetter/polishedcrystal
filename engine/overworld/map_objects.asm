@@ -2914,12 +2914,12 @@ InitSprites:
 	jr .next_sprite
 
 .InitSprite:
-	call .StorePlayerOAMLocation
 	ld hl, OBJECT_SPRITE_TILE
 	add hl, bc
 	ld a, [hl]
 	cp UNALLOCATED_SPRITE_TILE
-	ret z
+	jp z, .StorePlayerOAMLocation
+.allocated
 	and ~(1 << 7)
 	ldh [hCurSpriteTile], a
 	xor a
@@ -2995,9 +2995,59 @@ InitSprites:
 	add hl, bc
 	ld a, [hl]
 	cp STANDING
-	jr z, .done
+	jr z, .invalid_facing
 	cp NUM_FACINGS
-	jr nc, .done
+	jr c, .valid_facing
+.invalid_facing
+	call .StorePlayerOAMLocation
+	xor a
+	ret
+.valid_facing
+	ld e, a
+	call .StorePlayerOAMLocation
+	ld a, e ; preserve the player/non-player zero flag from the call
+	jr nz, .normal_facing
+	ld a, [bc]
+	cp SPRITE_CHRIS
+	jr z, .chris_player
+	; Only the player gets Chris's asymmetric vertical head layout. NPCs using
+	; the same sprite retain the standard whole-body mirror.
+	ld a, e
+	cp FACING_STEP_DOWN_3
+	jr z, .check_chris_vertical_flip
+	cp FACING_STEP_UP_3
+	jr nz, .normal_facing
+.check_chris_vertical_flip
+	ld a, [bc]
+	cp SPRITE_CHRIS_RUN
+	jr z, .chris_vertical_flip
+	; The other three Chris state sprites are the first three sprite IDs.
+	assert SPRITE_CHRIS == 1
+	assert SPRITE_CHRIS_BIKE == 2
+	assert SPRITE_CHRIS_SURF == 3
+	dec a
+	cp SPRITE_CHRIS_SURF
+	jr nc, .normal_facing
+.chris_vertical_flip
+	ld hl, FacingChrisStepDown3
+	bit 2, e ; down 3 has bit 2 clear; up 3 has it set
+	jr z, .RenderFacing
+	ld hl, FacingChrisStepUp3
+	jr .RenderFacing
+.chris_player
+	ld a, e
+	push af
+	cp FACING_STEP_DOWN_3
+	jr z, .chris_vertical_facing
+	cp FACING_STEP_UP_3
+	jr nz, .chris_normal_facing
+.chris_vertical_facing
+	ld hl, FacingChrisStepDown3
+	bit 2, e ; down 3 has bit 2 clear; up 3 has it set
+	jr z, .chris_got_facing
+	ld hl, FacingChrisStepUp3
+	jr .chris_got_facing
+.chris_normal_facing
 	ld l, a
 	ld h, 0
 	add hl, hl
@@ -3006,17 +3056,40 @@ InitSprites:
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
+.chris_got_facing
+	call .RenderFacing
+	pop bc ; b = the original facing; preserve the renderer's carry result
+	ret c
+	ld a, b
+	call .RenderChrisOverlay
+	xor a
+	ret
+.normal_facing
+	ld a, e
+	ld l, a
+	ld h, 0
+	add hl, hl
+	ld bc, Facings
+	add hl, bc
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+.RenderFacing
+	ld a, [hli]
+	ldh [hUsedSpriteTile], a
+	add a
+	add a
+	ld e, a
+	ldh a, [hUsedOAMIndex]
+	add e
+	cp OAM_SIZE + 1
+	jr nc, .full
 	ldh a, [hUsedOAMIndex]
 	; a = (OAM_COUNT - 1) * OBJ_SIZE - a
 	cpl
 	add OBJ_SIZE * (OAM_COUNT - 1) + 1
 	ld c, a
 	ld b, HIGH(wShadowOAM)
-	ld a, [hli]
-	ldh [hUsedSpriteTile], a
-	sub c
-	cp LOW(wShadowOAM)
-	jr c, .full
 .addsprite
 	ldh a, [hCurSpriteYPixel]
 	add [hl]
@@ -3061,10 +3134,13 @@ InitSprites:
 	jr z, .nope3
 	inc a
 .nope3
-	bit FIXED_BROWN_PALETTE_F, e
+	bit TREE_TRUNK_PALETTE_F, e
 	jr z, .nope4
 	and ~OAM_PALETTE
-	or FRUIT_TREE_TRUNK_PAL_SLOT
+	ld e, a
+	ld a, [wTreeTrunkPalette]
+	and OAM_PALETTE
+	or e
 .nope4
 	ld [bc], a
 	inc c
@@ -3087,6 +3163,35 @@ InitSprites:
 	scf
 	ret
 
+.RenderChrisOverlay
+	cp FACING_FISH_DOWN ; overlays cover only the ordinary walk-cycle facings
+	jr nc, .no_chris_overlay
+	ld l, a
+	ld h, 0
+	add hl, hl
+	ld bc, ChrisOverlayFacings
+	add hl, bc
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ld d, OAM_BANK1 | PLAYER_OVERLAY_PAL_SLOT
+	ld a, [hl]
+	push af
+	call .RenderFacing
+	pop bc ; b = overlay object count; preserve the renderer's carry result
+	ret c
+	ld a, b
+	add 4
+	ld [wPlayerCurrentOAMCount], a
+	ldh a, [hUsedOAMIndex]
+	; a = OAM_SIZE - a, the lowest address used by the complete player sprite
+	cpl
+	add OAM_SIZE + 1
+	ld [wPlayerCurrentOAMSlot], a
+.no_chris_overlay
+	xor a
+	ret
+
 .ObjectStructPointers:
 	dw wPlayerStruct
 for n, 1, NUM_OBJECT_STRUCTS
@@ -3105,6 +3210,9 @@ endr
 	cpl
 	add (OAM_COUNT - 4) * OBJ_SIZE + 1
 	ld [wPlayerCurrentOAMSlot], a
+	ld a, 4
+	ld [wPlayerCurrentOAMCount], a
+	cp a ; return Z for the player; early returns above preserve NZ for NPCs
 	ret
 
 StepFunction_Half1:

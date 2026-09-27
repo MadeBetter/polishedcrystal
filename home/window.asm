@@ -20,13 +20,29 @@ RefreshScreenFast::
 	farjp ReanchorBGMap_NoOAMUpdate_NoDelay
 
 CloseText::
+; Menus and other screens retain full sprite/atlas restoration.
+	ld hl, RestoreFullTextSprites
+	jr CloseTextWithSpriteRestore
+
+CloseDialogueText::
+; Scripted dialogue keeps base tiles and graphics allocations unchanged.
+	ld hl, RestoreDialogueTextSprites
+
+CloseTextWithSpriteRestore:
 	ldh a, [hOAMUpdate]
 	push af
+	push hl
 	ld a, $1
 	ldh [hOAMUpdate], a
-
-	call .CloseText
-
+	call .Prepare
+	pop hl
+	call _hl_
+	ld a, $90
+	ldh [hWY], a
+	xor a
+	assert NO_BG_MAP_TRANSFER == 0
+	ldh [hBGMapMode], a
+	farcall InitMapNameSign
 	pop af
 	ldh [hOAMUpdate], a
 	ld hl, wStateFlags
@@ -35,7 +51,7 @@ CloseText::
 	res OW_WEATHER_DISABLED_F, [hl]
 	ret
 
-.CloseText:
+.Prepare:
 	call ClearWindowData
 	xor a
 	assert NO_BG_MAP_TRANSFER == 0
@@ -45,16 +61,16 @@ CloseText::
 	xor a
 	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
-	call SafeUpdateSprites
+	jmp SafeUpdateSprites
+
+RestoreFullTextSprites:
 	farcall RefreshSprites
 	ld a, $90
 	ldh [hWY], a
-	call UpdatePlayerSprite
-	xor a
-	assert NO_BG_MAP_TRANSFER == 0
-	ldh [hBGMapMode], a
+	jmp UpdatePlayerSprite
 
-	farjp InitMapNameSign
+RestoreDialogueTextSprites:
+	farjp RestoreTextSpriteGFX
 
 Script_opentext::
 OpenText::

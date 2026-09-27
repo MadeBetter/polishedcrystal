@@ -136,6 +136,13 @@ LoadOverworldGFX::
 	; Fruit at $7a-$7b makes the effects atlas contiguous again.
 	lb bc, BANK(LoadOverworldGFX), $80 - $6f
 	call Get2bpp
+
+	ld a, BANK(vTiles3)
+	ldh [rVBK], a
+	ld hl, vTiles3 tile PLAYER_OVERLAY_VRAM1_TILE
+	ld de, ChrisPlayerOverlayGFX
+	lb bc, BANK(ChrisPlayerOverlayGFX), PLAYER_OVERLAY_TILES
+	call Get2bpp
 	pop af
 	ldh [rVBK], a
 	ret

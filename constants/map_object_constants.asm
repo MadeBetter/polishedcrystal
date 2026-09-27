@@ -37,15 +37,21 @@ DEF OBJECT_PAL_INDEX        rb ; 21
 DEF OBJECT_LENGTH EQU _RS
 DEF NUM_OBJECT_STRUCTS EQU 13 ; see wObjectStructs
 ; Graphics slots are independent of object-structure indexes.
-DEF NUM_SPRITE_GFX_SLOTS EQU 12 ; excludes the dedicated player allocation
+DEF NUM_SPRITE_GFX_SLOTS EQU 10 ; slots 0-9; excludes the dedicated player
 DEF FIRST_VRAM1_SPRITE_GFX_SLOT EQU 7
 DEF SPECIAL_SPRITE_GFX_SLOT EQU NUM_SPRITE_GFX_SLOTS - 1
+DEF SPECIAL_SPRITE_GFX_TILE EQU (SPECIAL_SPRITE_GFX_SLOT - FIRST_VRAM1_SPRITE_GFX_SLOT) * 12
 DEF SPRITE_GFX_KEY_LENGTH EQU 4 ; ROM bank, pointer, tile count/placement
 DEF SPRITE_GFX_SPECIAL_F EQU 7 ; tile count also encodes the final-slot constraint
 DEF UNALLOCATED_SPRITE_TILE EQU $ff
+DEF STRENGTH_BOULDER_TILES EQU 4
+DEF STRENGTH_BOULDER_VRAM1_TILE EQU $35 ; fixed bank-1 location; loaded on demand
+DEF SMASHABLE_ROCK_TILES EQU 4
+DEF SMASHABLE_ROCK_VRAM1_TILE EQU $39 ; fixed bank-1 location; loaded on demand
 DEF STATIONARY_BALL_TILES EQU 3
-DEF STATIONARY_BALL_VRAM1_TILE EQU $3c ; tail after the ordinary bank-1 blocks
-DEF SPRITE_GFX_PARTIAL EQU 2 ; only the last three tiles are owned by balls
+DEF STATIONARY_BALL_VRAM1_TILE EQU $3d ; fixed bank-1 location; loaded on demand
+DEF PLAYER_OVERLAY_TILES EQU 12
+DEF PLAYER_OVERLAY_VRAM1_TILE EQU $74 ; fixed bank-1 location; loaded on every refresh
 
 ; object_struct OBJECT_MAP_OBJECT_INDEX values
 DEF UNASSOCIATED_OBJECT EQU -1
@@ -90,13 +96,15 @@ DEF OW_RIGHT EQU RIGHT << 2
 DEF FISHING_ROD_TILE EQU $65 ; vertical, then horizontal
 
 ; facing attribute bit flags
-	DEF FIXED_BROWN_PALETTE_F EQU 0
-	DEF FIXED_BROWN_PALETTE   EQU 1 << FIXED_BROWN_PALETTE_F
+	DEF TREE_TRUNK_PALETTE_F EQU 0
+	DEF TREE_TRUNK_PALETTE   EQU 1 << TREE_TRUNK_PALETTE_F
 	const_def 1
 	shift_const RELATIVE_ATTRIBUTES ; 1
 	shift_const ABSOLUTE_TILE_ID    ; 2
 	shift_const NEXT_PALETTE        ; 3
-	DEF FRUIT_TREE_TRUNK_PAL_SLOT EQU 6
+	DEF PLAYER_PAL_SLOT         EQU 0
+	DEF PLAYER_OVERLAY_PAL_SLOT EQU 1
+	DEF DUAL_OBJECT_PAL_SLOT    EQU 2
 
 ; map_object struct members (see macros/ram.asm)
 rsreset
@@ -361,7 +369,9 @@ DEF NUM_OBJECT_ACTIONS EQU const_value
 	const FACING_BIG_LUGIA_2        ; 3d
 	const FACING_CUT_TREE           ; 3e
 	const FACING_FARAWAY_ROCK       ; 3f
-	const FACING_STATIONARY_BALL    ; 40
+	const FACING_STRENGTH_BOULDER   ; 40
+	const FACING_SMASHABLE_ROCK     ; 41
+	const FACING_STATIONARY_BALL    ; 42
 DEF NUM_FACINGS EQU const_value
 
 ; DoPlayerMovement.DoStep arguments (see engine/overworld/player_movement.asm)

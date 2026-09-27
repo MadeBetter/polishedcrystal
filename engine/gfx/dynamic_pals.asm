@@ -22,6 +22,7 @@ ClearSavedObjPals::
 	assert NO_PAL_LOADED == -1
 	dec a
 	ld [wNeededMonPalLight], a
+	ld [wTreeTrunkPalette], a
 	rst ByteFill
 
 	pop af
@@ -71,9 +72,10 @@ CheckForUsedObjPals::
 	xor a
 	ld [wNeededObjPalGlow], a
 
-	; reset all wUsedObjectPals bits
-	xor a
+	; The player base and overlay palettes always own slots 0 and 1.
+	ld a, (1 << PLAYER_PAL_SLOT) | (1 << PLAYER_OVERLAY_PAL_SLOT)
 	ld [wUsedObjectPals], a
+	xor a
 
 	; Remember objects whose requested palette already matched in pass one.
 	; Pass two can skip them until all slots are occupied (slot exhaustion
@@ -88,6 +90,7 @@ CheckForUsedObjPals::
 	dec a
 	ld [wNeededMonPalLight], a
 
+	call LoadFixedPlayerPals
 	call CheckDualObjectPals
 	; Weather OAM uses a fixed slot, including particles still clearing after
 	; the weather stops. Do not let an object overwrite that palette.
@@ -101,11 +104,13 @@ CheckForUsedObjPals::
 	ld hl, wPalFlags
 	set SCAN_OBJECTS_FIRST_F, [hl]
 	call ScanObjectStructPals
+	call CheckTreeTrunkPal
 
 	; Scan for active objects that still need pals loaded
 	ld hl, wPalFlags
 	res SCAN_OBJECTS_FIRST_F, [hl]
 	call ScanObjectStructPals
+	call CheckTreeTrunkPal
 
 	; If this flag was set, it's time to reset it
 	ld hl, wPalFlags
@@ -175,6 +180,22 @@ ScanObjectStructPals:
 	ld hl, OBJECT_SPRITE
 	add hl, de
 	ld a, [hl]
+	; Atlas cut trees shared one unmodified green palette before the dynamic
+	; refactor. Keep that identity independent of collision glow so every cut
+	; tree can continue to share one allocator entry.
+	cp SPRITE_BALL_CUT_TREE
+	jr nz, .got_palette_sprite
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, de
+	ld a, [hl]
+	cp SPRITEMOVEDATA_CUTTABLE_TREE
+	ld a, SPRITE_BALL_CUT_TREE
+	jr nz, .got_palette_sprite
+	xor a
+	ld [wNeededObjPalGlow], a
+	ld [wPrevNeededObjPalGlow], a
+	ld a, SPRITE_BALL_CUT_TREE
+.got_palette_sprite
 
 	; Look up the object's requested color palette
 	ld hl, OBJECT_PAL_INDEX
@@ -284,6 +305,115 @@ ScanObjectStructPals:
 	adc HIGH(wResolvedObjectPals)
 	sub l
 	ld h, a
+	ret
+
+LoadFixedPlayerPals:
+; Slots 0 and 1 are stable across the overworld. Other objects may match and
+; share these exact palette identities, but the allocator cannot replace them.
+	ld hl, wLoadedObjPalType
+	res PLAYER_PAL_SLOT, [hl]
+	res PLAYER_OVERLAY_PAL_SLOT, [hl]
+	ld hl, wPlayerStruct + OBJECT_PALETTE
+	ld a, [hl]
+	and ~OAM_PALETTE
+	or PLAYER_PAL_SLOT
+	ld [hl], a
+
+	xor a
+	ld [wNeededPalType], a
+	assert NO_PAL_LOADED == -1
+	dec a
+	ld [wNeededMonPalLight], a
+	ld a, [wObjectGlowTypes]
+	ld [wNeededObjPalGlow], a
+	ld [wLoadedObjPalGlows + PLAYER_PAL_SLOT], a
+	ld a, [wObjectPrevGlowTypes]
+	bit OBJ_GLOW_TRANSITION_F, a
+	jr nz, .got_player_previous_glow
+	ld a, [wNeededObjPalGlow]
+	jr .store_player_previous_glow
+.got_player_previous_glow
+	and ~OBJ_GLOW_TRANSITION
+.store_player_previous_glow
+	ld [wPrevNeededObjPalGlow], a
+	ld [wLoadedObjPalPrevGlows + PLAYER_PAL_SLOT], a
+	ld a, [wPlayerStruct + OBJECT_PAL_INDEX]
+	ld [wNeededPalIndex], a
+	ld [wLoadedObjPal0 + PLAYER_PAL_SLOT], a
+	ld de, wOBPals1 + PLAYER_PAL_SLOT palettes
+	call CopyObjectSpritePalHandler
+
+	xor a
+	ld [wNeededPalType], a
+	ld [wNeededObjPalGlow], a
+	ld [wPrevNeededObjPalGlow], a
+	ld [wLoadedObjPalGlows + PLAYER_OVERLAY_PAL_SLOT], a
+	ld [wLoadedObjPalPrevGlows + PLAYER_OVERLAY_PAL_SLOT], a
+	assert NO_PAL_LOADED == -1
+	dec a
+	ld [wNeededMonPalLight], a
+	ld a, PAL_OW_CHRIS_OVERLAY
+	ld [wNeededPalIndex], a
+	ld [wLoadedObjPal0 + PLAYER_OVERLAY_PAL_SLOT], a
+	ld de, wOBPals1 + PLAYER_OVERLAY_PAL_SLOT palettes
+	jmp CopyObjectSpritePalHandler
+
+CheckTreeTrunkPal:
+; Cut-tree and fruit-tree trunks share one normal, non-glowing palette request.
+	ld de, wObjectStructs
+	ld b, NUM_OBJECT_STRUCTS
+.tree_loop
+	ld hl, OBJECT_SPRITE
+	add hl, de
+	ld a, [hl]
+	and a
+	jr z, .next_tree
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, de
+	ld a, [hl]
+	cp SPRITEMOVEDATA_FRUIT
+	jr z, .check_tree_visibility
+	cp SPRITEMOVEDATA_CUTTABLE_TREE
+	jr nz, .next_tree
+	ld a, [de]
+	cp SPRITE_BALL_CUT_TREE
+	jr nz, .next_tree
+.check_tree_visibility
+	ld hl, OBJECT_FLAGS1
+	add hl, de
+	bit INVISIBLE_F, [hl]
+	jr nz, .next_tree
+	inc hl ; OBJECT_FLAGS2
+	bit OFF_SCREEN_F, [hl]
+	jr z, .tree_found
+.next_tree
+	ld hl, OBJECT_LENGTH
+	add hl, de
+	ld d, h
+	ld e, l
+	dec b
+	jr nz, .tree_loop
+	jr .not_used
+
+.tree_found
+	xor a
+	ld [wNeededPalType], a
+	ld [wNeededObjPalGlow], a
+	ld [wPrevNeededObjPalGlow], a
+	assert NO_PAL_LOADED == -1
+	dec a
+	ld [wNeededMonPalLight], a
+	ld a, PAL_OW_COPY_BG_BROWN
+	ld [wNeededPalIndex], a
+	call MarkUsedPal
+	jr nc, .not_used
+	and OAM_PALETTE
+	ld [wTreeTrunkPalette], a
+	ret
+
+.not_used
+	ld a, NO_PAL_LOADED
+	ld [wTreeTrunkPalette], a
 	ret
 
 MarkUsedPal:
@@ -461,24 +591,6 @@ CheckWeatherPalInUse:
 	ret
 
 CheckDualObjectPals:
-	call .CheckFruitTreeTrunkPal
-
-	; Cut trees use adjacent green and brown palettes for their trunk overlay.
-	ld de, wObjectStructs
-	ld b, NUM_OBJECT_STRUCTS
-.cut_tree_loop
-	ld hl, OBJECT_MOVEMENT_TYPE
-	add hl, de
-	ld a, [hl]
-	cp SPRITEMOVEDATA_CUTTABLE_TREE
-	jr z, .cut_tree
-	ld hl, OBJECT_LENGTH
-	add hl, de
-	ld d, h
-	ld e, l
-	dec b
-	jr nz, .cut_tree_loop
-
 	ld a, [wMapGroup]
 	ld d, a
 	ld a, [wMapNumber]
@@ -499,56 +611,25 @@ CheckDualObjectPals:
 	inc hl
 	jr .loop
 
-.cut_tree
-	ld hl, CutTreeObjectPalettes
-
 .found
 	ld a, [wUsedObjectPals]
-	or %00000110
+	or (1 << DUAL_OBJECT_PAL_SLOT) | (1 << (DUAL_OBJECT_PAL_SLOT + 1))
 	ld [wUsedObjectPals], a
-	; Clear type bits for slots 1 and 2 (these are normal palettes, not mon palettes)
+	; These adjacent slots are normal palettes, not mon palettes.
 	ld a, [wLoadedObjPalType]
-	and ~%00000110
+	and ~((1 << DUAL_OBJECT_PAL_SLOT) | (1 << (DUAL_OBJECT_PAL_SLOT + 1)))
 	ld [wLoadedObjPalType], a
 	ld a, [hli]
-	ld [wLoadedObjPal1], a
+	ld [wLoadedObjPal0 + DUAL_OBJECT_PAL_SLOT], a
 	ld [wNeededPalIndex], a
-	ld de, wOBPals1 + 1 palettes
+	ld de, wOBPals1 + DUAL_OBJECT_PAL_SLOT palettes
 	ld a, [hl]
 	push af
 	call CopySpritePalHandler
 	pop af
-	ld [wLoadedObjPal2], a
+	ld [wLoadedObjPal0 + DUAL_OBJECT_PAL_SLOT + 1], a
 	ld [wNeededPalIndex], a
-	ld de, wOBPals1 + 2 palettes
-	jmp CopySpritePalHandler
-
-.CheckFruitTreeTrunkPal:
-	ld de, wObjectStructs
-	ld b, NUM_OBJECT_STRUCTS
-.fruit_tree_loop
-	ld hl, OBJECT_MOVEMENT_TYPE
-	add hl, de
-	ld a, [hl]
-	cp SPRITEMOVEDATA_FRUIT
-	jr z, .fruit_tree_found
-	ld hl, OBJECT_LENGTH
-	add hl, de
-	ld d, h
-	ld e, l
-	dec b
-	jr nz, .fruit_tree_loop
-	ret
-
-.fruit_tree_found
-	ld hl, wUsedObjectPals
-	set FRUIT_TREE_TRUNK_PAL_SLOT, [hl]
-	ld hl, wLoadedObjPalType
-	res FRUIT_TREE_TRUNK_PAL_SLOT, [hl]
-	ld a, PAL_OW_COPY_BG_BROWN
-	ld [wLoadedObjPal0 + FRUIT_TREE_TRUNK_PAL_SLOT], a
-	ld [wNeededPalIndex], a
-	ld de, wOBPals1 + FRUIT_TREE_TRUNK_PAL_SLOT palettes
+	ld de, wOBPals1 + (DUAL_OBJECT_PAL_SLOT + 1) palettes
 	jmp CopySpritePalHandler
 
 UpdateObjectGlowPals::

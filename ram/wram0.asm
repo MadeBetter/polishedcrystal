@@ -1512,3 +1512,10 @@ wSpriteGfxKeys:: ds NUM_SPRITE_GFX_SLOTS * SPRITE_GFX_KEY_LENGTH
 wSpriteGfxUsed:: ds NUM_SPRITE_GFX_SLOTS
 wSpriteGfxRequest:: ds SPRITE_GFX_KEY_LENGTH
 wSpriteGfxSlot:: db
+
+
+SECTION "Player Overlay and Tree Palette Rendering", WRAM0
+
+; Transient hardware palette selection and variable-size player OAM state.
+wTreeTrunkPalette:: db
+wPlayerCurrentOAMCount:: db

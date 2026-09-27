@@ -2330,7 +2330,7 @@ Script_showtext:
 
 Script_closetext:
 	call BGMapAnchorTopLeft
-	jmp CloseText
+	jmp CloseDialogueText
 
 Script_autoinput:
 	call GetScriptByte
