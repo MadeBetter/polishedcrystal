@@ -271,7 +271,7 @@ class SharedSpriteTests(unittest.TestCase):
         m.spawn(0, 'SPRITE_CHRIS')
         m.spawn(1, 'SPRITE_YOUNGSTER')
         m.spawn(2, 'SPRITE_YOUNGSTER')
-        m.spawn(3, 'SPRITE_BLANK_FRUIT')
+        m.spawn(3, 'SPRITE_TEACHER')
         # A real font load overwrites the alternate bank-0 area.
         m.call('_LoadStandardFont')
         self.assertNotEqual(m.graphics(1), self.expected('youngster'))
@@ -280,7 +280,7 @@ class SharedSpriteTests(unittest.TestCase):
         self.assertEqual(len(m.loads), 3)
         self.assertEqual(m.tile(1), m.tile(2))
         self.assertEqual(m.graphics(1), self.expected('youngster'))
-        self.assertEqual(m.graphics(3)[0], self.expected('blank_fruit')[0])
+        self.assertEqual(m.graphics(3), self.expected('teacher'))
         self.assertEqual(m.graphics(0), self.expected('chris'))
 
     def test_variable_alias_rebind_does_not_change_other_users(self):
@@ -924,20 +924,50 @@ class AtlasTests(unittest.TestCase):
             self.assertEqual(m.draw(1), before)
             self.assert_atlas(self.outdoor_atlas)
 
-    def test_blank_fruit_decorations_keep_their_shared_sheet_in_bank1(self):
+    def test_blank_fruit_uses_zero_oam_and_compact_silver_cave_arch(self):
         m = self.m
-        for i in range(1, 8):
-            m.spawn(i, i + 6)
-        m.loads.clear()
-        for i, movement in ((8, 6), (9, 0x29), (10, 0x25)):
-            m.spawn(i, 'SPRITE_BLANK_FRUIT', movement=movement)
-            self.assertEqual(m.tile(i), 0)  # first bank-1 block
-            self.assertEqual(m.graphics(i)[0], (ROOT / 'gfx/sprites/blank_fruit.2bpp').read_bytes()[:192])
+        arch = (ROOT / 'gfx/overworld/silver_cave_arch.2bpp').read_bytes()
+        self.assertEqual(len(arch), 32)
+
+        for i in (1, 2):
+            m.spawn(i, 'SPRITE_BLANK_FRUIT', movement=6)
+            m.call('SetFacingCurrent', bc=m.obj(i))
+            self.assertEqual(m.tile(i), 0x80)
+            self.assertEqual(m.draw(i), [])
+        self.assertEqual(m.loads, [])
+
+        m.spawn(3, 'SPRITE_BLANK_FRUIT', movement=0x25)
+        m.call('SetFacingCurrent', bc=m.obj(3))
+        m.spawn(4, 'SPRITE_BLANK_FRUIT', movement=0x29)
+        m.call('SetFacingMuseumDrill', bc=m.obj(4))
+        self.assertEqual([m.tile(i) for i in (3, 4)], [0x3e, 0x3e])
+        self.assertEqual(m.draw(3), [(12, 8, 0x3e, 8), (20, 16, 0x3f, 8)])
+        self.assertEqual(m.draw(4), [(20, 16, 0x3f, 8)])
+        self.assertEqual(m.graphics(3, 2)[0], arch)
+        self.assertEqual(m.loads, [(*SYMBOLS['SilverCaveArchSpriteGFX'], 2)])
+
+        m.spawn(5, 'SPRITE_BLANK_FRUIT', movement=0x21)
+        self.assertEqual(m.tile(5), 0x80)
         self.assertEqual(len(m.loads), 1)
-        m.spawn(11, 'SPRITE_BLANK_FRUIT', movement=0x21)
-        self.assertEqual(m.tile(11), 0x80)
-        self.assertEqual(len(m.loads), 1)
-        self.assertEqual([entry[2] for entry in m.draw(8, facing=0)], [0, 1, 2, 3])
+
+    def test_zero_oam_preserves_collision_and_emote_anchor_coordinates(self):
+        m = self.m
+        m.spawn(1, 'SPRITE_BLANK_FRUIT', movement=6)
+        m.call('SetFacingCurrent', bc=m.obj(1))
+        self.assertEqual(m.draw(1), [])
+        ptr = m.obj(1)
+        m.p.memory[ptr + 0x10:ptr + 0x14] = [7, 9, 7, 9]
+
+        m.put('hMapObjectIndexBuffer', 0)
+        found = m.call('IsNPCAtCoord', de=0x0709)
+        self.assertTrue(found['F'] & 0x10)
+        self.assertEqual(m.p.memory[m.addr('hObjectStructIndexBuffer')], 1)
+
+        m.put('hMapObjectIndexBuffer', 1)
+        m.call('SpawnEmote', bc=ptr)
+        emote = m.obj(0)
+        self.assertEqual(m.p.memory[emote + 3], 0x16)
+        self.assertEqual(m.p.memory[emote + 0x10:emote + 0x12], [7, 9])
 
     def test_fruit_tree_maps_have_trunks_available(self):
         fruit_maps = {MAP_NAMES[p.stem] for p in (ROOT / 'maps').glob('*.asm')
@@ -1056,19 +1086,19 @@ class StrengthBoulderTests(unittest.TestCase):
         self.m.call('SetFacingCurrent', bc=self.m.obj(index))
         return self.m.tile(index)
 
-    def test_pushable_and_stationary_boulders_share_four_fixed_tiles(self):
+    def test_pushable_and_stationary_boulders_share_four_dynamic_tiles(self):
         m = self.m
         before = [m.vram(b, 0x8000, 0x9000) for b in (0, 1)]
         for i in range(1, 13):
             movement = 0x13 if i & 1 else 6
-            self.assertEqual(self.boulder_at(i, movement, i % 8), 0x35)
-            self.assertEqual(m.draw(i), [(12, 8, 0x35, 8 | i % 8),
-                                         (12, 16, 0x36, 8 | i % 8),
-                                         (20, 8, 0x37, 8 | i % 8),
-                                         (20, 16, 0x38, 8 | i % 8)])
+            self.assertEqual(self.boulder_at(i, movement, i % 8), 0x3c)
+            self.assertEqual(m.draw(i), [(12, 8, 0x3c, 8 | i % 8),
+                                         (12, 16, 0x3d, 8 | i % 8),
+                                         (20, 8, 0x3e, 8 | i % 8),
+                                         (20, 16, 0x3f, 8 | i % 8)])
         self.assertEqual(m.loads, [(*SYMBOLS['StrengthBoulderSpriteGFX'], 4)])
         expected = bytearray(before[1])
-        expected[0x350:0x390] = self.boulder
+        expected[0x3c0:0x400] = self.boulder
         self.assertEqual(m.vram(1, 0x8000, 0x9000), bytes(expected))
         self.assertEqual(m.vram(0, 0x8000, 0x9000), before[0])
         m.call('MarkUsedSpriteGfx')
@@ -1083,16 +1113,16 @@ class StrengthBoulderTests(unittest.TestCase):
         m.put('hMapObjectIndexBuffer', 1)
         out = m.call('CopyMapObjectToObjectStruct', bc=ptr, de=m.obj(1))
         self.assertFalse(out['F'] & 0x10)
-        self.assertEqual(m.tile(1), 0x35)
+        self.assertEqual(m.tile(1), 0x3c)
         self.assertEqual(m.loads, [(*SYMBOLS['StrengthBoulderSpriteGFX'], 4)])
 
-        m.fill_vram(1, 0x8350, 0x8390, 0x33)
+        m.fill_vram(1, 0x83c0, 0x8400, 0x33)
         m.loads.clear()
         m.call('RefreshSprites')
         self.assertEqual(sum(load == (*SYMBOLS['StrengthBoulderSpriteGFX'], 4)
                              for load in m.loads), 1)
-        self.assertEqual(m.tile(1), 0x35)
-        self.assertEqual(m.vram(1, 0x8350, 0x8390), self.boulder)
+        self.assertEqual(m.tile(1), 0x3c)
+        self.assertEqual(m.vram(1, 0x83c0, 0x8400), self.boulder)
 
     def test_sign_and_ice_boulders_retain_their_original_shared_sheets(self):
         m = self.m
@@ -1119,35 +1149,35 @@ class SmashableRockTests(unittest.TestCase):
         self.m.call('SetFacingCurrent', bc=self.m.obj(index))
         return self.m.tile(index)
 
-    def test_twelve_smashable_rocks_upload_four_fixed_tiles_once(self):
+    def test_twelve_smashable_rocks_upload_four_dynamic_tiles_once(self):
         m = self.m
         before = [m.vram(b, 0x8000, 0x9000) for b in (0, 1)]
         for i in range(1, 13):
-            self.assertEqual(self.rock_at(i, palette=i % 8), 0x39)
+            self.assertEqual(self.rock_at(i, palette=i % 8), 0x3c)
             entries = m.draw(i)
-            self.assertEqual(entries, [(12, 8, 0x39, 8 | i % 8),
-                                       (12, 16, 0x3a, 8 | i % 8),
-                                       (20, 8, 0x3b, 8 | i % 8),
-                                       (20, 16, 0x3c, 8 | i % 8)])
+            self.assertEqual(entries, [(12, 8, 0x3c, 8 | i % 8),
+                                       (12, 16, 0x3d, 8 | i % 8),
+                                       (20, 8, 0x3e, 8 | i % 8),
+                                       (20, 16, 0x3f, 8 | i % 8)])
         self.assertEqual(m.loads, [(*SYMBOLS['SmashableRockSpriteGFX'], 4)])
         expected = bytearray(before[1])
-        expected[0x390:0x3d0] = self.rock
+        expected[0x3c0:0x400] = self.rock
         self.assertEqual(m.vram(1, 0x8000, 0x9000), bytes(expected))
         self.assertEqual(m.vram(0, 0x8000, 0x9000), before[0])
         m.call('MarkUsedSpriteGfx')
         self.assertEqual(m.p.memory[m.addr('wSpriteGfxUsed'):m.addr('wSpriteGfxUsed') + 10], [0] * 10)
 
-    def test_fixed_rock_and_ball_coexist_without_shared_allocations(self):
+    def test_dynamic_rock_and_ball_coexist_without_shared_allocations(self):
         m = self.m
-        self.assertEqual(self.rock_at(1), 0x39)
+        self.assertEqual(self.rock_at(1), 0x3c)
         m.spawn(2, 'SPRITE_BALL_CUT_TREE', movement=6)
         m.call('SetFacingCurrent', bc=m.obj(2))
-        self.assertEqual(m.tile(2), 0x3d)
+        self.assertEqual(m.tile(2), 0x39)
         m.spawn(3, 'SPRITE_BIG_GYARADOS')
         self.assertEqual(m.tile(3), 0x18)
-        self.assertEqual([entry[2] for entry in m.draw(1)], [0x39, 0x3a, 0x3b, 0x3c])
-        self.assertEqual([entry[2] for entry in m.draw(2)], [0x3d, 0x3e, 0x3f, 0x3f])
-        self.assertEqual(m.vram(1, 0x8390, 0x83d0), self.rock)
+        self.assertEqual([entry[2] for entry in m.draw(1)], [0x3c, 0x3d, 0x3e, 0x3f])
+        self.assertEqual([entry[2] for entry in m.draw(2)], [0x39, 0x3a, 0x3b, 0x3b])
+        self.assertEqual(m.vram(1, 0x83c0, 0x8400), self.rock)
         self.assertEqual(len(m.loads), 3)
 
     def test_other_boulder_sheet_uses_and_mount_moon_rock_remain_separate(self):
@@ -1155,7 +1185,7 @@ class SmashableRockTests(unittest.TestCase):
         m.spawn(1, 'SPRITE_BOULDER_ROCK', movement=0x13)
         m.spawn(2, 'SPRITE_BOULDER_ROCK', movement=8)
         m.spawn(3, 'SPRITE_N64', movement=0x12)
-        self.assertEqual([m.tile(i) for i in (1, 2, 3)], [0x35, 0x8c, 0x98])
+        self.assertEqual([m.tile(i) for i in (1, 2, 3)], [0x3c, 0x8c, 0x98])
         self.assertEqual(len(m.loads), 3)
         self.assertEqual(m.graphics(1, 4)[0], (ROOT / 'gfx/overworld/strength_boulder.2bpp').read_bytes())
         self.assertEqual(m.graphics(2)[0], (ROOT / 'gfx/sprites/boulder_rock.2bpp').read_bytes()[:192])
@@ -1171,29 +1201,95 @@ class SmashableRockTests(unittest.TestCase):
         m.put('hMapObjectIndexBuffer', 1)
         out = m.call('CopyMapObjectToObjectStruct', bc=ptr, de=m.obj(1))
         self.assertFalse(out['F'] & 0x10)
-        self.assertEqual(m.tile(1), 0x39)
+        self.assertEqual(m.tile(1), 0x3c)
         self.assertEqual(m.loads, [(*SYMBOLS['SmashableRockSpriteGFX'], 4)])
 
     def test_refresh_loads_live_rocks_once_and_skips_absent_rocks(self):
         m = self.m
         self.rock_at(1)
         self.rock_at(2)
-        m.fill_vram(1, 0x8390, 0x83d0, 0x33)
+        m.fill_vram(1, 0x83c0, 0x8400, 0x33)
         m.loads.clear()
         m.call('RefreshSprites')
         self.assertEqual(sum(load == (*SYMBOLS['SmashableRockSpriteGFX'], 4)
                              for load in m.loads), 1)
-        self.assertEqual([m.tile(i) for i in (1, 2)], [0x39, 0x39])
-        self.assertEqual(m.vram(1, 0x8390, 0x83d0), self.rock)
+        self.assertEqual([m.tile(i) for i in (1, 2)], [0x3c, 0x3c])
+        self.assertEqual(m.vram(1, 0x83c0, 0x8400), self.rock)
 
         m.remove(1)
         m.remove(2)
-        m.fill_vram(1, 0x8390, 0x83d0, 0x44)
+        m.fill_vram(1, 0x83c0, 0x8400, 0x44)
         m.loads.clear()
         m.call('RefreshSprites')
         self.assertFalse(any(load == (*SYMBOLS['SmashableRockSpriteGFX'], 4)
                              for load in m.loads))
-        self.assertEqual(m.vram(1, 0x8390, 0x83d0), bytes([0x44]) * 64)
+        self.assertEqual(m.vram(1, 0x83c0, 0x8400), bytes([0x44]) * 64)
+
+
+class CompactObjectAllocatorTests(unittest.TestCase):
+    def setUp(self):
+        self.m = Machine()
+
+    def tearDown(self):
+        self.m.close()
+
+    def spawn(self, index, sprite, movement):
+        result = self.m.spawn(index, sprite, movement=movement)
+        self.assertFalse(result['F'] & 0x10)
+        self.m.call('SetFacingCurrent', bc=self.m.obj(index))
+        return self.m.tile(index)
+
+    def test_mixed_resources_pack_backward_deduplicate_and_reuse_gaps(self):
+        m = self.m
+        self.assertEqual(self.spawn(1, 'SPRITE_BOULDER_ROCK', 0x13), 0x3c)
+        self.assertEqual(self.spawn(2, 'SPRITE_BALL_CUT_TREE', 6), 0x39)
+        self.assertEqual(self.spawn(3, 'SPRITE_BOULDER_ROCK', 0x12), 0x35)
+        self.assertEqual(self.spawn(4, 'SPRITE_BOULDER_ROCK', 6), 0x3c)
+        self.assertEqual(self.spawn(5, 'SPRITE_BALL_CUT_TREE', 6), 0x39)
+        self.assertEqual(self.spawn(6, 'SPRITE_BOULDER_ROCK', 0x12), 0x35)
+        self.assertFalse(m.spawn(7, 'SPRITE_BALL_CUT_TREE', movement=0x28)['F'] & 0x10)
+        self.assertFalse(m.spawn(8, 'SPRITE_BALL_CUT_TREE', movement=0x29)['F'] & 0x10)
+        self.assertEqual([m.tile(i) for i in (7, 8)], [0x33, 0x33])
+        self.assertEqual(len(m.loads), 4)
+
+        m.remove(2)
+        m.remove(5)
+        m.loads.clear()
+        self.assertEqual(self.spawn(9, 'SPRITE_BALL_CUT_TREE', 6), 0x39)
+        self.assertEqual(m.loads, [(*SYMBOLS['StationaryBallSpriteGFX'], 3)])
+
+        live = (1, 3, 4, 6, 7, 8, 9)
+        before = [m.tile(i) for i in live]
+        m.loads.clear()
+        self.assertEqual(self.spawn(10, 'SPRITE_BIG_GYARADOS', 0x22), 0x18)
+        self.assertEqual([m.tile(i) for i in live], before)
+        self.assertEqual(m.loads, [(*SYMBOLS['BigGyaradosSpriteGFX'], 15)])
+
+
+class NamingScreenBallTests(unittest.TestCase):
+    def setUp(self):
+        self.m = Machine()
+        self.ball = (ROOT / 'gfx/overworld/ball.2bpp').read_bytes()
+        self.assertEqual(len(self.ball), 48)
+
+    def tearDown(self):
+        self.m.close()
+
+    def test_box_icon_loads_three_tiles_and_mirrors_bottom_right(self):
+        m = self.m
+        m.call('NamingScreen.Box')
+        self.assertEqual(m.vram(0, 0x8000, 0x8030), self.ball)
+        self.assertEqual(m.vram(0, 0x8030, 0x8040), bytes([0xa5]) * 16)
+        self.assertEqual(m.vram(1, 0x8000, 0x8040), bytes([0x5a]) * 64)
+
+        for _ in range(40):
+            m.call('PlaySpriteAnimations')
+        oam = m.addr('wShadowOAM')
+        entries = [tuple(m.p.memory[oam + i * 4:oam + i * 4 + 4]) for i in range(4)]
+        self.assertEqual(entries, [(28, 24, 0, 0),
+                                   (28, 32, 1, 0),
+                                   (36, 24, 2, 0),
+                                   (36, 32, 2, 0x20)])
 
 
 class StationaryBallTests(unittest.TestCase):
@@ -1229,7 +1325,7 @@ class StationaryBallTests(unittest.TestCase):
         m.call('MarkUsedSpriteGfx')
         self.assertEqual(m.p.memory[m.addr('wSpriteGfxUsed'):m.addr('wSpriteGfxUsed') + 10], [0] * 10)
 
-    def test_special_then_ball_only_copies_three_fixed_bank1_tiles(self):
+    def test_special_then_ball_only_copies_three_dynamic_bank1_tiles(self):
         m = self.m
         m.spawn(2, 'SPRITE_BIG_GYARADOS')
         before = [m.vram(b, 0x8000, 0x9000) for b in (0, 1)]
@@ -1313,7 +1409,6 @@ class StationaryBallTests(unittest.TestCase):
         m.loads.clear()
         m.call('RefreshSprites')
         self.assertEqual(sum(n == 3 for _, _, n in m.loads), 1)
-        self.assertFalse(any((b, p) == SYMBOLS['BallCutTreeSpriteGFX'] for b, p, _ in m.loads))
         self.assertEqual(m.graphics(1, 3)[0], self.ball)
         m.remove(1)
         m.loads.clear()
@@ -1326,14 +1421,31 @@ class StationaryBallTests(unittest.TestCase):
         self.assertEqual(len(m.loads), 1)
         self.assertEqual(m.graphics(4, 3)[0], self.ball)
 
-    def test_original_sheet_remains_available_to_other_object_uses(self):
+    def test_arch_tree_halves_share_two_tiles_and_skip_blank_oam(self):
         m = self.m
+        arch_tree = (ROOT / 'gfx/overworld/arch_tree.2bpp').read_bytes()
+        self.assertEqual(len(arch_tree), 32)
         self.ball_at(1)
-        # Silver Cave arch-tree decoration keeps the old graphics descriptor.
         m.spawn(2, 'SPRITE_BALL_CUT_TREE', movement=0x28)
-        self.assertEqual(m.tile(2), 0x8c)
-        self.assertEqual(m.graphics(2)[0], (ROOT / 'gfx/sprites/ball_cut_tree.2bpp').read_bytes()[:192])
+        m.call('SetFacingMuseumDrill', bc=m.obj(2))
+        m.spawn(3, 'SPRITE_BALL_CUT_TREE', movement=0x29)
+        m.call('SetFacingMuseumDrill', bc=m.obj(3))
+        self.assertEqual([m.tile(i) for i in (2, 3)], [0x3b, 0x3b])
+        self.assertEqual(m.draw(2), [(20, 8, 0x3b, 8)])
+        self.assertEqual(m.draw(3), [(20, 16, 0x3c, 8)])
+        self.assertEqual(m.graphics(2, 2)[0], arch_tree)
+        self.assertEqual(sum(load == (*SYMBOLS['ArchTreeSpriteGFX'], 2)
+                             for load in m.loads), 1)
+        self.assertEqual(len(m.loads), 2)
         self.assertEqual(m.graphics(1, 3)[0], self.ball)
+
+        m.fill_vram(1, 0x83b0, 0x83d0, 0x44)
+        m.loads.clear()
+        m.call('RefreshSprites')
+        self.assertEqual(sum(load == (*SYMBOLS['ArchTreeSpriteGFX'], 2)
+                             for load in m.loads), 1)
+        self.assertEqual(m.graphics(2, 2)[0], arch_tree)
+        self.assertEqual([m.tile(i) for i in (2, 3)], [0x3b, 0x3b])
 
     def test_refresh_with_large_sprite_preserves_ball_and_all_owners(self):
         m = self.m
@@ -1349,7 +1461,7 @@ class StationaryBallTests(unittest.TestCase):
         self.assertEqual(m.graphics(4)[0], (ROOT / 'gfx/sprites/youngster.2bpp').read_bytes()[:192])
         self.assertEqual(m.tile(1), 0x3d)
 
-    def test_hardware_oam_keeps_fixed_balls_when_special_is_loaded(self):
+    def test_hardware_oam_keeps_dynamic_balls_when_special_is_loaded(self):
         m = self.m
         self.ball_at(1, palette=2)
         self.ball_at(3, palette=4)

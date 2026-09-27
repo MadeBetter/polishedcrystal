@@ -36,7 +36,7 @@ ObjectActionPairPointers:
 
 SetFacingStanding:
 	ld a, STANDING
-	jr SetFixedFacing
+	jp SetFixedFacing
 
 SetFacingShadow:
 	ld a, [wOptions3]
@@ -45,33 +45,64 @@ SetFacingShadow:
 	ldh a, [hVBlankCounter]
 	and 1
 	ld a, STANDING
-	jr nz, SetFixedFacing
-.solid
+	jp nz, SetFixedFacing
+	.solid
 	ld a, FACING_SHADOW
-	jr SetFixedFacing
+	jp SetFixedFacing
 
 SetFacingCutTree:
 	ld a, [bc] ; OBJECT_SPRITE
 	cp SPRITE_BALL_CUT_TREE
 	ld a, FACING_CUT_TREE
-	jr z, SetFixedFacing
+	jp z, SetFixedFacing
 	ld a, FACING_FARAWAY_ROCK
-	jr SetFixedFacing
+	jp SetFixedFacing
 
 SetFacingCurrent:
-	assert SMASHABLE_ROCK_VRAM1_TILE == STRENGTH_BOULDER_VRAM1_TILE + 4
-	assert STATIONARY_BALL_VRAM1_TILE == STRENGTH_BOULDER_VRAM1_TILE + 8
-	assert FACING_SMASHABLE_ROCK == FACING_STRENGTH_BOULDER + 1
-	assert FACING_STATIONARY_BALL == FACING_STRENGTH_BOULDER + 2
-	ld hl, OBJECT_SPRITE_TILE
+	; Compact object graphics have dynamic tile bases. Select their facing from
+	; object identity and movement instead of assigning meaning to an address.
+	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_BOULDER_ROCK
+	jr z, .boulder
+	cp SPRITE_BALL_CUT_TREE
+	jr z, .ball_cut_tree
+	cp SPRITE_BLANK_FRUIT
+	jr z, .blank_fruit
+	jr .normal
+.ball_cut_tree
+	ld hl, OBJECT_MOVEMENT_TYPE
 	add hl, bc
 	ld a, [hl]
-	sub STRENGTH_BOULDER_VRAM1_TILE
-	rrca
-	rrca ; divide the four-tile stride; other offsets rotate above this range
-	cp 3
-	jr nc, .normal
-	add FACING_STRENGTH_BOULDER
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr nz, .normal
+	ld a, FACING_STATIONARY_BALL
+	jp SetFixedFacing
+.blank_fruit
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	ld a, STANDING
+	jp z, SetFixedFacing
+	ld a, [hl]
+	cp SPRITEMOVEDATA_POKECOM_NEWS
+	ld a, FACING_COMPACT_SILVER_CAVE_ARCH
+	jp z, SetFixedFacing
+	jr .normal
+.boulder
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_SMASHABLE_ROCK
+	ld a, FACING_SMASHABLE_ROCK
+	jr z, SetFixedFacing
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STRENGTH_BOULDER
+	jr z, .strength
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr nz, .normal
+.strength
+	ld a, FACING_STRENGTH_BOULDER
 	jr SetFixedFacing
 .normal
 	call GetSpriteDirection
@@ -110,6 +141,28 @@ SetFacingFish:
 	jr SetFixedFacing
 
 SetFacingMuseumDrill:
+	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_BALL_CUT_TREE
+	jr z, .arch_tree
+	cp SPRITE_BLANK_FRUIT
+	jr nz, .normal
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
+	ld a, FACING_COMPACT_SILVER_CAVE_ARCH_RIGHT
+	jr z, SetFixedFacing
+	jr .normal
+.arch_tree
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	sub SPRITEMOVEDATA_ARCH_TREE_LEFT
+	cp 2
+	jr nc, .normal
+	add FACING_COMPACT_ARCH_TREE_LEFT
+	jr SetFixedFacing
+.normal
 	call GetSpriteDirection
 	rrca
 	rrca
@@ -139,14 +192,14 @@ SetFacingStandAction:
 	add hl, bc
 	ld a, [hl]
 	and 1
-	jr z, SetFacingCurrent
+	jp z, SetFacingCurrent
 	; fallthrough
 SetFacingStepAction:
 SetFacingBumpAction:
 	ld hl, OBJECT_FLAGS1
 	add hl, bc
 	bit SLIDING_F, [hl]
-	jr nz, SetFacingCurrent
+	jp nz, SetFacingCurrent
 
 	call _GetNextStepFrame
 	rrca

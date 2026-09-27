@@ -111,6 +111,7 @@ SpriteAnimOAMData:
 	spriteanimoam $04, .OAMData_FlyMon2                ; SPRITE_ANIM_OAMSET_FLY_MON_3
 	spriteanimoam $00, .OAMData_PurpleWalk             ; SPRITE_ANIM_OAMSET_PURPLE_WALK_1
 	spriteanimoam $04, .OAMData_PurpleWalk             ; SPRITE_ANIM_OAMSET_PURPLE_WALK_2
+	spriteanimoam $00, .OAMData_NamingScreenBox        ; SPRITE_ANIM_OAMSET_NAMING_SCREEN_BOX
 	assert_table_length NUM_SPRITE_ANIM_OAMSETS
 
 .OAMData_1x1_Palette0:
@@ -861,3 +862,10 @@ SpriteAnimOAMData:
 	dsprite -1,  0,  0,  0, $01, $3
 	dsprite  0,  0, -1,  0, $02, $3
 	dsprite  0,  0,  0,  0, $03, $3
+
+.OAMData_NamingScreenBox:
+	db 4
+	dsprite -1,  0, -1,  0, $00, $0
+	dsprite -1,  0,  0,  0, $01, $0
+	dsprite  0,  0, -1,  0, $02, $0
+	dsprite  0,  0,  0,  0, $02, $0 | OAM_XFLIP

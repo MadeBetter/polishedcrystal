@@ -64,6 +64,7 @@ SpriteAnimFrameData:
 	dw .Frameset_GreenWalk
 	dw .Frameset_FlyMon
 	dw .Frameset_PurpleWalk
+	dw .Frameset_NamingScreenBox
 	assert_table_length NUM_SPRITE_ANIM_FRAMESETS
 
 .Frameset_00:
@@ -410,3 +411,7 @@ SpriteAnimFrameData:
 	oamframe SPRITE_ANIM_OAMSET_FLY_MON_1,  8
 	oamframe SPRITE_ANIM_OAMSET_FLY_MON_3,  8, B_OAM_XFLIP
 	oamrestart
+
+.Frameset_NamingScreenBox:
+	oamframe SPRITE_ANIM_OAMSET_NAMING_SCREEN_BOX, 32
+	oamend

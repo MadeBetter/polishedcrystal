@@ -186,7 +186,7 @@ SpriteHeaders:
 	overworld_sprite RattataBackSpriteGFX, STANDING_SPRITE, PAL_OW_PURPLE
 	overworld_sprite SlowpoketailSpriteGFX, STANDING_SPRITE, PAL_OW_PINK
 	overworld_sprite WeirdTreeSpriteGFX, STANDING_SPRITE, PAL_OW_GREEN
-	overworld_sprite BallCutTreeSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_GREEN
+	overworld_sprite StationaryBallSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_GREEN
 	overworld_sprite BoulderRockSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_BROWN
 	overworld_sprite BookPaperPokedexSpriteGFX, STANDING_SPRITE, PAL_OW_BROWN
 	overworld_sprite SnesSpriteGFX, STANDING_SPRITE, PAL_OW_BROWN
@@ -212,7 +212,7 @@ SpriteHeaders:
 	overworld_sprite ChrisRunSpriteGFX, WALKING_SPRITE, PAL_OW_RED
 	overworld_sprite KrisRunSpriteGFX, WALKING_SPRITE, PAL_OW_BLUE
 	overworld_sprite CrysRunSpriteGFX, WALKING_SPRITE, PAL_OW_GREEN
-	overworld_sprite BlankFruitSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_ROOF
+	overworld_sprite SilverCaveArchSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_ROOF
 	overworld_sprite BigHoOhSpriteGFX, WALKING_SPRITE, PAL_OW_RED
 	overworld_sprite BigLugiaSpriteGFX, STANDING_SPRITE, PAL_OW_BLUE
 	overworld_sprite BetaSpriteGFX, WALKING_SPRITE, PAL_OW_PURPLE

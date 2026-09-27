@@ -44,12 +44,25 @@ DEF SPECIAL_SPRITE_GFX_TILE EQU (SPECIAL_SPRITE_GFX_SLOT - FIRST_VRAM1_SPRITE_GF
 DEF SPRITE_GFX_KEY_LENGTH EQU 4 ; ROM bank, pointer, tile count/placement
 DEF SPRITE_GFX_SPECIAL_F EQU 7 ; tile count also encodes the final-slot constraint
 DEF UNALLOCATED_SPRITE_TILE EQU $ff
+; Compact non-character resources share an exact-size bank-1 allocation pool.
+; The 15-tile special sprite ends at $26, so the pool starts at $27 and grows
+; backward from $3f without reserving one fixed range per resource.
+DEF OVERWORLD_OBJECT_VRAM1_START EQU $27
+DEF OVERWORLD_OBJECT_VRAM1_END EQU $40 ; exclusive
+
+	const_def
+	const OVERWORLD_OBJECT_GFX_STRENGTH_BOULDER
+	const OVERWORLD_OBJECT_GFX_SMASHABLE_ROCK
+	const OVERWORLD_OBJECT_GFX_STATIONARY_BALL
+	const OVERWORLD_OBJECT_GFX_ARCH_TREE
+	const OVERWORLD_OBJECT_GFX_SILVER_CAVE_ARCH
+DEF NUM_OVERWORLD_OBJECT_GFX EQU const_value
+
 DEF STRENGTH_BOULDER_TILES EQU 4
-DEF STRENGTH_BOULDER_VRAM1_TILE EQU $35 ; fixed bank-1 location; loaded on demand
 DEF SMASHABLE_ROCK_TILES EQU 4
-DEF SMASHABLE_ROCK_VRAM1_TILE EQU $39 ; fixed bank-1 location; loaded on demand
 DEF STATIONARY_BALL_TILES EQU 3
-DEF STATIONARY_BALL_VRAM1_TILE EQU $3d ; fixed bank-1 location; loaded on demand
+DEF ARCH_TREE_TILES EQU 2
+DEF SILVER_CAVE_ARCH_TILES EQU 2
 DEF PLAYER_OVERLAY_TILES EQU 12
 DEF PLAYER_OVERLAY_VRAM1_TILE EQU $74 ; fixed bank-1 location; loaded on every refresh
 
@@ -372,6 +385,10 @@ DEF NUM_OBJECT_ACTIONS EQU const_value
 	const FACING_STRENGTH_BOULDER   ; 40
 	const FACING_SMASHABLE_ROCK     ; 41
 	const FACING_STATIONARY_BALL    ; 42
+	const FACING_COMPACT_ARCH_TREE_LEFT  ; 43
+	const FACING_COMPACT_ARCH_TREE_RIGHT ; 44
+	const FACING_COMPACT_SILVER_CAVE_ARCH ; 45
+	const FACING_COMPACT_SILVER_CAVE_ARCH_RIGHT ; 46
 DEF NUM_FACINGS EQU const_value
 
 ; DoPlayerMovement.DoStep arguments (see engine/overworld/player_movement.asm)

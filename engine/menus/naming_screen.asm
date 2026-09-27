@@ -133,8 +133,8 @@ NamingScreen:
 
 .Box:
 	ld de, vTiles0 tile $00
-	ld hl, BallCutTreeSpriteGFX
-	lb bc, BANK(BallCutTreeSpriteGFX), 4
+	ld hl, StationaryBallSpriteGFX
+	lb bc, BANK(StationaryBallSpriteGFX), STATIONARY_BALL_TILES
 	call DecompressRequest2bpp
 	xor a
 	ld hl, wSpriteAnimDict
@@ -145,7 +145,7 @@ NamingScreen:
 	call InitSpriteAnimStruct
 	ld hl, SPRITEANIMSTRUCT_FRAMESET_ID
 	add hl, bc
-	ld [hl], SPRITE_ANIM_FRAMESET_NULL
+	ld [hl], SPRITE_ANIM_FRAMESET_NAMING_SCREEN_BOX
 	hlcoord 5, 2
 	ld de, .BoxNameString
 	rst PlaceString

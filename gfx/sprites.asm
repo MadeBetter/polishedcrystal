@@ -545,14 +545,14 @@ WeirdTreeSpriteGFX:: INCBIN "gfx/sprites/weird_tree.2bpp.lzp"
 SECTION "StationaryBallSpriteGFX", ROMX
 StationaryBallSpriteGFX:: INCBIN "gfx/overworld/ball.2bpp.lzp"
 
+SECTION "ArchTreeSpriteGFX", ROMX
+ArchTreeSpriteGFX:: INCBIN "gfx/overworld/arch_tree.2bpp.lzp"
+
 SECTION "SmashableRockSpriteGFX", ROMX
 SmashableRockSpriteGFX:: INCBIN "gfx/overworld/smashable_rock.2bpp.lzp"
 
 SECTION "StrengthBoulderSpriteGFX", ROMX
 StrengthBoulderSpriteGFX:: INCBIN "gfx/overworld/strength_boulder.2bpp.lzp"
-
-SECTION "BallCutTreeSpriteGFX", ROMX
-BallCutTreeSpriteGFX:: INCBIN "gfx/sprites/ball_cut_tree.2bpp.lzp"
 
 SECTION "BoulderRockSpriteGFX", ROMX
 BoulderRockSpriteGFX:: INCBIN "gfx/sprites/boulder_rock.2bpp.lzp"
@@ -620,8 +620,8 @@ CrysRunSpriteGFX:: INCBIN "gfx/sprites/crys_run.2bpp.lzp"
 SECTION "ThortonSpriteGFX", ROMX
 ThortonSpriteGFX:: INCBIN "gfx/sprites/thorton.2bpp.lzp"
 
-SECTION "BlankFruitSpriteGFX", ROMX
-BlankFruitSpriteGFX:: INCBIN "gfx/sprites/blank_fruit.2bpp.lzp"
+SECTION "SilverCaveArchSpriteGFX", ROMX
+SilverCaveArchSpriteGFX:: INCBIN "gfx/overworld/silver_cave_arch.2bpp.lzp"
 
 SECTION "BigHoOhSpriteGFX", ROMX
 BigHoOhSpriteGFX:: INCBIN "gfx/sprites/big_ho_oh.2bpp.lzp"

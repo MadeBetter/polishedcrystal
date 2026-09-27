@@ -220,7 +220,7 @@ gfx/music_player/music_player.2bpp: gfx/music_player/bg.2bpp gfx/music_player/ob
 gfx/new_game/shrink1.2bpp: RGBGFXFLAGS += -Z
 gfx/new_game/shrink2.2bpp: RGBGFXFLAGS += -Z
 
-# Fixed overworld objects must stay compact, without sprite-sheet padding.
+# Compact overworld objects must stay exact-size, without sprite-sheet padding.
 gfx/overworld/strength_boulder.2bpp.lzp: gfx/overworld/strength_boulder.2bpp
 	@test "$$(wc -c < $<)" -eq 64
 	$Qtools/lzpcompress -- $< $@
@@ -231,6 +231,14 @@ gfx/overworld/smashable_rock.2bpp.lzp: gfx/overworld/smashable_rock.2bpp
 
 gfx/overworld/ball.2bpp.lzp: gfx/overworld/ball.2bpp
 	@test "$$(wc -c < $<)" -eq 48
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/arch_tree.2bpp.lzp: gfx/overworld/arch_tree.2bpp
+	@test "$$(wc -c < $<)" -eq 32
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/silver_cave_arch.2bpp.lzp: gfx/overworld/silver_cave_arch.2bpp
+	@test "$$(wc -c < $<)" -eq 32
 	$Qtools/lzpcompress -- $< $@
 
 gfx/overworld/overworld.2bpp: gfx/overworld/puddle_splash.2bpp gfx/overworld/cut_grass.2bpp gfx/overworld/cut_tree.2bpp gfx/overworld/heal_machine.2bpp gfx/overworld/fruit.2bpp gfx/overworld/shadow.2bpp gfx/overworld/shaking_grass.2bpp gfx/overworld/boulder_dust.2bpp

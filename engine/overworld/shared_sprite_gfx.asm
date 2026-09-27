@@ -73,7 +73,7 @@ AcquireSharedSprite:
 	ret
 
 .npc
-	; Select graphics by use: atlas trees, compact fixed objects, or the
+	; Select graphics by use: atlas trees, compact dynamic objects, or the
 	; original sheet for decorations. Pearl rocks also retain their sheet.
 	ldh a, [hUsedSpriteIndex]
 	cp SPRITE_BALL_CUT_TREE
@@ -99,18 +99,35 @@ AcquireSharedSprite:
 	jr z, .fruit
 	cp SPRITEMOVEDATA_STANDING_DOWN
 	jp z, AcquireStationaryBall
+	cp SPRITEMOVEDATA_ARCH_TREE_LEFT
+	jp z, AcquireArchTree
+	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
+	jp z, AcquireArchTree
 	cp SPRITEMOVEDATA_CUTTABLE_TREE
-	jr nz, .resolve
+	jr z, .atlas
+	; Every supported use of this overloaded sprite ID has its own compact or
+	; atlas path. Reject unknown movement types instead of reading past a
+	; three-tile descriptor as though it were a 12-tile standing sheet.
+	scf
+	ret
 .atlas
 	ld a, $80 ; bank 0, no shared graphics slot; facing uses absolute tiles
 	and a
 	ret
 
 .fruit
-	; BlankFruit also supplies decorations; only actual fruit trees use atlas.
+	; Fruit trees and invisible anchors need no allocation; Silver Cave does.
 	cp SPRITEMOVEDATA_FRUIT
 	jr z, .atlas
-	jr .resolve
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr z, .atlas
+	cp SPRITEMOVEDATA_POKECOM_NEWS
+	jp z, AcquireSilverCaveArch
+	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
+	jp z, AcquireSilverCaveArch
+	; Every supported use has an atlas or compact resource.
+	scf
+	ret
 .rock
 	ld a, d
 	cp SPRITEMOVEDATA_SMASHABLE_ROCK
@@ -238,16 +255,12 @@ endr
 	assert SPECIAL_SPRITE_GFX_SLOT == 9
 	assert SPECIAL_SPRITE_GFX_TILE == $18
 	assert (FIRST_VRAM1_SPRITE_GFX_SLOT + 1) * 12 == $60
-	; Keep special sprites clear of the fixed compact-object atlas.
+	; Keep special sprites clear of the compact-object allocation pool.
 	assert SPECIAL_SPRITE_GFX_TILE + 15 == $27
-	assert SPECIAL_SPRITE_GFX_TILE + 15 <= STRENGTH_BOULDER_VRAM1_TILE
-	assert STRENGTH_BOULDER_VRAM1_TILE + STRENGTH_BOULDER_TILES == SMASHABLE_ROCK_VRAM1_TILE
-	assert SPECIAL_SPRITE_GFX_TILE + 15 <= SMASHABLE_ROCK_VRAM1_TILE
-	assert SMASHABLE_ROCK_VRAM1_TILE + SMASHABLE_ROCK_TILES == STATIONARY_BALL_VRAM1_TILE
-	assert SPECIAL_SPRITE_GFX_TILE + 15 <= STATIONARY_BALL_VRAM1_TILE
+	assert SPECIAL_SPRITE_GFX_TILE + 15 == OVERWORLD_OBJECT_VRAM1_START
+	assert OVERWORLD_OBJECT_VRAM1_START < OVERWORLD_OBJECT_VRAM1_END
 	assert SPECIAL_SPRITE_GFX_TILE + $40 + 15 == $67
-	assert STATIONARY_BALL_VRAM1_TILE + STATIONARY_BALL_TILES == $40
-	assert SPECIAL_SPRITE_GFX_TILE + $40 + 15 <= PLAYER_OVERLAY_VRAM1_TILE
+	assert OVERWORLD_OBJECT_VRAM1_END <= PLAYER_OVERLAY_VRAM1_TILE
 	assert PLAYER_OVERLAY_VRAM1_TILE + PLAYER_OVERLAY_TILES == $80
 
 SpriteGfxKey:
@@ -318,7 +331,7 @@ MarkUsedSpriteGfx:
 	cp -12 ; only exact twelve-tile bases can own a shared slot
 	jr nz, .restore
 	ld a, c
-	cp NUM_SPRITE_GFX_SLOTS ; also excludes atlas objects and fixed balls
+	cp NUM_SPRITE_GFX_SLOTS ; also excludes atlas and compact dynamic objects
 	jr nc, .restore
 	call SpriteGfxUsed
 	ld [hl], 1
@@ -337,7 +350,7 @@ MarkUsedSpriteGfx:
 	ret
 
 FindSharedSpriteGfx:
-; Only live shared allocations can hit; fixed balls own no shared slot.
+; Only live shared allocations can hit; compact objects own no shared slot.
 	ld c, 0
 .loop
 	ld a, c
@@ -459,69 +472,64 @@ DetachSharedSprites:
 	ret
 
 AcquireStationaryBall:
-	call FindLiveStationaryBall
-	jr nc, .new
-	and a ; sharing hit: no decompression or transfer
-	ret
-.new
-	ld a, STATIONARY_BALL_VRAM1_TILE
+	ld a, OVERWORLD_OBJECT_GFX_STATIONARY_BALL
 	ld de, StationaryBallSpriteGFX
 	lb bc, BANK(StationaryBallSpriteGFX), STATIONARY_BALL_TILES
-	jr LoadFixedSpriteGFX
+	jr AcquireOverworldObjectGFX
 
-FindLiveStationaryBall:
-; Carry and a = existing encoded base. Ignore the object being rebound and
-; detached objects so menu restoration never mistakes stale VRAM for a hit.
-	ld bc, wObject1Struct
-	ld e, 1
-.loop
-	ldh a, [hObjectStructIndexBuffer]
-	cp e
-	jr z, .next
-	ld a, [bc]
-	cp SPRITE_BALL_CUT_TREE
-	jr nz, .next
-	ld hl, OBJECT_MAP_OBJECT_INDEX
-	add hl, bc
-	ld a, [hli]
-	cp TEMP_OBJECT
-	jr z, .next
-	ld a, [hli] ; OBJECT_SPRITE_TILE
-	cp STATIONARY_BALL_VRAM1_TILE
-	jr nz, .next
-	ld a, [hl] ; OBJECT_MOVEMENT_TYPE
-	cp SPRITEMOVEDATA_STANDING_DOWN
-	jr nz, .next
-	ld a, STATIONARY_BALL_VRAM1_TILE
-	scf
-	ret
-.next
-	ld hl, OBJECT_LENGTH
-	add hl, bc
-	ld b, h
-	ld c, l
-	inc e
-	ld a, e
-	cp NUM_OBJECT_STRUCTS
-	jr nz, .loop
-	and a
-	ret
+AcquireArchTree:
+	ld a, OVERWORLD_OBJECT_GFX_ARCH_TREE
+	ld de, ArchTreeSpriteGFX
+	lb bc, BANK(ArchTreeSpriteGFX), ARCH_TREE_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquireSilverCaveArch:
+	ld a, OVERWORLD_OBJECT_GFX_SILVER_CAVE_ARCH
+	ld de, SilverCaveArchSpriteGFX
+	lb bc, BANK(SilverCaveArchSpriteGFX), SILVER_CAVE_ARCH_TILES
+	jr AcquireOverworldObjectGFX
 
 AcquireSmashableRock:
-	ld d, SMASHABLE_ROCK_VRAM1_TILE
-	call FindLiveFixedBoulder
+	ld a, OVERWORLD_OBJECT_GFX_SMASHABLE_ROCK
+	ld de, SmashableRockSpriteGFX
+	lb bc, BANK(SmashableRockSpriteGFX), SMASHABLE_ROCK_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquireStrengthBoulder:
+	ld a, OVERWORLD_OBJECT_GFX_STRENGTH_BOULDER
+	ld de, StrengthBoulderSpriteGFX
+	lb bc, BANK(StrengthBoulderSpriteGFX), STRENGTH_BOULDER_TILES
+	; fallthrough
+
+AcquireOverworldObjectGFX:
+; a = resource ID; b:de = graphics; c = exact tile count.
+; Allocate downward from $3f and use live objects as the ownership table.
+	ld [wSpriteGfxSlot], a
+	ld hl, wSpriteGfxRequest
+	ld a, b
+	ld [hli], a
+	ld a, e
+	ld [hli], a
+	ld a, d
+	ld [hli], a
+	ld [hl], c
+	call FindLiveOverworldObjectGFX
 	jr nc, .new
 	and a ; sharing hit: no decompression or transfer
 	ret
 .new
-	ld a, SMASHABLE_ROCK_VRAM1_TILE
-	ld de, SmashableRockSpriteGFX
-	lb bc, BANK(SmashableRockSpriteGFX), SMASHABLE_ROCK_TILES
-	; fallthrough
-
-LoadFixedSpriteGFX:
-; a = fixed bank-1 tile; b:de = graphics; c = exact tile count.
-; These tiles never overlap a shared allocation or special sprite.
+	call FindFreeOverworldObjectGFX
+	ret c
+	push af
+	ld hl, wSpriteGfxRequest
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hli]
+	ld d, a
+	ld c, [hl]
+	pop af
 	push af
 	ld hl, wSpriteFlags
 	set 5, [hl]
@@ -531,21 +539,9 @@ LoadFixedSpriteGFX:
 	and a
 	ret
 
-AcquireStrengthBoulder:
-	ld d, STRENGTH_BOULDER_VRAM1_TILE
-	call FindLiveFixedBoulder
-	jr nc, .new
-	and a ; sharing hit: no decompression or transfer
-	ret
-.new
-	ld a, STRENGTH_BOULDER_VRAM1_TILE
-	ld de, StrengthBoulderSpriteGFX
-	lb bc, BANK(StrengthBoulderSpriteGFX), STRENGTH_BOULDER_TILES
-	jr LoadFixedSpriteGFX
-
-FindLiveFixedBoulder:
-; d = fixed tile base. Carry and a = an existing matching base. Only the
-; ordinary boulder sheet uses these atlases; special sheets stay separate.
+FindLiveOverworldObjectGFX:
+; Carry and a = an existing base for the requested resource. Ignore the object
+; being rebound and detached objects so a stale tile cannot become a hit.
 	ld bc, wObject1Struct
 	ld e, 1
 .loop
@@ -553,34 +549,26 @@ FindLiveFixedBoulder:
 	cp e
 	jr z, .next
 	ld a, [bc]
-	cp SPRITE_BOULDER_ROCK
-	jr nz, .next
+	and a
+	jr z, .next
 	ld hl, OBJECT_MAP_OBJECT_INDEX
 	add hl, bc
-	ld a, [hli]
+	ld a, [hl]
 	cp TEMP_OBJECT
 	jr z, .next
-	ld a, [hli] ; OBJECT_SPRITE_TILE
+	call GetOverworldObjectGFXResource
+	jr nc, .next
+	ld d, a
+	ld a, [wSpriteGfxSlot]
 	cp d
 	jr nz, .next
-	ld a, [hl] ; OBJECT_MOVEMENT_TYPE
-	cp SPRITEMOVEDATA_SMASHABLE_ROCK
-	jr z, .smashable
-	cp SPRITEMOVEDATA_STRENGTH_BOULDER
-	jr z, .strength
-	cp SPRITEMOVEDATA_STANDING_DOWN
-	jr nz, .next
-.strength
-	ld a, d
-	cp STRENGTH_BOULDER_VRAM1_TILE
-	jr nz, .next
-	jr .found
-.smashable
-	ld a, d
-	cp SMASHABLE_ROCK_VRAM1_TILE
-	jr nz, .next
-.found
-	ld a, d
+	ld hl, OBJECT_SPRITE_TILE
+	add hl, bc
+	ld a, [hl]
+	cp OVERWORLD_OBJECT_VRAM1_START
+	jr c, .next
+	cp OVERWORLD_OBJECT_VRAM1_END
+	jr nc, .next
 	scf
 	ret
 .next
@@ -594,3 +582,160 @@ FindLiveFixedBoulder:
 	jr nz, .loop
 	and a
 	ret
+
+FindFreeOverworldObjectGFX:
+; Return the highest exact-size free range in a. The lower bound permanently
+; reserves the three tiles that overlap the 15-tile special sprite.
+	ld a, [wSpriteGfxRequest + 3]
+	cpl
+	add OVERWORLD_OBJECT_VRAM1_END + 1
+.loop
+	ldh [hUsedSpriteTile], a
+	call OverworldObjectGFXRangeIsFree
+	jr nc, .found
+	ldh a, [hUsedSpriteTile]
+	dec a
+	cp OVERWORLD_OBJECT_VRAM1_START - 1
+	jr nz, .loop
+	scf
+	ret
+.found
+	ldh a, [hUsedSpriteTile]
+	and a
+	ret
+
+OverworldObjectGFXRangeIsFree:
+; Carry means the requested range overlaps a live compact resource.
+	ld bc, wObject1Struct
+	ld e, 1
+.loop
+	ldh a, [hObjectStructIndexBuffer]
+	cp e
+	jr z, .next
+	ld a, [bc]
+	and a
+	jr z, .next
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	cp TEMP_OBJECT
+	jr z, .next
+	call GetOverworldObjectGFXResource
+	jr nc, .next
+	call OverworldObjectGFXTileCount
+	ld d, a
+	ld hl, OBJECT_SPRITE_TILE
+	add hl, bc
+	ld a, [hl]
+	cp OVERWORLD_OBJECT_VRAM1_START
+	jr c, .next
+	cp OVERWORLD_OBJECT_VRAM1_END
+	jr nc, .next
+	ld h, a ; live start
+	ldh a, [hUsedSpriteTile]
+	ld l, a ; requested start
+	ld a, [wSpriteGfxRequest + 3]
+	add l ; requested end
+	cp h
+	jr c, .next
+	jr z, .next
+	ld a, h
+	add d ; live end
+	cp l
+	jr c, .next
+	jr z, .next
+	scf
+	ret
+.next
+	ld hl, OBJECT_LENGTH
+	add hl, bc
+	ld b, h
+	ld c, l
+	inc e
+	ld a, e
+	cp NUM_OBJECT_STRUCTS
+	jr nz, .loop
+	and a
+	ret
+
+GetOverworldObjectGFXResource:
+; bc = object_struct. Return resource ID in a and carry for compact objects.
+	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_BOULDER_ROCK
+	jr z, .boulder
+	cp SPRITE_BALL_CUT_TREE
+	jr z, .ball_cut_tree
+	cp SPRITE_BLANK_FRUIT
+	jr z, .blank_fruit
+	jr .no
+.ball_cut_tree
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr z, .ball
+	cp SPRITEMOVEDATA_ARCH_TREE_LEFT
+	jr z, .arch_tree
+	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
+	jr nz, .no
+.arch_tree
+	ld a, OVERWORLD_OBJECT_GFX_ARCH_TREE
+	scf
+	ret
+.ball
+	ld a, OVERWORLD_OBJECT_GFX_STATIONARY_BALL
+	scf
+	ret
+.blank_fruit
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr z, .no
+	cp SPRITEMOVEDATA_POKECOM_NEWS
+	jr z, .silver_cave_arch
+	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
+	jr nz, .no
+.silver_cave_arch
+	ld a, OVERWORLD_OBJECT_GFX_SILVER_CAVE_ARCH
+	scf
+	ret
+.boulder
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_SMASHABLE_ROCK
+	jr z, .smashable
+	cp SPRITEMOVEDATA_STRENGTH_BOULDER
+	jr z, .strength
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr nz, .no
+.strength
+	ld a, OVERWORLD_OBJECT_GFX_STRENGTH_BOULDER
+	scf
+	ret
+.smashable
+	ld a, OVERWORLD_OBJECT_GFX_SMASHABLE_ROCK
+	scf
+	ret
+.no
+	and a
+	ret
+
+OverworldObjectGFXTileCount:
+; a = resource ID. Return its exact tile count in a.
+	add LOW(.TileCounts)
+	ld l, a
+	adc HIGH(.TileCounts)
+	sub l
+	ld h, a
+	ld a, [hl]
+	ret
+.TileCounts
+	table_width 1
+	db STRENGTH_BOULDER_TILES
+	db SMASHABLE_ROCK_TILES
+	db STATIONARY_BALL_TILES
+	db ARCH_TREE_TILES
+	db SILVER_CAVE_ARCH_TILES
+	assert_table_length NUM_OVERWORLD_OBJECT_GFX

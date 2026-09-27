@@ -68,6 +68,10 @@ Facings:
 	dw FacingStepDown0        ; FACING_STRENGTH_BOULDER
 	dw FacingStepDown0        ; FACING_SMASHABLE_ROCK
 	dw FacingStationaryBall   ; FACING_STATIONARY_BALL
+	dw FacingCompactArchTreeLeft  ; FACING_COMPACT_ARCH_TREE_LEFT
+	dw FacingCompactArchTreeRight ; FACING_COMPACT_ARCH_TREE_RIGHT
+	dw FacingCompactSilverCaveArch ; FACING_COMPACT_SILVER_CAVE_ARCH
+	dw FacingCompactSilverCaveArchRight ; FACING_COMPACT_SILVER_CAVE_ARCH_RIGHT
 	assert_table_length NUM_FACINGS
 	dw 0 ; end
 
@@ -480,6 +484,23 @@ FacingArchTreeRight:
 	db 2 ; #
 	db  0,  8, 0, $09
 	db  8,  8, 0, $0b
+
+FacingCompactArchTreeLeft:
+	db 1 ; #
+	db  8,  0, 0, $00
+
+FacingCompactArchTreeRight:
+	db 1 ; #
+	db  8,  8, 0, $01
+
+FacingCompactSilverCaveArch:
+	db 2 ; #
+	db  0,  0, 0, $00
+	db  8,  8, 0, $01
+
+FacingCompactSilverCaveArchRight:
+	db 1 ; #
+	db  8,  8, 0, $01
 
 FacingSailboatTop:
 	db 8 ; #

@@ -49,14 +49,13 @@ clear means bank 1. `$ff` means no allocation and is not rendered.
 | Shared slots 0–6 | 0 | `$0c–$5f` | `$8c–$df` |
 | Shared slots 7–9 | 1 | `$00–$23` | `$40–$63` |
 | Slot 9 with a 15-tile sprite | 1 | `$18–$26` | `$58–$66` |
-| Strength/stationary boulders (fixed, on demand) | 1 | `$35–$38` | None |
-| Smashable rocks (fixed, on demand) | 1 | `$39–$3c` | None |
-| Stationary balls (fixed, on demand) | 1 | `$3d–$3f` | None |
+| Compact object pool (dynamic, on demand) | 1 | `$27–$3f` | None |
 
 Ordinary allocations retain the 12-tile stride. Pokemon icons copy eight base
-tiles and no alternate group. Boulders, smashable rocks, and stationary balls use compact
-fixed allocations, described below. Other resources retain the existing paired-copy
-behavior; their short standing-sprite assets have not been compacted. The effects area beginning at bank-0 `$60`, the `$6f–$7f`
+tiles and no alternate group. Boulders, smashable rocks, and stationary balls use
+exact-size allocations from the compact pool, described below. Other resources retain
+the existing paired-copy behavior; their short standing-sprite assets have not been
+compacted. The effects area beginning at bank-0 `$60`, the `$6f–$7f`
 effects, and map-name/UI graphics at `$e0+` are not available to this allocator.
 
 The final allocation is slot 9. Big Gyarados and Alolan Exeggutor upload
@@ -117,7 +116,7 @@ the original four-object behavior for every other state. These bytes are outside
 saved Game Data.
 
 Ten distinct shared resources can coexist; duplicate objects share them, and
-atlas trees, fixed rocks, and fixed balls consume no shared slots. A new incompatible resource
+atlas trees and compact object resources consume no shared slots. A new incompatible resource
 fails allocation when no slot is available, without overwriting live graphics.
 The object-structure limit remains 13, including the player. Future maps and
 scripts must respect the reduced resource capacity.
@@ -158,7 +157,7 @@ Ordinary scripted dialogue closes through `CloseDialogueText`, which calls
 `RestoreTextSpriteGFX`. It preserves every allocation, graphics key, and object
 tile reference. Only the private player's alternate group and live bank-0 shared
 alternate groups are restored, once per resource, at their existing addresses.
-Bank-1 graphics, bank-0 base poses, atlas objects, fixed rocks/balls, and eight-tile
+Bank-1 graphics, bank-0 base poses, atlas objects, compact rocks/balls, and eight-tile
 Pokemon icons are not uploaded. Unused allocation keys are ignored and gaps
 are retained. The caller keeps text poses active until restoration completes.
 
@@ -231,9 +230,11 @@ it does not reference player graphics or own a shared allocation. Both map-objec
 creation and live-object refresh take this allocation-free path.
 
 Stationary ball objects using the same sprite ID now acquire and share
-`ball.png`, as described below. Decorations using other movement types retain
-`ball_cut_tree.png`. Pearl rocks on Faraway Island keep their original relative
-facing and allocation. Cut's animation still uses atlas `$74-$77`.
+`ball.png`, as described below. Silver Cave arch-tree halves use the compact
+`arch_tree.png` resource. Unsupported movement types are rejected instead of
+falling back to the removed 12-tile sheet. Pearl rocks on Faraway Island keep
+their original relative facing and allocation. Cut's animation still uses atlas
+`$74-$77`.
 
 Refresh holds OAM DMA through both sprite rebinding and atlas restoration, then
 restores the caller's prior setting. The atlas loader also preserves the incoming
@@ -261,11 +262,20 @@ active fruit-tree objects needs no NPC graphics block or sprite-sheet upload.
 The atlas uses two more tiles than the rod-only change, returning to a single
 17-tile upload. No persistent RAM is added and no per-frame lookup is needed.
 
-Other uses of `SPRITE_BLANK_FRUIT`, including standing decorations and Silver
-Cave arch-tree objects, still share and upload the original sheet. It remains
-in ROM for those uses. Fruit trees must be placed on maps using the trunk pair,
-not the healing-machine pair; regression checks reject fruit-tree maps that
-also select healing graphics.
+The two Battle Tower blockers and Shamouti's Alolan Exeggutor emote anchor use
+the non-rendering `STANDING` facing sentinel. They reserve no graphics, upload
+no tiles, and emit no OAM entries. Their object structures remain present for
+coordinate collision, interaction, event removal, and emote anchoring.
+
+Silver Cave's three right-side arch decorations share the two tiles in
+`gfx/overworld/silver_cave_arch.png`, copied exactly from old tiles `$08` and
+`$0b`. The diagonal facing emits both visible tiles; the right-edge facing emits
+only the second. Blank quadrants no longer consume OAM entries. This compact
+resource and the zero-OAM standing path remove the final users of
+`gfx/sprites/blank_fruit.png`, so the old
+12-tile sheet is removed. Fruit trees must be placed on maps using the trunk
+pair, not the healing-machine pair; regression checks reject fruit-tree maps
+that also select healing graphics.
 
 Tests cover twelve active fruit trees without allocations, both fruit types,
 independent picking/regrowth, exact OAM coordinates and palettes, map-object
@@ -299,8 +309,8 @@ the field scripts.
 `SPRITE_BOULDER_ROCK` with `SPRITEMOVEDATA_STRENGTH_BOULDER` uses exactly the
 four tiles in `gfx/overworld/strength_boulder.png`. Stationary/fallen boulders
 using the same graphics group also select this path. Together, all 41 authored
-placements share fixed bank-1 tiles `$35-$38`, consume no shared allocation,
-and have no alternate-pose reservation.
+placements share one four-tile bank-1 allocation, consume no 12-tile shared
+allocation, and have no alternate-pose reservation.
 
 The first live boulder uploads 64 bytes and later boulders reuse them. A full
 refresh uploads the resource once when needed. The build rejects an asset that
@@ -316,8 +326,8 @@ relative priority are unchanged. The Pokécom information sign retains the
 original `boulder_rock.png` shared resource.
 Mount Moon Square's special N64-sheet rock also retains its separate appearance.
 
-All live ordinary smashable rocks share four fixed tiles in bank 1 `$39-$3c`.
-They consume no shared graphics slot and have no alternate-pose reservation.
+All live ordinary smashable rocks share one four-tile allocation in bank 1.
+They consume no 12-tile shared graphics slot and have no alternate-pose reservation.
 Only 64 bytes reach VRAM. The first live rock loads the asset; subsequent rocks
 reuse it, and a full refresh loads it once when such rocks are present. The build
 rejects an asset that is not exactly four tiles.
@@ -331,7 +341,7 @@ palettes, and the lower-half relative priority are unchanged. Item balls,
 key-item balls, TM/HM balls, starter balls, and the existing stationary scripted
 ball objects all select this path without changes to map IDs or saved data.
 
-All live stationary balls share three fixed tiles in bank 1 `$3d-$3f`.
+All live stationary balls share one three-tile allocation in bank 1.
 They do not consume any of the ten shared allocations and never overlap the
 special-sprite ranges. There is no alternate-pose reservation or upload. Only
 48 bytes reach VRAM, and the build rejects an asset that is not exactly three tiles.
@@ -342,23 +352,58 @@ these tiles when none are present. Live object scans handle sharing and deletion
 detached objects cannot produce false hits during a refresh. No new persistent
 RAM or reference count is needed.
 
-Balls never relocate, including when a special sprite appears. Their former
-fallback allocation, partial-block ownership, and relocation routines have been
-removed. Ordinary resource relocation out of the special slot still publishes
-new OAM references before replacing the old graphics.
+Compact objects keep their assigned bases while live, including when a special
+sprite appears. Ordinary resource relocation out of the special slot still
+publishes new OAM references before replacing the old graphics.
 
-The old sheet remains available for other uses, including Silver Cave arch-tree
-decorations. Tests verify exact fixed uploads, all twelve balls sharing, mirrored
-OAM, map creation, on-demand/menu restoration, special coexistence in both spawn
-orders, full shared capacity with balls, and stable hardware OAM.
+The box naming screen loads the same three-tile asset into bank-0 tiles `$00-$02`.
+Its dedicated animation frame reuses tile 2 with horizontal flipping for the
+bottom-right quadrant. This removes the final use of the former 12-tile combined
+sheet, so `gfx/sprites/ball_cut_tree.png` and the duplicate
+`gfx/sprites/ball.png` are removed. Tests verify exact-size uploads, all twelve
+balls sharing, mirrored OAM in both renderers, map creation, on-demand/menu
+restoration, special coexistence in both spawn orders, full shared capacity with
+balls, and stable hardware OAM.
+
+## Dynamic compact-object pool
+
+Non-character resources allocate backward from bank-1 tile `$3f`. Each distinct
+live resource reserves only its exact tile count, while duplicate objects reuse
+the base stored by an existing live object. Object structures therefore serve as
+the ownership table; no persistent reference counts or saved-data fields are
+added. Removing the final owner immediately makes its range available to the next
+resource, and a full refresh rebuilds the same compact set from live objects.
+
+The pool begins at `$27`, leaving `$24-$26` exclusively available to the tail of
+the 15-tile special sprite at `$18-$26`. This retains 25 compact tiles without a
+relocation path between two unrelated allocators. Current strength boulders,
+smashable rocks, stationary balls, arch trees, and Silver Cave arch decorations
+use fifteen tiles when all five resources are live, leaving ten tiles for
+additional compact resources.
+
+Facing selection uses the object's sprite and movement type, not its assigned
+tile address. This lets allocations move between maps and spawn orders while all
+OAM entries remain relative to the selected base.
+
+## Two-tile arch trees
+
+The `SPRITE_BALL_CUT_TREE` objects with `SPRITEMOVEDATA_ARCH_TREE_LEFT` and
+`SPRITEMOVEDATA_ARCH_TREE_RIGHT` share the two tiles in
+`gfx/overworld/arch_tree.png`. They use the compact pool instead of uploading
+the former 12-tile combined sheet.
+
+The former `$08` and `$09` entries were blank upper halves. Compact left and
+right facings emit one OAM entry each: tile 0 for the lower-left half and tile 1
+for the lower-right half. Other sprites using the generic arch-tree movements
+retain the original two-entry facings and their own sprite sheets.
 
 ## Optimization review
 
 The implementation follows the
 [pret assembly optimization guide](https://github.com/pret/pokecrystal/wiki/Optimizing-assembly-code):
 
-- Ownership/key lookup happens on acquisition and refresh, not in the per-frame
-  rendering loop. A sharing hit performs no decompression or transfer.
+- Ownership/key lookup happens on acquisition and refresh. A sharing hit performs
+  no decompression or transfer; compact facing selection uses only object fields.
 - Four-byte key indexing uses two `add a` instructions; constant pointer addition
   uses the carry-aware `add LOW` / `adc HIGH` pattern without a temporary pair.
 - Live tile bases are converted back to slots with a bounded subtraction loop
@@ -404,8 +449,9 @@ through two open/close cycles with out-of-order graphics allocations. Legacy
 `CloseText` still exercises full reload. All 23,578 RAM symbols retain their
 pre-dialogue addresses, and the assembly optimizer reports no findings.
 
-The compact boulder revisions raise the suite to 68 tests. They check exact
-four-tile transfers to bank 1 `$39-$3c`, twelve simultaneous rocks sharing one
-upload, OAM tile/palette behavior, the real map-object path, coexistence with
-fixed balls and special sprites, and preservation of the other boulder-sheet
+The compact-object revisions raise the suite to 71 tests. They check exact-size
+transfers, backward packing, deduplication, gap reuse, twelve simultaneous objects
+sharing one upload, overworld and naming-screen OAM behavior, zero-OAM object
+collision and emote anchoring, the real map-object path,
+coexistence with special sprites, and preservation of the other boulder-sheet
 uses and Mount Moon Square's N64-sheet rock.
