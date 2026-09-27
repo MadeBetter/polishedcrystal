@@ -1124,14 +1124,160 @@ class StrengthBoulderTests(unittest.TestCase):
         self.assertEqual(m.tile(1), 0x3c)
         self.assertEqual(m.vram(1, 0x83c0, 0x8400), self.boulder)
 
-    def test_sign_and_ice_boulders_retain_their_original_shared_sheets(self):
+    def test_pokecom_sign_and_ice_boulders_use_separate_compact_resources(self):
         m = self.m
-        m.spawn(1, 'SPRITE_BOULDER_ROCK', movement=8)
-        m.spawn(2, 'SPRITE_ICE_BOULDER_FOSSILS', movement=0x13)
-        self.assertEqual([m.tile(i) for i in (1, 2)], [0x8c, 0x98])
+        sign = (ROOT / 'gfx/overworld/pokecom_sign.2bpp').read_bytes()
+        self.assertEqual(len(sign), 64)
+        ptr = m.addr('wMapObjects') + 14
+        m.p.memory[ptr:ptr + 14] = [
+            255, SPRITES['SPRITE_BOULDER_ROCK'], 5, 5, 8,
+            0, 0, 255, 0, 0, 0, 0, 255, 255,
+        ]
+        m.put('hObjectStructIndexBuffer', 1)
+        m.put('hMapObjectIndexBuffer', 1)
+        out = m.call('CopyMapObjectToObjectStruct', bc=ptr, de=m.obj(1))
+        self.assertFalse(out['F'] & 0x10)
+        m.call('SetFacingCurrent', bc=m.obj(1))
+        m.spawn(2, 'SPRITE_BOULDER_ROCK', movement=8)
+        m.call('SetFacingCurrent', bc=m.obj(2))
+        m.spawn(3, 'SPRITE_ICE_BOULDER_FOSSILS', movement=0x13)
+        m.call('SetFacingCurrent', bc=m.obj(3))
+        self.assertEqual([m.tile(i) for i in (1, 2, 3)], [0x3c, 0x3c, 0x38])
         self.assertEqual(len(m.loads), 2)
-        self.assertEqual(m.graphics(1)[0], (ROOT / 'gfx/sprites/boulder_rock.2bpp').read_bytes()[:192])
-        self.assertEqual(m.graphics(2)[0], (ROOT / 'gfx/sprites/ice_boulder_fossils.2bpp').read_bytes()[:192])
+        self.assertEqual(m.loads[0], (*SYMBOLS['PokecomSignSpriteGFX'], 4))
+        self.assertEqual(m.graphics(1, 4)[0], sign)
+        self.assertEqual([entry[2] for entry in m.draw(1)], [0x3c, 0x3d, 0x3e, 0x3f])
+        self.assertEqual(m.graphics(3, 4)[0], (ROOT / 'gfx/overworld/ice_boulder.2bpp').read_bytes())
+
+
+class IceBoulderFossilTests(unittest.TestCase):
+    def setUp(self):
+        self.m = Machine()
+
+    def tearDown(self):
+        self.m.close()
+
+    def spawn(self, index, movement):
+        result = self.m.spawn(index, 'SPRITE_ICE_BOULDER_FOSSILS', movement=movement)
+        self.assertFalse(result['F'] & 0x10)
+        self.m.call('SetFacingCurrent', bc=self.m.obj(index))
+        return self.m.tile(index)
+
+    def test_ice_boulders_and_fossils_use_exact_compact_resources(self):
+        m = self.m
+        resources = (
+            (0x13, 'IceBoulderSpriteGFX', 'ice_boulder.2bpp'),
+            (7, 'HelixFossilSpriteGFX', 'helix_fossil.2bpp'),
+            (8, 'DomeFossilSpriteGFX', 'dome_fossil.2bpp'),
+        )
+        for index, (movement, symbol, filename) in enumerate(resources, 1):
+            expected = (ROOT / 'gfx/overworld' / filename).read_bytes()
+            self.assertEqual(len(expected), 64)
+            self.assertEqual(self.spawn(index, movement), 0x40 - index * 4)
+            self.assertEqual(m.graphics(index, 4)[0], expected)
+            self.assertEqual([entry[2] for entry in m.draw(index)],
+                             list(range(0x40 - index * 4, 0x44 - index * 4)))
+            self.assertIn((*SYMBOLS[symbol], 4), m.loads)
+
+        self.assertEqual(self.spawn(4, 6), 0x3c)
+        self.assertEqual(len(m.loads), 3)
+
+        m.loads.clear()
+        m.call('RefreshSprites')
+        for _, symbol, _ in resources:
+            self.assertEqual(sum(load == (*SYMBOLS[symbol], 4)
+                                 for load in m.loads), 1)
+        self.assertEqual([m.tile(i) for i in range(1, 5)], [0x3c, 0x38, 0x34, 0x3c])
+
+        source = '\n'.join(path.read_text() for path in (ROOT / 'maps').glob('*.asm'))
+        movements = set(re.findall(
+            r'object_event[^\n]*SPRITE_ICE_BOULDER_FOSSILS,\s*(SPRITEMOVEDATA_\w+)',
+            source))
+        self.assertEqual(movements, {
+            'SPRITEMOVEDATA_STRENGTH_BOULDER',
+            'SPRITEMOVEDATA_STANDING_DOWN',
+            'SPRITEMOVEDATA_STANDING_UP',
+            'SPRITEMOVEDATA_STANDING_LEFT',
+        })
+
+        for index in range(1, 5):
+            m.remove(index)
+        m.loads.clear()
+        for index, (movement, symbol, _) in enumerate(resources, 1):
+            ptr = m.addr('wMapObjects') + index * 14
+            m.p.memory[ptr:ptr + 14] = [
+                255, SPRITES['SPRITE_ICE_BOULDER_FOSSILS'], 5, 5, movement,
+                0, 0, 255, 0, 0, 0, 0, 255, 255,
+            ]
+            m.put('hObjectStructIndexBuffer', index)
+            m.put('hMapObjectIndexBuffer', index)
+            result = m.call('CopyMapObjectToObjectStruct', bc=ptr, de=m.obj(index))
+            self.assertFalse(result['F'] & 0x10)
+            self.assertEqual(m.tile(index), 0x40 - index * 4)
+            self.assertIn((*SYMBOLS[symbol], 4), m.loads)
+
+
+class CampfireTests(unittest.TestCase):
+    def setUp(self):
+        self.m = Machine()
+        self.campfire = (ROOT / 'gfx/overworld/campfire.2bpp').read_bytes()
+        self.assertEqual(len(self.campfire), 64)
+
+    def tearDown(self):
+        self.m.close()
+
+    def test_four_tiles_reproduce_both_frames_and_deduplicate(self):
+        m = self.m
+        for index in range(1, 13):
+            result = m.spawn(index, 'SPRITE_CAMPFIRE', movement=0x10, palette=index % 8)
+            self.assertFalse(result['F'] & 0x10)
+            self.assertEqual(m.tile(index), 0x3c)
+        self.assertEqual(m.loads, [(*SYMBOLS['CompactCampfireSpriteGFX'], 4)])
+        self.assertEqual(m.graphics(1, 4)[0], self.campfire)
+
+        ptr = m.obj(1)
+        m.p.memory[ptr + 0xc] = 31
+        m.call('SetFacingBounce', bc=ptr)
+        self.assertEqual(m.draw(1), [
+            (12, 8, 0x3c, 9), (12, 16, 0x3d, 9),
+            (20, 8, 0x3e, 9), (20, 16, 0x3f, 9),
+        ])
+
+        m.p.memory[ptr + 0xc] = 15
+        m.call('SetFacingBounce', bc=ptr)
+        self.assertEqual(m.draw(1), [
+            (12, 8, 0x3d, 0x29), (12, 16, 0x3c, 0x29),
+            (20, 8, 0x3f, 0x29), (20, 16, 0x3e, 0x29),
+        ])
+
+        m.call('SetFacingFreezeBounce', bc=ptr)
+        self.assertEqual([entry[2] for entry in m.draw(1)], [0x3c, 0x3d, 0x3e, 0x3f])
+
+        m.loads.clear()
+        m.call('RefreshSprites')
+        self.assertEqual(sum(load == (*SYMBOLS['CompactCampfireSpriteGFX'], 4)
+                             for load in m.loads), 1)
+        self.assertEqual([m.tile(i) for i in range(1, 13)], [0x3c] * 12)
+
+        source = '\n'.join(path.read_text() for path in (ROOT / 'maps').glob('*.asm'))
+        movements = set(re.findall(
+            r'object_event[^\n]*SPRITE_CAMPFIRE,\s*(SPRITEMOVEDATA_\w+)', source))
+        self.assertEqual(movements, {'SPRITEMOVEDATA_POKEMON'})
+
+        for index in range(1, 13):
+            m.remove(index)
+        m.loads.clear()
+        map_object = m.addr('wMapObjects') + 14
+        m.p.memory[map_object:map_object + 14] = [
+            255, SPRITES['SPRITE_CAMPFIRE'], 5, 5, 0x10,
+            0, 0, 255, 0, 0, 0, 0, 255, 255,
+        ]
+        m.put('hObjectStructIndexBuffer', 1)
+        m.put('hMapObjectIndexBuffer', 1)
+        result = m.call('CopyMapObjectToObjectStruct', bc=map_object, de=m.obj(1))
+        self.assertFalse(result['F'] & 0x10)
+        self.assertEqual(m.tile(1), 0x3c)
+        self.assertEqual(m.loads, [(*SYMBOLS['CompactCampfireSpriteGFX'], 4)])
 
 
 class SmashableRockTests(unittest.TestCase):
@@ -1180,17 +1326,19 @@ class SmashableRockTests(unittest.TestCase):
         self.assertEqual(m.vram(1, 0x83c0, 0x8400), self.rock)
         self.assertEqual(len(m.loads), 3)
 
-    def test_other_boulder_sheet_uses_and_mount_moon_rock_remain_separate(self):
+    def test_strength_sign_and_mount_moon_rock_remain_separate(self):
         m = self.m
         m.spawn(1, 'SPRITE_BOULDER_ROCK', movement=0x13)
         m.spawn(2, 'SPRITE_BOULDER_ROCK', movement=8)
+        m.call('SetFacingCurrent', bc=m.obj(2))
         m.spawn(3, 'SPRITE_N64', movement=0x12)
-        self.assertEqual([m.tile(i) for i in (1, 2, 3)], [0x3c, 0x8c, 0x98])
+        self.assertEqual([m.tile(i) for i in (1, 2, 3)], [0x3c, 0x38, 0x8c])
         self.assertEqual(len(m.loads), 3)
         self.assertEqual(m.graphics(1, 4)[0], (ROOT / 'gfx/overworld/strength_boulder.2bpp').read_bytes())
-        self.assertEqual(m.graphics(2)[0], (ROOT / 'gfx/sprites/boulder_rock.2bpp').read_bytes()[:192])
+        self.assertEqual(m.graphics(2, 4)[0], (ROOT / 'gfx/overworld/pokecom_sign.2bpp').read_bytes())
         self.assertEqual(m.graphics(3)[0], (ROOT / 'gfx/sprites/n64.2bpp').read_bytes()[:192])
-        self.assertEqual([entry[2] for entry in m.draw(3, facing=4)], [0x1c, 0x1d, 0x1e, 0x1f])
+        self.assertEqual([entry[2] for entry in m.draw(2)], [0x38, 0x39, 0x3a, 0x3b])
+        self.assertEqual([entry[2] for entry in m.draw(3, facing=4)], [0x10, 0x11, 0x12, 0x13])
 
     def test_real_map_object_selects_compact_rock_path(self):
         m = self.m
@@ -1264,6 +1412,63 @@ class CompactObjectAllocatorTests(unittest.TestCase):
         self.assertEqual(self.spawn(10, 'SPRITE_BIG_GYARADOS', 0x22), 0x18)
         self.assertEqual([m.tile(i) for i in live], before)
         self.assertEqual(m.loads, [(*SYMBOLS['BigGyaradosSpriteGFX'], 15)])
+
+    def test_books_papers_and_pokedexes_use_exact_compact_resources(self):
+        m = self.m
+        resources = (
+            (6, 'BookSpriteGFX', 'book.2bpp'),
+            (7, 'PaperSpriteGFX', 'paper.2bpp'),
+            (8, 'PokedexObjectSpriteGFX', 'pokedex.2bpp'),
+        )
+        for index, (movement, symbol, filename) in enumerate(resources, 1):
+            expected = (ROOT / 'gfx/overworld' / filename).read_bytes()
+            self.assertEqual(len(expected), 64)
+            self.assertEqual(self.spawn(index, 'SPRITE_BOOK_PAPER_POKEDEX', movement),
+                             0x40 - index * 4)
+            self.assertEqual(m.graphics(index, 4)[0], expected)
+            self.assertEqual(m.draw(index), [
+                (12, 8, 0x40 - index * 4, 8),
+                (12, 16, 0x41 - index * 4, 8),
+                (20, 8, 0x42 - index * 4, 8),
+                (20, 16, 0x43 - index * 4, 8),
+            ])
+            self.assertIn((*SYMBOLS[symbol], 4), m.loads)
+
+        self.assertEqual(self.spawn(4, 'SPRITE_BOOK_PAPER_POKEDEX', 6), 0x3c)
+        self.assertEqual(len(m.loads), 3)
+
+        m.loads.clear()
+        m.call('RefreshSprites')
+        for _, symbol, _ in resources:
+            self.assertEqual(sum(load == (*SYMBOLS[symbol], 4)
+                                 for load in m.loads), 1)
+        self.assertEqual([m.tile(i) for i in range(1, 5)], [0x3c, 0x38, 0x34, 0x3c])
+
+        source = '\n'.join(path.read_text() for path in (ROOT / 'maps').glob('*.asm'))
+        movements = set(re.findall(
+            r'object_event[^\n]*SPRITE_BOOK_PAPER_POKEDEX,\s*(SPRITEMOVEDATA_\w+)',
+            source))
+        self.assertEqual(movements, {
+            'SPRITEMOVEDATA_STANDING_DOWN',
+            'SPRITEMOVEDATA_STANDING_UP',
+            'SPRITEMOVEDATA_STANDING_LEFT',
+        })
+
+        for index in range(1, 5):
+            m.remove(index)
+        m.loads.clear()
+        for index, (movement, symbol, _) in enumerate(resources, 1):
+            ptr = m.addr('wMapObjects') + index * 14
+            m.p.memory[ptr:ptr + 14] = [
+                255, SPRITES['SPRITE_BOOK_PAPER_POKEDEX'], 5, 5, movement,
+                0, 0, 255, 0, 0, 0, 0, 255, 255,
+            ]
+            m.put('hObjectStructIndexBuffer', index)
+            m.put('hMapObjectIndexBuffer', index)
+            result = m.call('CopyMapObjectToObjectStruct', bc=ptr, de=m.obj(index))
+            self.assertFalse(result['F'] & 0x10)
+            self.assertEqual(m.tile(index), 0x40 - index * 4)
+            self.assertIn((*SYMBOLS[symbol], 4), m.loads)
 
 
 class NamingScreenBallTests(unittest.TestCase):

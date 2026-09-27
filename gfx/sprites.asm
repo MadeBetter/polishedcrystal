@@ -554,11 +554,17 @@ SmashableRockSpriteGFX:: INCBIN "gfx/overworld/smashable_rock.2bpp.lzp"
 SECTION "StrengthBoulderSpriteGFX", ROMX
 StrengthBoulderSpriteGFX:: INCBIN "gfx/overworld/strength_boulder.2bpp.lzp"
 
-SECTION "BoulderRockSpriteGFX", ROMX
-BoulderRockSpriteGFX:: INCBIN "gfx/sprites/boulder_rock.2bpp.lzp"
+SECTION "PokecomSignSpriteGFX", ROMX
+PokecomSignSpriteGFX:: INCBIN "gfx/overworld/pokecom_sign.2bpp.lzp"
 
-SECTION "BookPaperPokedexSpriteGFX", ROMX
-BookPaperPokedexSpriteGFX:: INCBIN "gfx/sprites/book_paper_pokedex.2bpp.lzp"
+SECTION "BookSpriteGFX", ROMX
+BookSpriteGFX:: INCBIN "gfx/overworld/book.2bpp.lzp"
+
+SECTION "PaperSpriteGFX", ROMX
+PaperSpriteGFX:: INCBIN "gfx/overworld/paper.2bpp.lzp"
+
+SECTION "PokedexObjectSpriteGFX", ROMX
+PokedexObjectSpriteGFX:: INCBIN "gfx/overworld/pokedex.2bpp.lzp"
 
 SECTION "SnesSpriteGFX", ROMX
 SnesSpriteGFX:: INCBIN "gfx/sprites/snes.2bpp.lzp"
@@ -587,8 +593,14 @@ ElectricFenceRightSpriteGFX:: INCBIN "gfx/sprites/electric_fence_right.2bpp.lzp"
 SECTION "SailboatSpriteGFX", ROMX
 SailboatSpriteGFX:: INCBIN "gfx/sprites/sailboat.2bpp.lzp"
 
-SECTION "IceBoulderFossilsSpriteGFX", ROMX
-IceBoulderFossilsSpriteGFX:: INCBIN "gfx/sprites/ice_boulder_fossils.2bpp.lzp"
+SECTION "IceBoulderSpriteGFX", ROMX
+IceBoulderSpriteGFX:: INCBIN "gfx/overworld/ice_boulder.2bpp.lzp"
+
+SECTION "HelixFossilSpriteGFX", ROMX
+HelixFossilSpriteGFX:: INCBIN "gfx/overworld/helix_fossil.2bpp.lzp"
+
+SECTION "DomeFossilSpriteGFX", ROMX
+DomeFossilSpriteGFX:: INCBIN "gfx/overworld/dome_fossil.2bpp.lzp"
 
 SECTION "BeachGuySpriteGFX", ROMX
 BeachGuySpriteGFX:: INCBIN "gfx/sprites/beach_guy.2bpp.lzp"
@@ -653,5 +665,5 @@ PearlSpriteGFX:: INCBIN "gfx/sprites/pearl.2bpp.lzp"
 SECTION "PagodaSpriteGFX", ROMX
 PagodaSpriteGFX:: INCBIN "gfx/sprites/pagoda.2bpp.lzp"
 
-SECTION "CampfireSpriteGFX", ROMX
-CampfireSpriteGFX:: INCBIN "gfx/sprites/campfire.2bpp.lzp"
+SECTION "CompactCampfireSpriteGFX", ROMX
+CompactCampfireSpriteGFX:: INCBIN "gfx/overworld/campfire.2bpp.lzp"

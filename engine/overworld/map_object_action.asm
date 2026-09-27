@@ -62,12 +62,18 @@ SetFacingCurrent:
 	; Compact object graphics have dynamic tile bases. Select their facing from
 	; object identity and movement instead of assigning meaning to an address.
 	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_CAMPFIRE
+	jr z, .compact_2x2
+	cp SPRITE_ICE_BOULDER_FOSSILS
+	jr z, .ice_boulder_fossils
 	cp SPRITE_BOULDER_ROCK
 	jr z, .boulder
 	cp SPRITE_BALL_CUT_TREE
 	jr z, .ball_cut_tree
 	cp SPRITE_BLANK_FRUIT
 	jr z, .blank_fruit
+	cp SPRITE_BOOK_PAPER_POKEDEX
+	jr z, .book_paper_pokedex
 	jr .normal
 .ball_cut_tree
 	ld hl, OBJECT_MOVEMENT_TYPE
@@ -89,9 +95,33 @@ SetFacingCurrent:
 	ld a, FACING_COMPACT_SILVER_CAVE_ARCH
 	jp z, SetFixedFacing
 	jr .normal
+.ice_boulder_fossils
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STRENGTH_BOULDER
+	jr z, .compact_2x2
+	sub SPRITEMOVEDATA_STANDING_DOWN
+	cp SPRITEMOVEDATA_STANDING_LEFT - SPRITEMOVEDATA_STANDING_DOWN + 1
+	jp nc, .normal
+.compact_2x2
+	ld a, FACING_COMPACT_2X2
+	jp SetFixedFacing
+.book_paper_pokedex
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	sub SPRITEMOVEDATA_STANDING_DOWN
+	cp SPRITEMOVEDATA_STANDING_LEFT - SPRITEMOVEDATA_STANDING_DOWN + 1
+	jp nc, .normal
+	jr .compact_2x2
 .boulder
 	ld hl, OBJECT_MOVEMENT_TYPE
 	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	ld a, FACING_COMPACT_2X2
+	jp z, SetFixedFacing
 	ld a, [hl]
 	cp SPRITEMOVEDATA_SMASHABLE_ROCK
 	ld a, FACING_SMASHABLE_ROCK
@@ -295,11 +325,20 @@ AlternateStepFrame:
 	ret
 
 SetFacingBounce:
+	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_CAMPFIRE
+	jp z, SetFacingCampfire
 	call AlternateStepFrame
 	ld a, FACING_STEP_UP_0
 	jmp nz, SetFixedFacing
 SetFacingFreezeBounce:
 	xor a ; FACING_STEP_DOWN_0
+	jmp SetFixedFacing
+SetFacingCampfire:
+	call AlternateStepFrame
+	ld a, FACING_COMPACT_CAMPFIRE_FLIP
+	jmp nz, SetFixedFacing
+	ld a, FACING_COMPACT_2X2
 	jmp SetFixedFacing
 
 SetFacingFruit:

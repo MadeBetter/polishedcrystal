@@ -314,23 +314,51 @@ allocation, and have no alternate-pose reservation.
 
 The first live boulder uploads 64 bytes and later boulders reuse them. A full
 refresh uploads the resource once when needed. The build rejects an asset that
-is not exactly four tiles. The Pokécom information sign keeps the original
-`boulder_rock.png` sheet, and Ice Path's boulders retain their distinct
-`ice_boulder_fossils.png` resource.
+is not exactly four tiles. Ice Path's boulders retain their distinct appearance
+through their own compact resource.
 
 ## Four-tile smashable rocks
 
 `SPRITE_BOULDER_ROCK` with `SPRITEMOVEDATA_SMASHABLE_ROCK` uses exactly the four
 tiles in `gfx/overworld/smashable_rock.png`. Its position, palette, and lower-half
-relative priority are unchanged. The Pokécom information sign retains the
-original `boulder_rock.png` shared resource.
-Mount Moon Square's special N64-sheet rock also retains its separate appearance.
+relative priority are unchanged. Mount Moon Square's special N64-sheet rock
+retains its separate appearance.
 
 All live ordinary smashable rocks share one four-tile allocation in bank 1.
 They consume no 12-tile shared graphics slot and have no alternate-pose reservation.
 Only 64 bytes reach VRAM. The first live rock loads the asset; subsequent rocks
 reuse it, and a full refresh loads it once when such rocks are present. The build
 rejects an asset that is not exactly four tiles.
+
+## Four-tile PokéCom sign
+
+`SPRITE_BOULDER_ROCK` with `SPRITEMOVEDATA_STANDING_LEFT` uses the four tiles in
+`gfx/overworld/pokecom_sign.png`. The first sign uploads 64 bytes to the compact
+pool; duplicates reuse the same allocation. Its position, four-entry geometry,
+and `PAL_NPC_POKECOM_SIGN` palette are unchanged. With strength boulders and
+smashable rocks already compact, this removes the final use of the former
+12-tile `boulder_rock.png` sheet.
+
+## Four-tile ice boulders and fossils
+
+The former 12-tile `ice_boulder_fossils.png` sheet is split into three exact
+four-tile compact resources. `SPRITEMOVEDATA_STRENGTH_BOULDER` and
+`SPRITEMOVEDATA_STANDING_DOWN` select `ice_boulder.png`, standing-up selects
+`helix_fossil.png`, and standing-left selects `dome_fossil.png`. Each resource
+uses the same local 2×2 facing, retaining its position, OAM geometry, palette,
+and item-ball behavior. The two Mount Moon fossils may coexist in eight tiles;
+all Ice Path boulders share one four-tile allocation.
+
+## Four-tile campfire
+
+`SPRITE_CAMPFIRE` uses the four unique tiles in `gfx/overworld/campfire.png`.
+The unflipped animation frame uses local tiles `$00-$03`. The second frame swaps
+the left/right tile positions and applies `OAM_XFLIP`, reproducing old tiles
+`$04-$07` without storing them. Old tiles `$08-$0b` were blank padding and are
+removed. The campfire therefore uploads 64 bytes instead of a 192-byte standing
+sheet while retaining both animation frames, position, palette, and interaction.
+Multiple campfires share one compact allocation, and a full refresh uploads the
+resource once.
 
 ## Three-tile stationary balls
 
@@ -376,14 +404,24 @@ resource, and a full refresh rebuilds the same compact set from live objects.
 
 The pool begins at `$27`, leaving `$24-$26` exclusively available to the tail of
 the 15-tile special sprite at `$18-$26`. This retains 25 compact tiles without a
-relocation path between two unrelated allocators. Current strength boulders,
-smashable rocks, stationary balls, arch trees, and Silver Cave arch decorations
-use fifteen tiles when all five resources are live, leaving ten tiles for
-additional compact resources.
+relocation path between two unrelated allocators. Strength boulders, smashable
+rocks, stationary balls, arch trees, and Silver Cave arch decorations use
+fifteen tiles when all five resources are live. Books, papers, overworld Pokédex
+objects, the PokéCom sign, ice boulders, and both fossils use four tiles apiece.
+The campfire also uses four tiles. The pool allocates only the resources present
+on the current map, so duplicate objects share the same tiles and absent object
+types consume no space.
 
 Facing selection uses the object's sprite and movement type, not its assigned
 tile address. This lets allocations move between maps and spawn orders while all
 OAM entries remain relative to the selected base.
+
+The former 12-tile `book_paper_pokedex.png` sheet is split into three exact
+four-tile resources in `gfx/overworld`. `SPRITEMOVEDATA_STANDING_DOWN` selects
+`book.png`, `SPRITEMOVEDATA_STANDING_UP` selects `paper.png`, and
+`SPRITEMOVEDATA_STANDING_LEFT` selects `pokedex.png`. Their four-entry geometry,
+positions, relative attributes, and object palettes are unchanged. Each distinct
+resource is uploaded once and reused by every matching object on the map.
 
 ## Two-tile arch trees
 
@@ -449,9 +487,11 @@ through two open/close cycles with out-of-order graphics allocations. Legacy
 `CloseText` still exercises full reload. All 23,578 RAM symbols retain their
 pre-dialogue addresses, and the assembly optimizer reports no findings.
 
-The compact-object revisions raise the suite to 71 tests. They check exact-size
+The compact-object revisions raise the suite to 74 tests. They check exact-size
 transfers, backward packing, deduplication, gap reuse, twelve simultaneous objects
 sharing one upload, overworld and naming-screen OAM behavior, zero-OAM object
-collision and emote anchoring, the real map-object path,
-coexistence with special sprites, and preservation of the other boulder-sheet
-uses and Mount Moon Square's N64-sheet rock.
+collision and emote anchoring, compact book/paper/Pokédex selection, the real
+map-object path,
+coexistence with special sprites, compact Ice Path boulders and Mount Moon
+fossils, flipped compact campfire animation, and separation from Mount Moon
+Square's N64-sheet rock.

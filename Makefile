@@ -241,6 +241,38 @@ gfx/overworld/silver_cave_arch.2bpp.lzp: gfx/overworld/silver_cave_arch.2bpp
 	@test "$$(wc -c < $<)" -eq 32
 	$Qtools/lzpcompress -- $< $@
 
+gfx/overworld/book.2bpp.lzp: gfx/overworld/book.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/paper.2bpp.lzp: gfx/overworld/paper.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/pokedex.2bpp.lzp: gfx/overworld/pokedex.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/pokecom_sign.2bpp.lzp: gfx/overworld/pokecom_sign.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/ice_boulder.2bpp.lzp: gfx/overworld/ice_boulder.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/helix_fossil.2bpp.lzp: gfx/overworld/helix_fossil.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/dome_fossil.2bpp.lzp: gfx/overworld/dome_fossil.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/campfire.2bpp.lzp: gfx/overworld/campfire.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
 gfx/overworld/overworld.2bpp: gfx/overworld/puddle_splash.2bpp gfx/overworld/cut_grass.2bpp gfx/overworld/cut_tree.2bpp gfx/overworld/heal_machine.2bpp gfx/overworld/fruit.2bpp gfx/overworld/shadow.2bpp gfx/overworld/shaking_grass.2bpp gfx/overworld/boulder_dust.2bpp
 	@test "$$(wc -c < gfx/overworld/fruit.2bpp)" -eq 32
 	$Qcat $^ > $@

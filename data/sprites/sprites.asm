@@ -187,8 +187,8 @@ SpriteHeaders:
 	overworld_sprite SlowpoketailSpriteGFX, STANDING_SPRITE, PAL_OW_PINK
 	overworld_sprite WeirdTreeSpriteGFX, STANDING_SPRITE, PAL_OW_GREEN
 	overworld_sprite StationaryBallSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_GREEN
-	overworld_sprite BoulderRockSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_BROWN
-	overworld_sprite BookPaperPokedexSpriteGFX, STANDING_SPRITE, PAL_OW_BROWN
+	overworld_sprite StrengthBoulderSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_BROWN
+	overworld_sprite BookSpriteGFX, STANDING_SPRITE, PAL_OW_BROWN
 	overworld_sprite SnesSpriteGFX, STANDING_SPRITE, PAL_OW_BROWN
 	overworld_sprite N64SpriteGFX, STANDING_SPRITE, PAL_OW_GRAY
 	overworld_sprite GameCubeSpriteGFX, STANDING_SPRITE, PAL_OW_PURPLE
@@ -198,7 +198,7 @@ SpriteHeaders:
 	overworld_sprite ElectricFenceLeftSpriteGFX, STANDING_SPRITE, PAL_OW_ELECTRIC_FENCE
 	overworld_sprite ElectricFenceRightSpriteGFX, STANDING_SPRITE, PAL_OW_ELECTRIC_FENCE
 	overworld_sprite SailboatSpriteGFX, STANDING_SPRITE, PAL_OW_SAILBOAT
-	overworld_sprite IceBoulderFossilsSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_BROWN
+	overworld_sprite IceBoulderSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_BROWN
 	overworld_sprite BeachGuySpriteGFX, WALKING_SPRITE, PAL_OW_RED
 	overworld_sprite BeachGirlSpriteGFX, WALKING_SPRITE, PAL_OW_GREEN
 	overworld_sprite PiersSpriteGFX, STANDING_SPRITE, PAL_OW_RED
@@ -223,5 +223,5 @@ SpriteHeaders:
 	overworld_sprite SpinarakCartSpriteGFX, WALKING_SPRITE, PAL_OW_GREEN
 	overworld_sprite PearlSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_GREEN
 	overworld_sprite PagodaSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_WHITE
-	overworld_sprite CampfireSpriteGFX, STANDING_SPRITE, PAL_OW_CAMPFIRE
+	overworld_sprite CompactCampfireSpriteGFX, STANDING_SPRITE, PAL_OW_CAMPFIRE
 	assert_table_length NUM_OVERWORLD_SPRITES

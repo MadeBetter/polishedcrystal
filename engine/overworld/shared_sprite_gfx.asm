@@ -76,12 +76,18 @@ AcquireSharedSprite:
 	; Select graphics by use: atlas trees, compact dynamic objects, or the
 	; original sheet for decorations. Pearl rocks also retain their sheet.
 	ldh a, [hUsedSpriteIndex]
+	cp SPRITE_CAMPFIRE
+	jp z, AcquireCampfire
 	cp SPRITE_BALL_CUT_TREE
 	jr z, .get_movement
 	cp SPRITE_BOULDER_ROCK
 	jr z, .get_movement
 	cp SPRITE_BLANK_FRUIT
-	jr nz, .resolve
+	jr z, .get_movement
+	cp SPRITE_BOOK_PAPER_POKEDEX
+	jr z, .get_movement
+	cp SPRITE_ICE_BOULDER_FOSSILS
+	jp nz, .resolve
 .get_movement
 	ldh a, [hIsMapObject]
 	and a
@@ -92,6 +98,10 @@ AcquireSharedSprite:
 	add hl, bc
 	ld d, [hl]
 	ldh a, [hUsedSpriteIndex]
+	cp SPRITE_ICE_BOULDER_FOSSILS
+	jr z, .ice_boulder_fossils
+	cp SPRITE_BOOK_PAPER_POKEDEX
+	jr z, .book_paper_pokedex
 	cp SPRITE_BOULDER_ROCK
 	jr z, .rock
 	cp SPRITE_BLANK_FRUIT
@@ -128,6 +138,28 @@ AcquireSharedSprite:
 	; Every supported use has an atlas or compact resource.
 	scf
 	ret
+.ice_boulder_fossils
+	ld a, d
+	cp SPRITEMOVEDATA_STRENGTH_BOULDER
+	jp z, AcquireIceBoulder
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jp z, AcquireIceBoulder
+	cp SPRITEMOVEDATA_STANDING_UP
+	jp z, AcquireHelixFossil
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp z, AcquireDomeFossil
+	scf
+	ret
+.book_paper_pokedex
+	ld a, d
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jp z, AcquireBook
+	cp SPRITEMOVEDATA_STANDING_UP
+	jp z, AcquirePaper
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp z, AcquirePokedex
+	scf
+	ret
 .rock
 	ld a, d
 	cp SPRITEMOVEDATA_SMASHABLE_ROCK
@@ -136,6 +168,8 @@ AcquireSharedSprite:
 	jp z, AcquireStrengthBoulder
 	cp SPRITEMOVEDATA_STANDING_DOWN
 	jp z, AcquireStrengthBoulder
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp z, AcquirePokecomSign
 .resolve
 	ldh a, [hUsedSpriteIndex]
 	farcall GetSprite
@@ -489,6 +523,54 @@ AcquireSilverCaveArch:
 	lb bc, BANK(SilverCaveArchSpriteGFX), SILVER_CAVE_ARCH_TILES
 	jr AcquireOverworldObjectGFX
 
+AcquireBook:
+	ld a, OVERWORLD_OBJECT_GFX_BOOK
+	ld de, BookSpriteGFX
+	lb bc, BANK(BookSpriteGFX), BOOK_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquirePaper:
+	ld a, OVERWORLD_OBJECT_GFX_PAPER
+	ld de, PaperSpriteGFX
+	lb bc, BANK(PaperSpriteGFX), PAPER_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquirePokedex:
+	ld a, OVERWORLD_OBJECT_GFX_POKEDEX
+	ld de, PokedexObjectSpriteGFX
+	lb bc, BANK(PokedexObjectSpriteGFX), POKEDEX_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquirePokecomSign:
+	ld a, OVERWORLD_OBJECT_GFX_POKECOM_SIGN
+	ld de, PokecomSignSpriteGFX
+	lb bc, BANK(PokecomSignSpriteGFX), POKECOM_SIGN_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquireIceBoulder:
+	ld a, OVERWORLD_OBJECT_GFX_ICE_BOULDER
+	ld de, IceBoulderSpriteGFX
+	lb bc, BANK(IceBoulderSpriteGFX), ICE_BOULDER_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquireHelixFossil:
+	ld a, OVERWORLD_OBJECT_GFX_HELIX_FOSSIL
+	ld de, HelixFossilSpriteGFX
+	lb bc, BANK(HelixFossilSpriteGFX), HELIX_FOSSIL_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquireDomeFossil:
+	ld a, OVERWORLD_OBJECT_GFX_DOME_FOSSIL
+	ld de, DomeFossilSpriteGFX
+	lb bc, BANK(DomeFossilSpriteGFX), DOME_FOSSIL_TILES
+	jr AcquireOverworldObjectGFX
+
+AcquireCampfire:
+	ld a, OVERWORLD_OBJECT_GFX_CAMPFIRE
+	ld de, CompactCampfireSpriteGFX
+	lb bc, BANK(CompactCampfireSpriteGFX), CAMPFIRE_TILES
+	jr AcquireOverworldObjectGFX
+
 AcquireSmashableRock:
 	ld a, OVERWORLD_OBJECT_GFX_SMASHABLE_ROCK
 	ld de, SmashableRockSpriteGFX
@@ -661,13 +743,23 @@ OverworldObjectGFXRangeIsFree:
 GetOverworldObjectGFXResource:
 ; bc = object_struct. Return resource ID in a and carry for compact objects.
 	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_CAMPFIRE
+	jr z, .campfire
 	cp SPRITE_BOULDER_ROCK
-	jr z, .boulder
+	jp z, .boulder
 	cp SPRITE_BALL_CUT_TREE
 	jr z, .ball_cut_tree
 	cp SPRITE_BLANK_FRUIT
 	jr z, .blank_fruit
-	jr .no
+	cp SPRITE_BOOK_PAPER_POKEDEX
+	jr z, .book_paper_pokedex
+	cp SPRITE_ICE_BOULDER_FOSSILS
+	jr z, .ice_boulder_fossils
+	jp .no
+.campfire
+	ld a, OVERWORLD_OBJECT_GFX_CAMPFIRE
+	scf
+	ret
 .ball_cut_tree
 	ld hl, OBJECT_MOVEMENT_TYPE
 	add hl, bc
@@ -700,10 +792,56 @@ GetOverworldObjectGFXResource:
 	ld a, OVERWORLD_OBJECT_GFX_SILVER_CAVE_ARCH
 	scf
 	ret
+.book_paper_pokedex
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr z, .book
+	cp SPRITEMOVEDATA_STANDING_UP
+	jr z, .paper
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jr nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_POKEDEX
+	scf
+	ret
+.book
+	ld a, OVERWORLD_OBJECT_GFX_BOOK
+	scf
+	ret
+.paper
+	ld a, OVERWORLD_OBJECT_GFX_PAPER
+	scf
+	ret
+.ice_boulder_fossils
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STRENGTH_BOULDER
+	jr z, .ice_boulder
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jr z, .ice_boulder
+	cp SPRITEMOVEDATA_STANDING_UP
+	jr z, .helix_fossil
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jr nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_DOME_FOSSIL
+	scf
+	ret
+.ice_boulder
+	ld a, OVERWORLD_OBJECT_GFX_ICE_BOULDER
+	scf
+	ret
+.helix_fossil
+	ld a, OVERWORLD_OBJECT_GFX_HELIX_FOSSIL
+	scf
+	ret
 .boulder
 	ld hl, OBJECT_MOVEMENT_TYPE
 	add hl, bc
 	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jr z, .pokecom_sign
 	cp SPRITEMOVEDATA_SMASHABLE_ROCK
 	jr z, .smashable
 	cp SPRITEMOVEDATA_STRENGTH_BOULDER
@@ -716,6 +854,10 @@ GetOverworldObjectGFXResource:
 	ret
 .smashable
 	ld a, OVERWORLD_OBJECT_GFX_SMASHABLE_ROCK
+	scf
+	ret
+.pokecom_sign
+	ld a, OVERWORLD_OBJECT_GFX_POKECOM_SIGN
 	scf
 	ret
 .no
@@ -738,4 +880,12 @@ OverworldObjectGFXTileCount:
 	db STATIONARY_BALL_TILES
 	db ARCH_TREE_TILES
 	db SILVER_CAVE_ARCH_TILES
+	db BOOK_TILES
+	db PAPER_TILES
+	db POKEDEX_TILES
+	db POKECOM_SIGN_TILES
+	db ICE_BOULDER_TILES
+	db HELIX_FOSSIL_TILES
+	db DOME_FOSSIL_TILES
+	db CAMPFIRE_TILES
 	assert_table_length NUM_OVERWORLD_OBJECT_GFX
