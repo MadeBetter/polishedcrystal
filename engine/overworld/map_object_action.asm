@@ -32,6 +32,7 @@ ObjectActionPairPointers:
 	dw SetFacingBigHoOh,               SetFacingFreezeBigHoOh     ; OBJECT_ACTION_BIG_HO_OH
 	dw SetFacingBigLugia,              SetFacingFreezeBigLugia    ; OBJECT_ACTION_BIG_LUGIA
 	dw SetFacingCutTree,               SetFacingCutTree           ; OBJECT_ACTION_CUT_TREE
+	dw SetFacingUnownEye,              SetFacingFreezeUnownEye    ; OBJECT_ACTION_UNOWN_EYE
 	assert_table_length NUM_OBJECT_ACTIONS
 
 SetFacingStanding:
@@ -55,6 +56,10 @@ SetFacingCutTree:
 	cp SPRITE_BALL_CUT_TREE
 	ld a, FACING_CUT_TREE
 	jp z, SetFixedFacing
+	ld a, [bc]
+	cp SPRITE_PEARL
+	ld a, FACING_COMPACT_FARAWAY_ROCK
+	jp z, SetFixedFacing
 	ld a, FACING_FARAWAY_ROCK
 	jp SetFixedFacing
 
@@ -63,20 +68,58 @@ SetFacingCurrent:
 	; object identity and movement instead of assigning meaning to an address.
 	ld a, [bc] ; OBJECT_SPRITE
 	cp SPRITE_CAMPFIRE
-	jr z, .compact_2x2
+	jp z, .compact_2x2
 	cp SPRITE_FLOATING_BALL
-	jr z, .floating_ball
+	jp z, .floating_ball
 	cp SPRITE_ICE_BOULDER_FOSSILS
-	jr z, .ice_boulder_fossils
+	jp z, .ice_boulder_fossils
 	cp SPRITE_BOULDER_ROCK
-	jr z, .boulder
+	jp z, .boulder
 	cp SPRITE_BALL_CUT_TREE
 	jr z, .ball_cut_tree
 	cp SPRITE_BLANK_FRUIT
 	jr z, .blank_fruit
 	cp SPRITE_BOOK_PAPER_POKEDEX
-	jr z, .book_paper_pokedex
-	jr .normal
+	jp z, .book_paper_pokedex
+	cp SPRITE_WEIRD_TREE
+	jr z, .weird_tree
+	cp SPRITE_SNES
+	jp c, .normal
+	cp SPRITE_GOLD_TROPHY + 1
+	jr c, .console_or_trophy
+	cp SPRITE_PEARL
+	jp nz, .normal
+	jp .compact_2x2
+.console_or_trophy
+	cp SPRITE_SNES
+	jr z, .snes
+	cp SPRITE_GAMECUBE
+	jr z, .gamecube
+	jp .compact_2x2
+.snes
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STILL
+	jr nz, .compact_2x2
+	ld a, FACING_COMPACT_MIRROR_2X2
+	jp SetFixedFacing
+.gamecube
+	ld a, FACING_COMPACT_TOP_MIRROR_3
+	jp SetFixedFacing
+.weird_tree
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jr z, .caitlin
+	cp SPRITEMOVEDATA_SUDOWOODO
+	jp nz, .normal
+	ld a, FACING_COMPACT_WEIRD_TREE_0
+	jp SetFixedFacing
+.caitlin
+	ld a, FACING_COMPACT_MIRROR_2X2
+	jp SetFixedFacing
 .floating_ball
 	ld hl, OBJECT_MOVEMENT_TYPE
 	add hl, bc
@@ -137,7 +180,7 @@ SetFacingCurrent:
 	ld a, [hl]
 	cp SPRITEMOVEDATA_SMASHABLE_ROCK
 	ld a, FACING_SMASHABLE_ROCK
-	jr z, SetFixedFacing
+	jp z, SetFixedFacing
 	ld a, [hl]
 	cp SPRITEMOVEDATA_STRENGTH_BOULDER
 	jr z, .strength
@@ -186,6 +229,8 @@ SetFacingMuseumDrill:
 	ld a, [bc] ; OBJECT_SPRITE
 	cp SPRITE_BALL_CUT_TREE
 	jr z, .arch_tree
+	cp SPRITE_PEARL
+	jr z, .pearl_arch
 	cp SPRITE_BLANK_FRUIT
 	jr nz, .normal
 	ld hl, OBJECT_MOVEMENT_TYPE
@@ -203,6 +248,15 @@ SetFacingMuseumDrill:
 	cp 2
 	jr nc, .normal
 	add FACING_COMPACT_ARCH_TREE_LEFT
+	jr SetFixedFacing
+.pearl_arch
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	sub SPRITEMOVEDATA_ARCH_TREE_LEFT
+	cp 2
+	jr nc, .normal
+	add FACING_COMPACT_PEARL_ARCH_LEFT
 	jr SetFixedFacing
 .normal
 	call GetSpriteDirection
@@ -365,6 +419,31 @@ SetFacingFloatingBall:
 	ld a, FACING_COMPACT_FLOATING_BALL_0
 	jmp SetFixedFacing
 
+SetFacingFreezeUnownEye:
+	ld e, 0
+	jr SetFacingUnownEye_Select
+SetFacingUnownEye:
+	call AlternateStepFrame
+	ld e, 0
+	jr z, SetFacingUnownEye_Select
+	inc e
+SetFacingUnownEye_Select:
+	ld a, [bc] ; OBJECT_SPRITE
+	sub SPRITE_GAMECUBE
+	add a
+	add e
+	ld e, a
+	ld d, 0
+	ld hl, SetFacingUnownEye_Facings
+	add hl, de
+	ld a, [hl]
+	jmp SetFixedFacing
+SetFacingUnownEye_Facings:
+	db FACING_COMPACT_MIRROR_2X2, FACING_COMPACT_UNOWN_A_CLOSED
+	db FACING_COMPACT_MIRROR_2X2, FACING_COMPACT_UNOWN_W_CLOSED
+	db FACING_COMPACT_2X2, FACING_COMPACT_UNOWN_P_CLOSED
+	db FACING_COMPACT_TOP_MIRROR_3, FACING_COMPACT_UNOWN_R_CLOSED
+
 SetFacingFruit:
 	ld hl, OBJECT_RADIUS
 	add hl, bc
@@ -425,6 +504,14 @@ SetFacingWeirdTree:
 	and %1100
 	rrca
 	rrca
+	ld d, a
+	ld a, [bc] ; OBJECT_SPRITE
+	cp SPRITE_WEIRD_TREE
+	ld a, d
+	jr nz, .original
+	add FACING_COMPACT_WEIRD_TREE_0
+	jmp SetFixedFacing
+.original
 	add FACING_WEIRD_TREE_0
 	jmp SetFixedFacing
 

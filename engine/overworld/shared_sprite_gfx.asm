@@ -73,8 +73,8 @@ AcquireSharedSprite:
 	ret
 
 .npc
-	; Select graphics by use: atlas trees, compact dynamic objects, or the
-	; original sheet for decorations. Pearl rocks also retain their sheet.
+	; Select graphics by use: atlas trees, compact dynamic objects, and the
+	; remaining shared character sheets.
 	ldh a, [hUsedSpriteIndex]
 	cp SPRITE_CAMPFIRE
 	jp z, AcquireCampfire
@@ -89,6 +89,22 @@ AcquireSharedSprite:
 	cp SPRITE_BOOK_PAPER_POKEDEX
 	jr z, .get_movement
 	cp SPRITE_ICE_BOULDER_FOSSILS
+	jr z, .get_movement
+	cp SPRITE_SNES
+	jr z, .get_movement
+	cp SPRITE_N64
+	jr z, .get_movement
+	cp SPRITE_GAMECUBE
+	jr z, .get_movement
+	cp SPRITE_WII
+	jr z, .get_movement
+	cp SPRITE_SILVER_TROPHY
+	jr z, .get_movement
+	cp SPRITE_GOLD_TROPHY
+	jr z, .get_movement
+	cp SPRITE_PEARL
+	jr z, .get_movement
+	cp SPRITE_WEIRD_TREE
 	jp nz, .resolve
 .get_movement
 	ldh a, [hIsMapObject]
@@ -100,17 +116,33 @@ AcquireSharedSprite:
 	add hl, bc
 	ld d, [hl]
 	ldh a, [hUsedSpriteIndex]
+	cp SPRITE_SNES
+	jp z, .snes
+	cp SPRITE_N64
+	jp z, .n64
+	cp SPRITE_GAMECUBE
+	jp z, .gamecube
+	cp SPRITE_WII
+	jp z, .wii
+	cp SPRITE_SILVER_TROPHY
+	jp z, .silver_trophy
+	cp SPRITE_GOLD_TROPHY
+	jp z, .gold_trophy
+	cp SPRITE_PEARL
+	jp z, .pearl
+	cp SPRITE_WEIRD_TREE
+	jp z, .weird_tree
 	cp SPRITE_FLOATING_BALL
-	jr z, .floating_ball
+	jp z, .floating_ball
 	cp SPRITE_ICE_BOULDER_FOSSILS
-	jr z, .ice_boulder_fossils
+	jp z, .ice_boulder_fossils
 	cp SPRITE_BOOK_PAPER_POKEDEX
-	jr z, .book_paper_pokedex
+	jp z, .book_paper_pokedex
 	cp SPRITE_BOULDER_ROCK
-	jr z, .rock
+	jp z, .rock
 	cp SPRITE_BLANK_FRUIT
 	ld a, d
-	jr z, .fruit
+	jp z, .fruit
 	cp SPRITEMOVEDATA_STANDING_DOWN
 	jp z, AcquireStationaryBall
 	cp SPRITEMOVEDATA_ARCH_TREE_LEFT
@@ -129,12 +161,85 @@ AcquireSharedSprite:
 	and a
 	ret
 
+.snes
+	ld a, d
+	cp SPRITEMOVEDATA_STILL
+	jp z, AcquireSnes
+	cp SPRITEMOVEDATA_STANDING_UP
+	jp z, AcquireCrystalVertical
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp z, AcquireCrystalHorizontal
+	scf
+	ret
+.n64
+	ld a, d
+	cp SPRITEMOVEDATA_STILL
+	jp z, AcquireN64
+	cp SPRITEMOVEDATA_SMASHABLE_ROCK
+	jp z, AcquireMountMoonRock
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp z, AcquireLodestone
+	scf
+	ret
+.gamecube
+	ld a, d
+	cp SPRITEMOVEDATA_STILL
+	jp z, AcquireGameCube
+	cp SPRITEMOVEDATA_UNOWN_EYE
+	jp z, AcquireUnownA
+	scf
+	ret
+.wii
+	ld a, d
+	cp SPRITEMOVEDATA_STILL
+	jp z, AcquireWii
+	cp SPRITEMOVEDATA_UNOWN_EYE
+	jp z, AcquireUnownW
+	scf
+	ret
+.silver_trophy
+	ld a, d
+	cp SPRITEMOVEDATA_STILL
+	jp z, AcquireSilverTrophy
+	cp SPRITEMOVEDATA_UNOWN_EYE
+	jp z, AcquireUnownP
+	scf
+	ret
+.gold_trophy
+	ld a, d
+	cp SPRITEMOVEDATA_STILL
+	jp z, AcquireGoldTrophy
+	cp SPRITEMOVEDATA_UNOWN_EYE
+	jp z, AcquireUnownR
+	scf
+	ret
+.pearl
+	ld a, d
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jp z, AcquirePearl
+	cp SPRITEMOVEDATA_CUTTABLE_TREE
+	jp z, AcquireFarawayRock
+	cp SPRITEMOVEDATA_ARCH_TREE_LEFT
+	jp z, AcquireVermilionArch
+	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
+	jp z, AcquireVermilionArch
+	scf
+	ret
+.weird_tree
+	ld a, d
+	cp SPRITEMOVEDATA_SUDOWOODO
+	jp z, AcquireWeirdTree
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp z, AcquireCaitlinBack
+	scf
+	ret
+
 .fruit
 	; Fruit trees and invisible anchors need no allocation; Silver Cave does.
 	cp SPRITEMOVEDATA_FRUIT
-	jr z, .atlas
+	jp z, .atlas
 	cp SPRITEMOVEDATA_STANDING_DOWN
-	jr z, .atlas
+	jp z, .atlas
 	cp SPRITEMOVEDATA_POKECOM_NEWS
 	jp z, AcquireSilverCaveArch
 	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
@@ -533,78 +638,192 @@ AcquireSilverCaveArch:
 	ld a, OVERWORLD_OBJECT_GFX_SILVER_CAVE_ARCH
 	ld de, SilverCaveArchSpriteGFX
 	lb bc, BANK(SilverCaveArchSpriteGFX), SILVER_CAVE_ARCH_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireBook:
 	ld a, OVERWORLD_OBJECT_GFX_BOOK
 	ld de, BookSpriteGFX
 	lb bc, BANK(BookSpriteGFX), BOOK_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquirePaper:
 	ld a, OVERWORLD_OBJECT_GFX_PAPER
 	ld de, PaperSpriteGFX
 	lb bc, BANK(PaperSpriteGFX), PAPER_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquirePokedex:
 	ld a, OVERWORLD_OBJECT_GFX_POKEDEX
 	ld de, PokedexObjectSpriteGFX
 	lb bc, BANK(PokedexObjectSpriteGFX), POKEDEX_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquirePokecomSign:
 	ld a, OVERWORLD_OBJECT_GFX_POKECOM_SIGN
 	ld de, PokecomSignSpriteGFX
 	lb bc, BANK(PokecomSignSpriteGFX), POKECOM_SIGN_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireIceBoulder:
 	ld a, OVERWORLD_OBJECT_GFX_ICE_BOULDER
 	ld de, IceBoulderSpriteGFX
 	lb bc, BANK(IceBoulderSpriteGFX), ICE_BOULDER_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireHelixFossil:
 	ld a, OVERWORLD_OBJECT_GFX_HELIX_FOSSIL
 	ld de, HelixFossilSpriteGFX
 	lb bc, BANK(HelixFossilSpriteGFX), HELIX_FOSSIL_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireDomeFossil:
 	ld a, OVERWORLD_OBJECT_GFX_DOME_FOSSIL
 	ld de, DomeFossilSpriteGFX
 	lb bc, BANK(DomeFossilSpriteGFX), DOME_FOSSIL_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireCampfire:
 	ld a, OVERWORLD_OBJECT_GFX_CAMPFIRE
 	ld de, CompactCampfireSpriteGFX
 	lb bc, BANK(CompactCampfireSpriteGFX), CAMPFIRE_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireFloatingBall:
 	ld a, OVERWORLD_OBJECT_GFX_FLOATING_BALL
 	ld de, CompactFloatingBallSpriteGFX
 	lb bc, BANK(CompactFloatingBallSpriteGFX), FLOATING_BALL_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquirePokecomNews:
 	ld a, OVERWORLD_OBJECT_GFX_POKECOM_NEWS
 	ld de, PokecomNewsSpriteGFX
 	lb bc, BANK(PokecomNewsSpriteGFX), POKECOM_NEWS_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireSmashableRock:
 	ld a, OVERWORLD_OBJECT_GFX_SMASHABLE_ROCK
 	ld de, SmashableRockSpriteGFX
 	lb bc, BANK(SmashableRockSpriteGFX), SMASHABLE_ROCK_TILES
-	jr AcquireOverworldObjectGFX
+	jp AcquireOverworldObjectGFX
 
 AcquireStrengthBoulder:
 	ld a, OVERWORLD_OBJECT_GFX_STRENGTH_BOULDER
 	ld de, StrengthBoulderSpriteGFX
 	lb bc, BANK(StrengthBoulderSpriteGFX), STRENGTH_BOULDER_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireGameCube:
+	ld a, OVERWORLD_OBJECT_GFX_GAMECUBE
+	ld de, GameCubeConsoleSpriteGFX
+	lb bc, BANK(GameCubeConsoleSpriteGFX), GAMECUBE_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireUnownA:
+	ld a, OVERWORLD_OBJECT_GFX_UNOWN_A
+	ld de, UnownASpriteGFX
+	lb bc, BANK(UnownASpriteGFX), UNOWN_A_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireGoldTrophy:
+	ld a, OVERWORLD_OBJECT_GFX_GOLD_TROPHY
+	ld de, GoldTrophyObjectSpriteGFX
+	lb bc, BANK(GoldTrophyObjectSpriteGFX), GOLD_TROPHY_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireUnownR:
+	ld a, OVERWORLD_OBJECT_GFX_UNOWN_R
+	ld de, UnownRSpriteGFX
+	lb bc, BANK(UnownRSpriteGFX), UNOWN_R_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireN64:
+	ld a, OVERWORLD_OBJECT_GFX_N64
+	ld de, N64ConsoleSpriteGFX
+	lb bc, BANK(N64ConsoleSpriteGFX), N64_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireMountMoonRock:
+	ld a, OVERWORLD_OBJECT_GFX_MOUNT_MOON_ROCK
+	ld de, MountMoonRockSpriteGFX
+	lb bc, BANK(MountMoonRockSpriteGFX), MOUNT_MOON_ROCK_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireLodestone:
+	ld a, OVERWORLD_OBJECT_GFX_LODESTONE
+	ld de, LodestoneSpriteGFX
+	lb bc, BANK(LodestoneSpriteGFX), LODESTONE_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquirePearl:
+	ld a, OVERWORLD_OBJECT_GFX_PEARL
+	ld de, PearlObjectSpriteGFX
+	lb bc, BANK(PearlObjectSpriteGFX), PEARL_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireFarawayRock:
+	ld a, OVERWORLD_OBJECT_GFX_FARAWAY_ROCK
+	ld de, FarawayRockSpriteGFX
+	lb bc, BANK(FarawayRockSpriteGFX), FARAWAY_ROCK_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireVermilionArch:
+	ld a, OVERWORLD_OBJECT_GFX_VERMILION_ARCH
+	ld de, VermilionArchSpriteGFX
+	lb bc, BANK(VermilionArchSpriteGFX), VERMILION_ARCH_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireSilverTrophy:
+	ld a, OVERWORLD_OBJECT_GFX_SILVER_TROPHY
+	ld de, SilverTrophyObjectSpriteGFX
+	lb bc, BANK(SilverTrophyObjectSpriteGFX), SILVER_TROPHY_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireUnownP:
+	ld a, OVERWORLD_OBJECT_GFX_UNOWN_P
+	ld de, UnownPSpriteGFX
+	lb bc, BANK(UnownPSpriteGFX), UNOWN_P_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireSnes:
+	ld a, OVERWORLD_OBJECT_GFX_SNES
+	ld de, SnesConsoleSpriteGFX
+	lb bc, BANK(SnesConsoleSpriteGFX), SNES_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireCrystalVertical:
+	ld a, OVERWORLD_OBJECT_GFX_CRYSTAL_VERTICAL
+	ld de, CrystalVerticalSpriteGFX
+	lb bc, BANK(CrystalVerticalSpriteGFX), CRYSTAL_VERTICAL_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireCrystalHorizontal:
+	ld a, OVERWORLD_OBJECT_GFX_CRYSTAL_HORIZONTAL
+	ld de, CrystalHorizontalSpriteGFX
+	lb bc, BANK(CrystalHorizontalSpriteGFX), CRYSTAL_HORIZONTAL_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireWeirdTree:
+	ld a, OVERWORLD_OBJECT_GFX_WEIRD_TREE
+	ld de, CompactWeirdTreeSpriteGFX
+	lb bc, BANK(CompactWeirdTreeSpriteGFX), WEIRD_TREE_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireCaitlinBack:
+	ld a, OVERWORLD_OBJECT_GFX_CAITLIN_BACK
+	ld de, CaitlinBackSpriteGFX
+	lb bc, BANK(CaitlinBackSpriteGFX), CAITLIN_BACK_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireWii:
+	ld a, OVERWORLD_OBJECT_GFX_WII
+	ld de, WiiConsoleSpriteGFX
+	lb bc, BANK(WiiConsoleSpriteGFX), WII_TILES
+	jp AcquireOverworldObjectGFX
+
+AcquireUnownW:
+	ld a, OVERWORLD_OBJECT_GFX_UNOWN_W
+	ld de, UnownWSpriteGFX
+	lb bc, BANK(UnownWSpriteGFX), UNOWN_W_TILES
 	; fallthrough
 
 AcquireOverworldObjectGFX:
@@ -770,7 +989,7 @@ GetOverworldObjectGFXResource:
 	cp SPRITE_CAMPFIRE
 	jr z, .campfire
 	cp SPRITE_FLOATING_BALL
-	jr z, .floating_ball
+	jp z, .floating_ball
 	cp SPRITE_BOULDER_ROCK
 	jp z, .boulder
 	cp SPRITE_BALL_CUT_TREE
@@ -778,9 +997,25 @@ GetOverworldObjectGFXResource:
 	cp SPRITE_BLANK_FRUIT
 	jr z, .blank_fruit
 	cp SPRITE_BOOK_PAPER_POKEDEX
-	jr z, .book_paper_pokedex
+	jp z, .book_paper_pokedex
 	cp SPRITE_ICE_BOULDER_FOSSILS
-	jr z, .ice_boulder_fossils
+	jp z, .ice_boulder_fossils
+	cp SPRITE_SNES
+	jp z, .snes
+	cp SPRITE_N64
+	jp z, .n64
+	cp SPRITE_GAMECUBE
+	jp z, .gamecube
+	cp SPRITE_WII
+	jp z, .wii
+	cp SPRITE_SILVER_TROPHY
+	jp z, .silver_trophy
+	cp SPRITE_GOLD_TROPHY
+	jp z, .gold_trophy
+	cp SPRITE_PEARL
+	jp z, .pearl
+	cp SPRITE_WEIRD_TREE
+	jp z, .weird_tree
 	jp .no
 .campfire
 	ld a, OVERWORLD_OBJECT_GFX_CAMPFIRE
@@ -791,7 +1026,7 @@ GetOverworldObjectGFXResource:
 	add hl, bc
 	ld a, [hl]
 	cp SPRITEMOVEDATA_POKEMON
-	jr z, .floating_ball_graphics
+	jp z, .floating_ball_graphics
 	cp SPRITEMOVEDATA_POKECOM_NEWS
 	jr z, .pokecom_news
 	and a
@@ -813,7 +1048,7 @@ GetOverworldObjectGFXResource:
 	cp SPRITEMOVEDATA_ARCH_TREE_LEFT
 	jr z, .arch_tree
 	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
-	jr nz, .no
+	jp nz, .no
 .arch_tree
 	ld a, OVERWORLD_OBJECT_GFX_ARCH_TREE
 	scf
@@ -827,11 +1062,11 @@ GetOverworldObjectGFXResource:
 	add hl, bc
 	ld a, [hl]
 	cp SPRITEMOVEDATA_STANDING_DOWN
-	jr z, .no
+	jp z, .no
 	cp SPRITEMOVEDATA_POKECOM_NEWS
 	jr z, .silver_cave_arch
 	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
-	jr nz, .no
+	jp nz, .no
 .silver_cave_arch
 	ld a, OVERWORLD_OBJECT_GFX_SILVER_CAVE_ARCH
 	scf
@@ -845,7 +1080,7 @@ GetOverworldObjectGFXResource:
 	cp SPRITEMOVEDATA_STANDING_UP
 	jr z, .paper
 	cp SPRITEMOVEDATA_STANDING_LEFT
-	jr nz, .no
+	jp nz, .no
 	ld a, OVERWORLD_OBJECT_GFX_POKEDEX
 	scf
 	ret
@@ -868,7 +1103,7 @@ GetOverworldObjectGFXResource:
 	cp SPRITEMOVEDATA_STANDING_UP
 	jr z, .helix_fossil
 	cp SPRITEMOVEDATA_STANDING_LEFT
-	jr nz, .no
+	jp nz, .no
 	ld a, OVERWORLD_OBJECT_GFX_DOME_FOSSIL
 	scf
 	ret
@@ -891,7 +1126,7 @@ GetOverworldObjectGFXResource:
 	cp SPRITEMOVEDATA_STRENGTH_BOULDER
 	jr z, .strength
 	cp SPRITEMOVEDATA_STANDING_DOWN
-	jr nz, .no
+	jp nz, .no
 .strength
 	ld a, OVERWORLD_OBJECT_GFX_STRENGTH_BOULDER
 	scf
@@ -902,6 +1137,147 @@ GetOverworldObjectGFXResource:
 	ret
 .pokecom_sign
 	ld a, OVERWORLD_OBJECT_GFX_POKECOM_SIGN
+	scf
+	ret
+.snes
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STILL
+	jp z, .snes_console
+	cp SPRITEMOVEDATA_STANDING_UP
+	jr z, .crystal_vertical
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_CRYSTAL_HORIZONTAL
+	scf
+	ret
+.snes_console
+	ld a, OVERWORLD_OBJECT_GFX_SNES
+	scf
+	ret
+.crystal_vertical
+	ld a, OVERWORLD_OBJECT_GFX_CRYSTAL_VERTICAL
+	scf
+	ret
+.n64
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STILL
+	jp z, .n64_console
+	cp SPRITEMOVEDATA_SMASHABLE_ROCK
+	jr z, .mount_moon_rock
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_LODESTONE
+	scf
+	ret
+.n64_console
+	ld a, OVERWORLD_OBJECT_GFX_N64
+	scf
+	ret
+.mount_moon_rock
+	ld a, OVERWORLD_OBJECT_GFX_MOUNT_MOON_ROCK
+	scf
+	ret
+.gamecube
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STILL
+	jp z, .gamecube_console
+	cp SPRITEMOVEDATA_UNOWN_EYE
+	jp nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_UNOWN_A
+	scf
+	ret
+.gamecube_console
+	ld a, OVERWORLD_OBJECT_GFX_GAMECUBE
+	scf
+	ret
+.wii
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STILL
+	jp z, .wii_console
+	cp SPRITEMOVEDATA_UNOWN_EYE
+	jp nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_UNOWN_W
+	scf
+	ret
+.wii_console
+	ld a, OVERWORLD_OBJECT_GFX_WII
+	scf
+	ret
+.silver_trophy
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STILL
+	jp z, .silver_trophy_object
+	cp SPRITEMOVEDATA_UNOWN_EYE
+	jp nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_UNOWN_P
+	scf
+	ret
+.silver_trophy_object
+	ld a, OVERWORLD_OBJECT_GFX_SILVER_TROPHY
+	scf
+	ret
+.gold_trophy
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STILL
+	jp z, .gold_trophy_object
+	cp SPRITEMOVEDATA_UNOWN_EYE
+	jp nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_UNOWN_R
+	scf
+	ret
+.gold_trophy_object
+	ld a, OVERWORLD_OBJECT_GFX_GOLD_TROPHY
+	scf
+	ret
+.pearl
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_STANDING_DOWN
+	jp z, .pearl_object
+	cp SPRITEMOVEDATA_CUTTABLE_TREE
+	jr z, .faraway_rock
+	cp SPRITEMOVEDATA_ARCH_TREE_LEFT
+	jr z, .vermilion_arch
+	cp SPRITEMOVEDATA_ARCH_TREE_RIGHT
+	jp nz, .no
+.vermilion_arch
+	ld a, OVERWORLD_OBJECT_GFX_VERMILION_ARCH
+	scf
+	ret
+.pearl_object
+	ld a, OVERWORLD_OBJECT_GFX_PEARL
+	scf
+	ret
+.faraway_rock
+	ld a, OVERWORLD_OBJECT_GFX_FARAWAY_ROCK
+	scf
+	ret
+.weird_tree
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_SUDOWOODO
+	jp z, .weird_tree_graphics
+	cp SPRITEMOVEDATA_STANDING_LEFT
+	jp nz, .no
+	ld a, OVERWORLD_OBJECT_GFX_CAITLIN_BACK
+	scf
+	ret
+.weird_tree_graphics
+	ld a, OVERWORLD_OBJECT_GFX_WEIRD_TREE
 	scf
 	ret
 .no
@@ -934,4 +1310,23 @@ OverworldObjectGFXTileCount:
 	db CAMPFIRE_TILES
 	db FLOATING_BALL_TILES
 	db POKECOM_NEWS_TILES
+	db GAMECUBE_TILES
+	db UNOWN_A_TILES
+	db GOLD_TROPHY_TILES
+	db UNOWN_R_TILES
+	db N64_TILES
+	db MOUNT_MOON_ROCK_TILES
+	db LODESTONE_TILES
+	db PEARL_TILES
+	db FARAWAY_ROCK_TILES
+	db VERMILION_ARCH_TILES
+	db SILVER_TROPHY_TILES
+	db UNOWN_P_TILES
+	db SNES_TILES
+	db CRYSTAL_VERTICAL_TILES
+	db CRYSTAL_HORIZONTAL_TILES
+	db WEIRD_TREE_TILES
+	db CAITLIN_BACK_TILES
+	db WII_TILES
+	db UNOWN_W_TILES
 	assert_table_length NUM_OVERWORLD_OBJECT_GFX

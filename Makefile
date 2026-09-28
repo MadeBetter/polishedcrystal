@@ -281,6 +281,82 @@ gfx/overworld/pokecom_news.2bpp.lzp: gfx/overworld/pokecom_news.2bpp
 	@test "$$(wc -c < $<)" -eq 64
 	$Qtools/lzpcompress -- $< $@
 
+gfx/overworld/gamecube.2bpp.lzp: gfx/overworld/gamecube.2bpp
+	@test "$$(wc -c < $<)" -eq 48
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/unown_a.2bpp.lzp: gfx/overworld/unown_a.2bpp
+	@test "$$(wc -c < $<)" -eq 48
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/gold_trophy.2bpp.lzp: gfx/overworld/gold_trophy.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/unown_r.2bpp.lzp: gfx/overworld/unown_r.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/n64.2bpp.lzp: gfx/overworld/n64.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/mount_moon_rock.2bpp.lzp: gfx/overworld/mount_moon_rock.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/lodestone.2bpp.lzp: gfx/overworld/lodestone.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/pearl.2bpp.lzp: gfx/overworld/pearl.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/faraway_rock.2bpp.lzp: gfx/overworld/faraway_rock.2bpp
+	@test "$$(wc -c < $<)" -eq 80
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/vermilion_arch.2bpp.lzp: gfx/overworld/vermilion_arch.2bpp
+	@test "$$(wc -c < $<)" -eq 32
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/silver_trophy.2bpp.lzp: gfx/overworld/silver_trophy.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/unown_p.2bpp.lzp: gfx/overworld/unown_p.2bpp
+	@test "$$(wc -c < $<)" -eq 128
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/snes.2bpp.lzp: gfx/overworld/snes.2bpp
+	@test "$$(wc -c < $<)" -eq 32
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/crystal_vertical.2bpp.lzp: gfx/overworld/crystal_vertical.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/crystal_horizontal.2bpp.lzp: gfx/overworld/crystal_horizontal.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/weird_tree.2bpp.lzp: gfx/overworld/weird_tree.2bpp
+	@test "$$(wc -c < $<)" -eq 112
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/caitlin_back.2bpp.lzp: gfx/overworld/caitlin_back.2bpp
+	@test "$$(wc -c < $<)" -eq 32
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/wii.2bpp.lzp: gfx/overworld/wii.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
+gfx/overworld/unown_w.2bpp.lzp: gfx/overworld/unown_w.2bpp
+	@test "$$(wc -c < $<)" -eq 64
+	$Qtools/lzpcompress -- $< $@
+
 gfx/overworld/overworld.2bpp: gfx/overworld/puddle_splash.2bpp gfx/overworld/cut_grass.2bpp gfx/overworld/cut_tree.2bpp gfx/overworld/heal_machine.2bpp gfx/overworld/fruit.2bpp gfx/overworld/shadow.2bpp gfx/overworld/shaking_grass.2bpp gfx/overworld/boulder_dust.2bpp
 	@test "$$(wc -c < gfx/overworld/fruit.2bpp)" -eq 32
 	$Qcat $^ > $@

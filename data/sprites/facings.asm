@@ -76,6 +76,19 @@ Facings:
 	dw FacingCompactCampfireFlip ; FACING_COMPACT_CAMPFIRE_FLIP
 	dw FacingCompactFloatingBall0 ; FACING_COMPACT_FLOATING_BALL_0
 	dw FacingCompactFloatingBall1 ; FACING_COMPACT_FLOATING_BALL_1
+	dw FacingCompactMirror2x2 ; FACING_COMPACT_MIRROR_2X2
+	dw FacingCompactTopMirror3 ; FACING_COMPACT_TOP_MIRROR_3
+	dw FacingCompactUnownAClosed ; FACING_COMPACT_UNOWN_A_CLOSED
+	dw FacingCompactUnownRClosed ; FACING_COMPACT_UNOWN_R_CLOSED
+	dw FacingCompactUnownWClosed ; FACING_COMPACT_UNOWN_W_CLOSED
+	dw FacingCompactUnownPClosed ; FACING_COMPACT_UNOWN_P_CLOSED
+	dw FacingCompactFarawayRock ; FACING_COMPACT_FARAWAY_ROCK
+	dw FacingCompactPearlArchLeft ; FACING_COMPACT_PEARL_ARCH_LEFT
+	dw FacingCompactPearlArchRight ; FACING_COMPACT_PEARL_ARCH_RIGHT
+	dw FacingCompactWeirdTree0 ; FACING_COMPACT_WEIRD_TREE_0
+	dw FacingCompactWeirdTree1 ; FACING_COMPACT_WEIRD_TREE_1
+	dw FacingCompactWeirdTree0 ; FACING_COMPACT_WEIRD_TREE_2
+	dw FacingCompactWeirdTree3 ; FACING_COMPACT_WEIRD_TREE_3
 	assert_table_length NUM_FACINGS
 	dw 0 ; end
 
@@ -526,6 +539,85 @@ FacingCompactFloatingBall1:
 	db  0,  8, 0, $04
 	db  8,  0, RELATIVE_ATTRIBUTES, $05
 	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $05
+
+FacingCompactMirror2x2:
+	db 4 ; #
+	db  0,  0, 0, $00
+	db  0,  8, OAM_XFLIP, $00
+	db  8,  0, RELATIVE_ATTRIBUTES, $01
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $01
+
+FacingCompactTopMirror3:
+	db 4 ; #
+	db  0,  0, 0, $00
+	db  0,  8, OAM_XFLIP, $00
+	db  8,  0, RELATIVE_ATTRIBUTES, $01
+	db  8,  8, RELATIVE_ATTRIBUTES, $02
+
+FacingCompactUnownAClosed:
+	db 4 ; #
+	db  0,  0, 0, $02
+	db  0,  8, OAM_XFLIP, $02
+	db  8,  0, RELATIVE_ATTRIBUTES, $01
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $01
+
+FacingCompactUnownRClosed:
+	db 4 ; #
+	db  0,  0, 0, $03
+	db  0,  8, OAM_XFLIP, $03
+	db  8,  0, RELATIVE_ATTRIBUTES, $01
+	db  8,  8, RELATIVE_ATTRIBUTES, $02
+
+FacingCompactUnownWClosed:
+	db 4 ; #
+	db  0,  0, 0, $02
+	db  0,  8, OAM_XFLIP, $02
+	db  8,  0, RELATIVE_ATTRIBUTES, $03
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $03
+
+FacingCompactUnownPClosed:
+	db 4 ; #
+	db  0,  0, 0, $04
+	db  0,  8, 0, $05
+	db  8,  0, RELATIVE_ATTRIBUTES, $06
+	db  8,  8, RELATIVE_ATTRIBUTES, $07
+
+FacingCompactFarawayRock:
+	db 5 ; #
+	db -3,  0, 0, $00
+	db -3,  8, 0, $01
+	db  5,  0, RELATIVE_ATTRIBUTES, $02
+	db  5,  8, RELATIVE_ATTRIBUTES, $03
+	db  4,  4, RELATIVE_ATTRIBUTES | NEXT_PALETTE, $04
+
+FacingCompactPearlArchLeft:
+	db 1 ; #
+	db  0,  0, 0, $00
+
+FacingCompactPearlArchRight:
+	db 1 ; #
+	db  0,  8, 0, $01
+
+FacingCompactWeirdTree0:
+	db 4 ; #
+	db  0,  0, 0, $00
+	db  0,  8, 0, $01
+	db  8,  0, RELATIVE_ATTRIBUTES, $02
+	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $02
+
+FacingCompactWeirdTree1:
+	db 4 ; #
+	db  0,  0, 0, $03
+	db  0,  8, 0, $04
+	db  8,  0, 0, $05
+	db  8,  8, 0, $06
+
+FacingCompactWeirdTree3:
+	db 4 ; #
+	db  0,  8, OAM_XFLIP, $03
+	db  0,  0, OAM_XFLIP, $04
+	db  8,  8, OAM_XFLIP, $05
+	db  8,  0, OAM_XFLIP, $06
 
 FacingSailboatTop:
 	db 8 ; #

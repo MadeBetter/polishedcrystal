@@ -539,8 +539,11 @@ PidgeottoSideSpriteGFX:: INCBIN "gfx/sprites/pidgeotto_side.2bpp.lzp"
 SECTION "RattataBackSpriteGFX", ROMX
 RattataBackSpriteGFX:: INCBIN "gfx/sprites/rattata_back.2bpp.lzp"
 
-SECTION "WeirdTreeSpriteGFX", ROMX
-WeirdTreeSpriteGFX:: INCBIN "gfx/sprites/weird_tree.2bpp.lzp"
+SECTION "CompactWeirdTreeSpriteGFX", ROMX
+CompactWeirdTreeSpriteGFX:: INCBIN "gfx/overworld/weird_tree.2bpp.lzp"
+
+SECTION "CaitlinBackSpriteGFX", ROMX
+CaitlinBackSpriteGFX:: INCBIN "gfx/overworld/caitlin_back.2bpp.lzp"
 
 SECTION "StationaryBallSpriteGFX", ROMX
 StationaryBallSpriteGFX:: INCBIN "gfx/overworld/ball.2bpp.lzp"
@@ -566,23 +569,47 @@ PaperSpriteGFX:: INCBIN "gfx/overworld/paper.2bpp.lzp"
 SECTION "PokedexObjectSpriteGFX", ROMX
 PokedexObjectSpriteGFX:: INCBIN "gfx/overworld/pokedex.2bpp.lzp"
 
-SECTION "SnesSpriteGFX", ROMX
-SnesSpriteGFX:: INCBIN "gfx/sprites/snes.2bpp.lzp"
+SECTION "SnesConsoleSpriteGFX", ROMX
+SnesConsoleSpriteGFX:: INCBIN "gfx/overworld/snes.2bpp.lzp"
 
-SECTION "N64SpriteGFX", ROMX
-N64SpriteGFX:: INCBIN "gfx/sprites/n64.2bpp.lzp"
+SECTION "CrystalVerticalSpriteGFX", ROMX
+CrystalVerticalSpriteGFX:: INCBIN "gfx/overworld/crystal_vertical.2bpp.lzp"
 
-SECTION "GameCubeSpriteGFX", ROMX
-GameCubeSpriteGFX:: INCBIN "gfx/sprites/gamecube.2bpp.lzp"
+SECTION "CrystalHorizontalSpriteGFX", ROMX
+CrystalHorizontalSpriteGFX:: INCBIN "gfx/overworld/crystal_horizontal.2bpp.lzp"
 
-SECTION "WiiSpriteGFX", ROMX
-WiiSpriteGFX:: INCBIN "gfx/sprites/wii.2bpp.lzp"
+SECTION "N64ConsoleSpriteGFX", ROMX
+N64ConsoleSpriteGFX:: INCBIN "gfx/overworld/n64.2bpp.lzp"
 
-SECTION "SilverTrophySpriteGFX", ROMX
-SilverTrophySpriteGFX:: INCBIN "gfx/sprites/silver_trophy.2bpp.lzp"
+SECTION "MountMoonRockSpriteGFX", ROMX
+MountMoonRockSpriteGFX:: INCBIN "gfx/overworld/mount_moon_rock.2bpp.lzp"
 
-SECTION "GoldTrophySpriteGFX", ROMX
-GoldTrophySpriteGFX:: INCBIN "gfx/sprites/gold_trophy.2bpp.lzp"
+SECTION "LodestoneSpriteGFX", ROMX
+LodestoneSpriteGFX:: INCBIN "gfx/overworld/lodestone.2bpp.lzp"
+
+SECTION "GameCubeConsoleSpriteGFX", ROMX
+GameCubeConsoleSpriteGFX:: INCBIN "gfx/overworld/gamecube.2bpp.lzp"
+
+SECTION "UnownASpriteGFX", ROMX
+UnownASpriteGFX:: INCBIN "gfx/overworld/unown_a.2bpp.lzp"
+
+SECTION "WiiConsoleSpriteGFX", ROMX
+WiiConsoleSpriteGFX:: INCBIN "gfx/overworld/wii.2bpp.lzp"
+
+SECTION "UnownWSpriteGFX", ROMX
+UnownWSpriteGFX:: INCBIN "gfx/overworld/unown_w.2bpp.lzp"
+
+SECTION "SilverTrophyObjectSpriteGFX", ROMX
+SilverTrophyObjectSpriteGFX:: INCBIN "gfx/overworld/silver_trophy.2bpp.lzp"
+
+SECTION "UnownPSpriteGFX", ROMX
+UnownPSpriteGFX:: INCBIN "gfx/overworld/unown_p.2bpp.lzp"
+
+SECTION "GoldTrophyObjectSpriteGFX", ROMX
+GoldTrophyObjectSpriteGFX:: INCBIN "gfx/overworld/gold_trophy.2bpp.lzp"
+
+SECTION "UnownRSpriteGFX", ROMX
+UnownRSpriteGFX:: INCBIN "gfx/overworld/unown_r.2bpp.lzp"
 
 SECTION "ElectricFenceLeftSpriteGFX", ROMX
 ElectricFenceLeftSpriteGFX:: INCBIN "gfx/sprites/electric_fence_left.2bpp.lzp"
@@ -662,8 +689,14 @@ PokecomNewsSpriteGFX:: INCBIN "gfx/overworld/pokecom_news.2bpp.lzp"
 SECTION "SpinarakCartSpriteGFX", ROMX
 SpinarakCartSpriteGFX:: INCBIN "gfx/sprites/spinarak_cart.2bpp.lzp"
 
-SECTION "PearlSpriteGFX", ROMX
-PearlSpriteGFX:: INCBIN "gfx/sprites/pearl.2bpp.lzp"
+SECTION "PearlObjectSpriteGFX", ROMX
+PearlObjectSpriteGFX:: INCBIN "gfx/overworld/pearl.2bpp.lzp"
+
+SECTION "FarawayRockSpriteGFX", ROMX
+FarawayRockSpriteGFX:: INCBIN "gfx/overworld/faraway_rock.2bpp.lzp"
+
+SECTION "VermilionArchSpriteGFX", ROMX
+VermilionArchSpriteGFX:: INCBIN "gfx/overworld/vermilion_arch.2bpp.lzp"
 
 SECTION "PagodaSpriteGFX", ROMX
 PagodaSpriteGFX:: INCBIN "gfx/sprites/pagoda.2bpp.lzp"

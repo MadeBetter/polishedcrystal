@@ -458,4 +458,12 @@ SpriteMovementData::
 	db HIGH_PRIORITY ; flags2
 	db BG_ALIGNED ; palette flags
 
+; SPRITEMOVEDATA_UNOWN_EYE
+	db SPRITEMOVEFN_STANDING ; movement function
+	db LEFT ; facing
+	db OBJECT_ACTION_UNOWN_EYE ; action
+	db FIXED_FACING | SLIDING ; flags1
+	db 0 ; flags2
+	db 0 ; palette flags
+
 	assert_table_length NUM_SPRITEMOVEDATA

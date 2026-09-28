@@ -1018,11 +1018,13 @@ class AtlasTests(unittest.TestCase):
         for i in range(1, 8):
             m.spawn(i, i + 6)
         m.spawn(12, 'SPRITE_PEARL', movement=0x0c, palette=0x12)
-        self.assertEqual(m.tile(12), 0)
+        self.assertEqual(m.tile(12), 0x3b)
         m.call('SetFacingCutTree', bc=m.obj(12))
-        self.assertEqual(m.draw(12), [(13, 8, 4, 10), (13, 16, 5, 10),
-                                     (21, 8, 6, 10), (21, 16, 7, 10), (20, 12, 8, 11)])
-        self.assertEqual(m.graphics(12)[0], (ROOT / 'gfx/sprites/pearl.2bpp').read_bytes()[:192])
+        self.assertEqual(m.draw(12), [(13, 8, 0x3b, 10), (13, 16, 0x3c, 10),
+                                     (21, 8, 0x3d, 10), (21, 16, 0x3e, 10),
+                                     (20, 12, 0x3f, 11)])
+        self.assertEqual(m.graphics(12, 5)[0],
+                         (ROOT / 'gfx/overworld/faraway_rock.2bpp').read_bytes())
 
     def test_refresh_holds_oam_until_the_tree_atlas_is_ready(self):
         m = self.m
@@ -1421,13 +1423,14 @@ class SmashableRockTests(unittest.TestCase):
         m.spawn(2, 'SPRITE_BOULDER_ROCK', movement=8)
         m.call('SetFacingCurrent', bc=m.obj(2))
         m.spawn(3, 'SPRITE_N64', movement=0x12)
-        self.assertEqual([m.tile(i) for i in (1, 2, 3)], [0x3c, 0x38, 0x8c])
+        m.call('SetFacingCurrent', bc=m.obj(3))
+        self.assertEqual([m.tile(i) for i in (1, 2, 3)], [0x3c, 0x38, 0x34])
         self.assertEqual(len(m.loads), 3)
         self.assertEqual(m.graphics(1, 4)[0], (ROOT / 'gfx/overworld/strength_boulder.2bpp').read_bytes())
         self.assertEqual(m.graphics(2, 4)[0], (ROOT / 'gfx/overworld/pokecom_sign.2bpp').read_bytes())
-        self.assertEqual(m.graphics(3)[0], (ROOT / 'gfx/sprites/n64.2bpp').read_bytes()[:192])
+        self.assertEqual(m.graphics(3, 4)[0], (ROOT / 'gfx/overworld/mount_moon_rock.2bpp').read_bytes())
         self.assertEqual([entry[2] for entry in m.draw(2)], [0x38, 0x39, 0x3a, 0x3b])
-        self.assertEqual([entry[2] for entry in m.draw(3, facing=4)], [0x10, 0x11, 0x12, 0x13])
+        self.assertEqual([entry[2] for entry in m.draw(3)], [0x34, 0x35, 0x36, 0x37])
 
     def test_real_map_object_selects_compact_rock_path(self):
         m = self.m
@@ -1558,6 +1561,139 @@ class CompactObjectAllocatorTests(unittest.TestCase):
             self.assertFalse(result['F'] & 0x10)
             self.assertEqual(m.tile(index), 0x40 - index * 4)
             self.assertIn((*SYMBOLS[symbol], 4), m.loads)
+
+
+class SplitOverworldObjectTests(unittest.TestCase):
+    def setUp(self):
+        self.m = Machine()
+
+    def tearDown(self):
+        self.m.close()
+
+    def spawn(self, index, sprite, movement, action='SetFacingCurrent', palette=0):
+        out = self.m.spawn(index, sprite, movement=movement, palette=palette)
+        self.assertFalse(out['F'] & 0x10)
+        self.m.call(action, bc=self.m.obj(index))
+        return self.m.tile(index)
+
+    def assert_resource(self, index, symbol, filename, count):
+        expected = (ROOT / 'gfx/overworld' / f'{filename}.2bpp').read_bytes()
+        self.assertEqual(len(expected), count * 16)
+        self.assertEqual(self.m.graphics(index, count)[0], expected)
+        self.assertIn((*SYMBOLS[symbol], count), self.m.loads)
+
+    def test_console_and_trophy_aliases_use_only_their_unique_tiles(self):
+        m = self.m
+        cases = (
+            ('SPRITE_SNES', 'SnesConsoleSpriteGFX', 'snes', 2),
+            ('SPRITE_N64', 'N64ConsoleSpriteGFX', 'n64', 4),
+            ('SPRITE_GAMECUBE', 'GameCubeConsoleSpriteGFX', 'gamecube', 3),
+            ('SPRITE_WII', 'WiiConsoleSpriteGFX', 'wii', 4),
+            ('SPRITE_SILVER_TROPHY', 'SilverTrophyObjectSpriteGFX', 'silver_trophy', 4),
+            ('SPRITE_GOLD_TROPHY', 'GoldTrophyObjectSpriteGFX', 'gold_trophy', 4),
+        )
+        expected_bases = (0x3e, 0x3a, 0x37, 0x33, 0x2f, 0x2b)
+        for index, ((sprite, symbol, filename, count), base) in enumerate(
+                zip(cases, expected_bases), 1):
+            self.assertEqual(self.spawn(index, sprite, 1), base)
+            self.assert_resource(index, symbol, filename, count)
+
+        self.assertEqual([entry[2] for entry in m.draw(1)],
+                         [0x3e, 0x3e, 0x3f, 0x3f])
+        self.assertEqual([entry[3] & 0x20 for entry in m.draw(1)],
+                         [0, 0x20, 0, 0x20])
+        self.assertEqual([entry[2] for entry in m.draw(3)],
+                         [0x37, 0x37, 0x38, 0x39])
+        self.assertEqual([entry[3] & 0x20 for entry in m.draw(3)],
+                         [0, 0x20, 0, 0])
+
+    def test_snes_n64_and_pearl_variants_route_by_movement(self):
+        m = self.m
+        cases = (
+            ('SPRITE_SNES', 7, 'CrystalVerticalSpriteGFX', 'crystal_vertical', 4,
+             'SetFacingCurrent'),
+            ('SPRITE_SNES', 8, 'CrystalHorizontalSpriteGFX', 'crystal_horizontal', 4,
+             'SetFacingCurrent'),
+            ('SPRITE_N64', 0x12, 'MountMoonRockSpriteGFX', 'mount_moon_rock', 4,
+             'SetFacingCurrent'),
+            ('SPRITE_N64', 8, 'LodestoneSpriteGFX', 'lodestone', 4,
+             'SetFacingCurrent'),
+            ('SPRITE_PEARL', 6, 'PearlObjectSpriteGFX', 'pearl', 4,
+             'SetFacingCurrent'),
+        )
+        expected_bases = (0x3c, 0x38, 0x34, 0x30, 0x2c)
+        for index, ((sprite, movement, symbol, filename, count, action), base) in enumerate(
+                zip(cases, expected_bases), 1):
+            self.assertEqual(self.spawn(index, sprite, movement, action), base)
+            self.assert_resource(index, symbol, filename, count)
+
+        for index in range(1, 6):
+            m.remove(index)
+        self.assertEqual(self.spawn(6, 'SPRITE_PEARL', 0x0c,
+                                    'SetFacingCutTree'), 0x3b)
+        self.assert_resource(6, 'FarawayRockSpriteGFX', 'faraway_rock', 5)
+        self.assertEqual(self.spawn(7, 'SPRITE_PEARL', 0x28,
+                                    'SetFacingMuseumDrill'), 0x39)
+        self.assertEqual(self.spawn(8, 'SPRITE_PEARL', 0x29,
+                                    'SetFacingMuseumDrill'), 0x39)
+        self.assert_resource(7, 'VermilionArchSpriteGFX', 'vermilion_arch', 2)
+        self.assertEqual([entry[2] for entry in m.draw(6)],
+                         [0x3b, 0x3c, 0x3d, 0x3e, 0x3f])
+        self.assertEqual(m.draw(7), [(12, 8, 0x39, 8)])
+        self.assertEqual(m.draw(8), [(12, 16, 0x3a, 8)])
+        self.assertEqual(sum(load == (*SYMBOLS['VermilionArchSpriteGFX'], 2)
+                             for load in m.loads), 1)
+
+    def test_weird_tree_animation_and_caitlin_share_no_duplicate_tiles(self):
+        m = self.m
+        self.assertEqual(self.spawn(1, 'SPRITE_WEIRD_TREE', 0x11,
+                                    'SetFacingWeirdTree'), 0x39)
+        self.assertEqual(self.spawn(2, 'SPRITE_WEIRD_TREE', 8), 0x37)
+        self.assert_resource(1, 'CompactWeirdTreeSpriteGFX', 'weird_tree', 7)
+        self.assert_resource(2, 'CaitlinBackSpriteGFX', 'caitlin_back', 2)
+        expected = (
+            [0x39, 0x3a, 0x3b, 0x3b],
+            [0x3c, 0x3d, 0x3e, 0x3f],
+            [0x39, 0x3a, 0x3b, 0x3b],
+            [0x3c, 0x3d, 0x3e, 0x3f],
+        )
+        for facing, tiles in enumerate(expected, 0x54):
+            self.assertEqual([entry[2] for entry in m.draw(1, facing)], tiles)
+        self.assertEqual([entry[2] for entry in m.draw(2)],
+                         [0x37, 0x37, 0x38, 0x38])
+
+    def test_sinjoh_unown_keep_open_and_closed_eye_frames(self):
+        m = self.m
+        cases = (
+            ('SPRITE_WII', 'UnownWSpriteGFX', 'unown_w', 4, 0x3c,
+             [0, 0, 1, 1], [2, 2, 3, 3]),
+            ('SPRITE_GAMECUBE', 'UnownASpriteGFX', 'unown_a', 3, 0x39,
+             [0, 0, 1, 1], [2, 2, 1, 1]),
+            ('SPRITE_GOLD_TROPHY', 'UnownRSpriteGFX', 'unown_r', 4, 0x35,
+             [0, 0, 1, 2], [3, 3, 1, 2]),
+            ('SPRITE_SILVER_TROPHY', 'UnownPSpriteGFX', 'unown_p', 8, 0x2d,
+             [0, 1, 2, 3], [4, 5, 6, 7]),
+        )
+        for index, (sprite, symbol, filename, count, base, opened, closed) in enumerate(cases, 1):
+            self.assertEqual(self.spawn(index, sprite, 0x39, 'SetFacingUnownEye'), base)
+            self.assert_resource(index, symbol, filename, count)
+            self.assertEqual([entry[2] for entry in m.draw(index)],
+                             [base + tile for tile in opened])
+            m.p.memory[m.obj(index) + 0xc] = 15
+            m.call('SetFacingUnownEye', bc=m.obj(index))
+            self.assertEqual([entry[2] for entry in m.draw(index)],
+                             [base + tile for tile in closed])
+
+        before = [m.tile(i) for i in range(1, 5)]
+        m.loads.clear()
+        m.call('RefreshSprites')
+        self.assertEqual([m.tile(i) for i in range(1, 5)], before)
+        self.assertEqual(len(m.loads), 5)  # four Unown resources plus the player
+        for _, symbol, _, count, _, _, _ in cases:
+            self.assertEqual(sum(load == (*SYMBOLS[symbol], count)
+                                 for load in m.loads), 1)
+        source = (ROOT / 'maps/RuinsOfAlphSinjohChamber.asm').read_text()
+        self.assertEqual(source.count('SPRITEMOVEDATA_UNOWN_EYE'), 4)
 
 
 class NamingScreenBallTests(unittest.TestCase):
