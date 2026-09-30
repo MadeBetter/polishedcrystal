@@ -3010,6 +3010,8 @@ InitSprites:
 	ld a, [bc]
 	cp SPRITE_CHRIS
 	jr z, .chris_player
+	cp SPRITE_CHRIS_RUN
+	jr z, .chris_player
 	; Only the player gets Chris's asymmetric vertical head layout. NPCs using
 	; the same sprite retain the standard whole-body mirror.
 	ld a, e

@@ -169,7 +169,7 @@ ChrisOverlayFacings:
 	dw ChrisOverlayUpStatic    ; FACING_STEP_UP_0
 	dw ChrisOverlayUpWalk      ; FACING_STEP_UP_1
 	dw ChrisOverlayUpStatic    ; FACING_STEP_UP_2
-	dw ChrisOverlayUpWalk      ; FACING_STEP_UP_3
+	dw ChrisOverlayUpWalkFlip  ; FACING_STEP_UP_3
 	dw ChrisOverlayLeftStatic  ; FACING_STEP_LEFT_0
 	dw ChrisOverlayLeftWalk    ; FACING_STEP_LEFT_1
 	dw ChrisOverlayLeftStatic  ; FACING_STEP_LEFT_2
@@ -182,43 +182,48 @@ ChrisOverlayFacings:
 
 ChrisOverlayDownStatic:
 	db 3 ; #
-	db 0, 0, ABSOLUTE_TILE_ID, $74
-	db 0, 8, ABSOLUTE_TILE_ID, $75
+	db 0, 5, ABSOLUTE_TILE_ID, $75
+	db 1, 0, ABSOLUTE_TILE_ID, $74
 	db 8, 4, ABSOLUTE_TILE_ID, $76
 
 ChrisOverlayDownWalk:
 	db 3 ; #
-	db 1, 0, ABSOLUTE_TILE_ID, $74
-	db 1, 8, ABSOLUTE_TILE_ID, $75
+	db 1, 5, ABSOLUTE_TILE_ID, $75
+	db 2, 0, ABSOLUTE_TILE_ID, $74
 	db 9, 4, ABSOLUTE_TILE_ID, $7c
 
 ChrisOverlayDownWalkFlip:
 	db 3 ; #
-	db 1, 0, ABSOLUTE_TILE_ID, $74
-	db 1, 8, ABSOLUTE_TILE_ID, $75
+	db 1, 5, ABSOLUTE_TILE_ID, $75
+	db 2, 0, ABSOLUTE_TILE_ID, $74
 	db 9, 4, ABSOLUTE_TILE_ID | OAM_XFLIP, $7c
 
 ChrisOverlayUpStatic:
 	db 2 ; #
-	db -1, 4, ABSOLUTE_TILE_ID, $77
-	db  8, 4, ABSOLUTE_TILE_ID, $78
+	db 0, 4, ABSOLUTE_TILE_ID, $77
+	db 8, 4, ABSOLUTE_TILE_ID, $78
 
 ChrisOverlayUpWalk:
 	db 2 ; #
-	db 0, 4, ABSOLUTE_TILE_ID, $77
-	db 8, 4, ABSOLUTE_TILE_ID, $7d
+	db 1, 4, ABSOLUTE_TILE_ID, $77
+	db 9, 4, ABSOLUTE_TILE_ID, $7d
+
+ChrisOverlayUpWalkFlip:
+	db 2 ; #
+	db 1, 4, ABSOLUTE_TILE_ID, $77
+	db 9, 4, ABSOLUTE_TILE_ID | OAM_XFLIP, $7d
 
 ChrisOverlayLeftStatic:
 	db 3 ; #
 	db 0, 0, ABSOLUTE_TILE_ID, $79
 	db 0, 8, ABSOLUTE_TILE_ID, $7a
-	db 8, 7, ABSOLUTE_TILE_ID, $7b
+	db 8, 5, ABSOLUTE_TILE_ID, $7b
 
 ChrisOverlayRightStatic:
 	db 3 ; #
 	db 0, 8, ABSOLUTE_TILE_ID | OAM_XFLIP, $79
 	db 0, 0, ABSOLUTE_TILE_ID | OAM_XFLIP, $7a
-	db 8, 1, ABSOLUTE_TILE_ID | OAM_XFLIP, $7b
+	db 8, 3, ABSOLUTE_TILE_ID | OAM_XFLIP, $7b
 
 ChrisOverlayLeftWalk:
 	db 3 ; #

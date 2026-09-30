@@ -36,6 +36,10 @@ ChrisPlayerOverlayGFX::
 	INCBIN "gfx/overlays/chris.2bpp"
 	assert @ - ChrisPlayerOverlayGFX == PLAYER_OVERLAY_TILES tiles
 
+ChrisRunPlayerOverlayGFX::
+	INCBIN "gfx/overlays/chris_run.2bpp"
+	assert @ - ChrisRunPlayerOverlayGFX == PLAYER_OVERLAY_TILES tiles
+
 
 SECTION "Overworld Weather Graphics", ROMX
 

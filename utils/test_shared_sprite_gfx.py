@@ -423,7 +423,7 @@ class SharedSpriteTests(unittest.TestCase):
         self.assertEqual(m.tile(1), m.tile(2))
         self.assertNotEqual(m.tile(0), m.tile(1))
         old = m.graphics(1)
-        m.put('wPlayerState', 1)  # bike
+        m.put('wPlayerState', 1)  # run
         m.call('_UpdatePlayerSprite')
         self.assertEqual(m.graphics(1), old)
         self.assertNotEqual(m.graphics(0), old)
@@ -442,9 +442,9 @@ class SharedSpriteTests(unittest.TestCase):
                 up_entries = m.draw(0, 7)
                 self.assertEqual(down_entries[:4], down)
                 self.assertEqual(up_entries[:4], up)
-                expected_count = 7 if sprite == 'SPRITE_CHRIS' else 4
+                expected_count = 7 if sprite in ('SPRITE_CHRIS', 'SPRITE_CHRIS_RUN') else 4
                 self.assertEqual((len(down_entries), len(up_entries)),
-                                 (expected_count, 6 if sprite == 'SPRITE_CHRIS' else 4))
+                                 (expected_count, 6 if expected_count == 7 else 4))
 
         # Other player characters, and NPCs borrowing Chris's sprite, retain
         # the generic whole-body mirror.
@@ -467,20 +467,21 @@ class SharedSpriteTests(unittest.TestCase):
 
         # Coordinates are relative to the player's (y=12, x=8) render origin.
         # Right-facing records reflect both the tile and its horizontal offset.
-        down_static = [(0, 0, 0x74, 0), (0, 8, 0x75, 0), (8, 4, 0x76, 0)]
-        down_walk = [(1, 0, 0x74, 0), (1, 8, 0x75, 0), (9, 4, 0x7c, 0)]
-        down_walk_flip = [(1, 0, 0x74, 0), (1, 8, 0x75, 0), (9, 4, 0x7c, 0x20)]
-        up_static = [(-1, 4, 0x77, 0), (8, 4, 0x78, 0)]
-        up_walk = [(0, 4, 0x77, 0), (8, 4, 0x7d, 0)]
-        left_static = [(0, 0, 0x79, 0), (0, 8, 0x7a, 0), (8, 7, 0x7b, 0)]
+        down_static = [(0, 5, 0x75, 0), (1, 0, 0x74, 0), (8, 4, 0x76, 0)]
+        down_walk = [(1, 5, 0x75, 0), (2, 0, 0x74, 0), (9, 4, 0x7c, 0)]
+        down_walk_flip = [(1, 5, 0x75, 0), (2, 0, 0x74, 0), (9, 4, 0x7c, 0x20)]
+        up_static = [(0, 4, 0x77, 0), (8, 4, 0x78, 0)]
+        up_walk = [(1, 4, 0x77, 0), (9, 4, 0x7d, 0)]
+        up_walk_flip = [(1, 4, 0x77, 0), (9, 4, 0x7d, 0x20)]
+        left_static = [(0, 0, 0x79, 0), (0, 8, 0x7a, 0), (8, 5, 0x7b, 0)]
         right_static = [(0, 8, 0x79, 0x20), (0, 0, 0x7a, 0x20),
-                        (8, 1, 0x7b, 0x20)]
+                        (8, 3, 0x7b, 0x20)]
         left_walk = [(1, 0, 0x7e, 0), (1, 8, 0x7a, 0), (9, 5, 0x7f, 0)]
         right_walk = [(1, 8, 0x7e, 0x20), (1, 0, 0x7a, 0x20),
                       (9, 3, 0x7f, 0x20)]
         expected = {
             0: down_static, 1: down_walk, 2: down_static, 3: down_walk_flip,
-            4: up_static, 5: up_walk, 6: up_static, 7: up_walk,
+            4: up_static, 5: up_walk, 6: up_static, 7: up_walk_flip,
             8: left_static, 9: left_walk, 10: left_static, 11: left_walk,
             12: right_static, 13: right_walk, 14: right_static, 15: right_walk,
         }
@@ -493,13 +494,50 @@ class SharedSpriteTests(unittest.TestCase):
                 self.assertEqual(m.p.memory[m.addr('wPlayerCurrentOAMCount')],
                                  4 + len(overlay))
 
-    def test_chris_overlay_is_regular_state_only_and_never_partial(self):
+    def test_running_chris_overlay_all_walk_facings_use_bank1_palette_and_offsets(self):
+        m = self.m
+        m.spawn(0, 'SPRITE_CHRIS_RUN')
+        m.call('CheckForUsedObjPals')
+        slot = 1
+
+        down_static = [(0, 5, 0x75, 0), (1, 0, 0x74, 0), (8, 4, 0x76, 0)]
+        down_walk = [(1, 5, 0x75, 0), (2, 0, 0x74, 0), (9, 4, 0x7c, 0)]
+        down_walk_flip = [(1, 5, 0x75, 0), (2, 0, 0x74, 0),
+                          (9, 4, 0x7c, 0x20)]
+        up_static = [(0, 4, 0x77, 0), (8, 4, 0x78, 0)]
+        up_walk = [(1, 4, 0x77, 0), (9, 4, 0x7d, 0)]
+        up_walk_flip = [(1, 4, 0x77, 0), (9, 4, 0x7d, 0x20)]
+        left_static = [(0, 0, 0x79, 0), (0, 8, 0x7a, 0), (8, 5, 0x7b, 0)]
+        right_static = [(0, 8, 0x79, 0x20), (0, 0, 0x7a, 0x20),
+                        (8, 3, 0x7b, 0x20)]
+        left_walk = [(1, 0, 0x7e, 0), (1, 8, 0x7a, 0), (9, 5, 0x7f, 0)]
+        right_walk = [(1, 8, 0x7e, 0x20), (1, 0, 0x7a, 0x20),
+                      (9, 3, 0x7f, 0x20)]
+        expected = {
+            0: down_static, 1: down_walk, 2: down_static, 3: down_walk_flip,
+            4: up_static, 5: up_walk, 6: up_static, 7: up_walk_flip,
+            8: left_static, 9: left_walk, 10: left_static, 11: left_walk,
+            12: right_static, 13: right_walk, 14: right_static, 15: right_walk,
+        }
+        for facing, relative in expected.items():
+            with self.subTest(facing=facing):
+                entries = m.draw(0, facing)
+                overlay = [(12 + y, 8 + x, tile, 8 | slot | flip)
+                           for y, x, tile, flip in relative]
+                self.assertEqual(entries[4:], overlay)
+                self.assertEqual(m.p.memory[m.addr('wPlayerCurrentOAMCount')],
+                                 4 + len(overlay))
+
+    def test_chris_overlay_is_player_walk_or_run_only_and_never_partial(self):
         m = self.m
         m.spawn(0, 'SPRITE_CHRIS')
         m.call('CheckForUsedObjPals')
         self.assertEqual(len(m.draw(0, 0)), 7)
 
-        for sprite in ('SPRITE_CHRIS_RUN', 'SPRITE_CHRIS_BIKE', 'SPRITE_CHRIS_SURF'):
+        m.spawn(0, 'SPRITE_CHRIS_RUN')
+        self.assertEqual(len(m.draw(0, 0)), 7)
+
+        for sprite in ('SPRITE_CHRIS_BIKE', 'SPRITE_CHRIS_SURF'):
             with self.subTest(sprite=sprite):
                 m.spawn(0, sprite)
                 m.call('CheckForUsedObjPals')
@@ -777,7 +815,7 @@ class DialogueRestoreTests(unittest.TestCase):
         m = self.m
         m.spawn(3, 'SPRITE_TEACHER')
         m.spawn(2, 'SPRITE_MON_ICON', species=16, form=1)
-        m.put('wPlayerState', 1)  # biking changes the player graphics resource
+        m.put('wPlayerState', 1)  # running changes the player graphics resource
         copies = self.capture_copies()
         m.call('RestoreTextSpriteGFX')
         self.assertTrue(any(address < 0x8800 for address, _ in copies))
@@ -793,7 +831,9 @@ class AtlasTests(unittest.TestCase):
         self.atlas = (ROOT / 'gfx/overworld/overworld.2bpp').read_bytes()
         self.trunks = (ROOT / 'gfx/overworld/trunks.2bpp').read_bytes()
         self.player_overlay = (ROOT / 'gfx/overlays/chris.2bpp').read_bytes()
+        self.player_run_overlay = (ROOT / 'gfx/overlays/chris_run.2bpp').read_bytes()
         self.assertEqual(len(self.player_overlay), 12 * 16)
+        self.assertEqual(len(self.player_run_overlay), 12 * 16)
         self.outdoor_atlas = self.atlas[:9 * 16] + self.trunks + self.atlas[11 * 16:]
 
     def tearDown(self):
@@ -835,6 +875,21 @@ class AtlasTests(unittest.TestCase):
                 self.assertEqual(m.vram(1, 0x8800, 0x8900), bytes([0x5a]) * 0x100)
                 self.assertEqual(m.p.memory[0xff4f] & 1, 1)
                 self.assertEqual(m.p.memory[0xff70] & 7, SYMBOLS['wPlayerStruct'][0])
+
+    def test_player_state_transitions_swap_run_overlay_and_restore_normal_overlay(self):
+        m = self.m
+        m.spawn(0, 'SPRITE_CHRIS')
+        m.p.memory[0xff4f] = 1
+
+        m.put('wPlayerState', 1)  # PLAYER_RUN
+        m.call('_UpdatePlayerSprite')
+        self.assertEqual(m.vram(1, 0x8740, 0x8800), self.player_run_overlay)
+        self.assertEqual(m.p.memory[0xff4f] & 1, 1)
+
+        m.put('wPlayerState', 0)  # PLAYER_NORMAL
+        m.call('_UpdatePlayerSprite')
+        self.assertEqual(m.vram(1, 0x8740, 0x8800), self.player_overlay)
+        self.assertEqual(m.p.memory[0xff4f] & 1, 1)
 
     def test_cut_trees_use_atlas_without_uploads_and_keep_oam_layout(self):
         m = self.m

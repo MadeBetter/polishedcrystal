@@ -1,5 +1,6 @@
 _UpdatePlayerSprite::
 	call GetPlayerSprite
+	call LoadPlayerOverlayGFX
 	ld a, [wPlayerSprite]
 	ldh [hUsedSpriteIndex], a
 	xor a
@@ -137,11 +138,29 @@ LoadOverworldGFX::
 	lb bc, BANK(LoadOverworldGFX), $80 - $6f
 	call Get2bpp
 
+	call LoadPlayerOverlayGFX
+	pop af
+	ldh [rVBK], a
+	ret
+
+LoadPlayerOverlayGFX::
+; The fixed overlay region follows Chris's currently selected player state.
+; UpdatePlayerSprite calls this on both transitions, so leaving PLAYER_RUN
+; restores the ordinary overlay without requiring a full graphics refresh.
+	ld de, ChrisPlayerOverlayGFX
+	ld b, BANK(ChrisPlayerOverlayGFX)
+	ld a, [wPlayerSprite]
+	cp SPRITE_CHRIS_RUN
+	jr nz, .got_source
+	ld de, ChrisRunPlayerOverlayGFX
+	ld b, BANK(ChrisRunPlayerOverlayGFX)
+.got_source
+	ldh a, [rVBK]
+	push af
 	ld a, BANK(vTiles3)
 	ldh [rVBK], a
 	ld hl, vTiles3 tile PLAYER_OVERLAY_VRAM1_TILE
-	ld de, ChrisPlayerOverlayGFX
-	lb bc, BANK(ChrisPlayerOverlayGFX), PLAYER_OVERLAY_TILES
+	ld c, PLAYER_OVERLAY_TILES
 	call Get2bpp
 	pop af
 	ldh [rVBK], a

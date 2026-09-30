@@ -78,11 +78,13 @@ the player-overlay region, even with a 15-tile special sprite present.
 | `$27-$34` | `$8270-$834f` | 14 |
 | `$67-$73` | `$8670-$873f` | 13 |
 
-Bank-1 tiles `$74-$7f` are a fixed 12-tile player-overlay region. Every
-`LoadOverworldGFX` call uploads `gfx/overlays/chris.png` there, after restoring
-the bank-0 effects atlas, and restores the caller's original VRAM bank. The
-current asset is raw 2bpp data in ROM because its exact 192-byte size is small
-and avoids decompression scratch or persistent WRAM.
+Bank-1 tiles `$74-$7f` are a fixed 12-tile player-overlay region.
+`LoadOverworldGFX` and player-state updates upload `gfx/overlays/chris.png` for
+the ordinary Chris sprite or `gfx/overlays/chris_run.png` for `SPRITE_CHRIS_RUN`.
+Entering the running state replaces the region in place, and leaving it restores
+the ordinary overlay. Both paths restore the caller's original VRAM bank. The
+assets are raw 2bpp data in ROM because each exact 192-byte image is small and
+avoids decompression scratch or persistent WRAM.
 
 Chris's normal, running, biking, and surfing sprites use a player-only vertical
 step layout. On the mirrored down/up frame, the lower body keeps the standard
@@ -90,8 +92,8 @@ horizontal flip while the two head tiles retain their unmirrored positions and
 attributes. Other player characters and NPCs using Chris graphics keep the
 generic facing layout.
 
-Only the regular `SPRITE_CHRIS` state currently renders the bank-1 overlay;
-running, biking, surfing, fishing, other player characters, and NPC Chris
+The regular `SPRITE_CHRIS` and `SPRITE_CHRIS_RUN` states render the bank-1
+overlay; biking, surfing, fishing, other player characters, and NPC Chris
 sprites do not. The overlay uses `PAL_OW_CHRIS_OVERLAY` through the dynamic
 object-palette loader, independently of the base player's palette. Hardware OBJ
 palette slot 0 is permanently assigned to the current player palette, and slot
@@ -102,8 +104,9 @@ records are rendered after the base four objects, giving them foreground OAM
 priority. If the complete overlay record does not fit, none of its objects are
 written and the four-object base player remains valid.
 
-The static mappings are `$74/$75/$76` over down `$00/$01/$02`, `$77/$78`
-over up `$04/$06`, and `$79/$7a/$7b` over side `$08/$09/$0b`. Walking uses
+Both normal and running Chris use one shared overlay-facing table. The static
+mappings are `$74/$75/$76` over down `$00/$01/$02`, `$77/$78` over up
+`$04/$06`, and `$79/$7a/$7b` over side `$08/$09/$0b`. Moving poses use
 `$74/$75/$7c` over down `$80/$81/$82`, `$77/$7d` over up `$84/$86`, and
 `$7e/$7a/$7f` over side `$88/$89/$8a`. Horizontal offsets and X flips reflect
 with right-facing frames; for example, `$7f` moves from x+5 over left-facing
