@@ -112,6 +112,18 @@ mappings are `$74/$75/$76` over down `$00/$01/$02`, `$77/$78` over up
 with right-facing frames; for example, `$7f` moves from x+5 over left-facing
 `$8a` to x-5 over its mirrored right-facing position.
 
+During normal downward walking, a static -> moving transition arms a bounce
+that spans moving frames 10-16 and the next eight static ticks. Only `$74`
+moves: cycle frames 10-14 are +1 px and 15-16 are 0 relative to the current
+moving pose; frame 17 is +1 px, 18-19 are 0, 20-23 are -1 px, and 24 is 0
+relative to the current static pose. Offsets are added to the pose already rendered, so
+the pose switch and its matching alignment happen in the same OAM rebuild.
+Another bounce requires another static -> moving pair; standing still does
+not restart it. Running, other directions, other characters, and
+NPCs do not use the bounce. The state advances once per object update, so OAM
+rebuilds alone cannot change its timing. One transient WRAM0 byte records the
+transition and progress, and sprite setup clears it.
+
 Two additional transient WRAM0 bytes remember the dynamically selected shared
 tree-trunk palette slot and the current total player OAM count.
 `HidePlayerSprite` therefore hides all six or seven player objects when an overlay is active, while retaining

@@ -528,6 +528,92 @@ class SharedSpriteTests(unittest.TestCase):
                 self.assertEqual(m.p.memory[m.addr('wPlayerCurrentOAMCount')],
                                  4 + len(overlay))
 
+    def test_downward_hair_bounce_tracks_cycles_and_current_pose_offsets(self):
+        m = self.m
+        m.spawn(0, 'SPRITE_CHRIS')
+        # Use the real object tick/action path with fixed coordinates. Starting
+        # at $ff makes the next counter value 0, the first of eight static ticks.
+        m.put('wPlayerStepType', 3)  # STEP_TYPE_STANDING
+        m.put('wPlayerAction', 2)  # OBJECT_ACTION_STEP
+        m.put('wPlayerStepFrame', 255)
+        bounce = [1, 0, 0, -1, -1, -1, -1, 0] + [0] + [1] * 5 + [0, 0]
+        ys = []
+        for frame in range(1, 65):
+            m.call('HandleNPCStep')
+            facing = m.p.memory[m.addr('wPlayerFacing')]
+            expected_phase = ((frame - 1) // 8) % 4
+            self.assertEqual(facing, expected_phase)
+            entries = m.draw(0)
+            hair = next(entry for entry in entries if entry[2] == 0x74)
+            phase_tick = (frame - 1) % 16
+            offset = bounce[phase_tick] if frame >= 10 else 0
+            normal_y = 13 if facing % 2 == 0 else 14
+            self.assertEqual(hair, (normal_y + offset, 8, 0x74, 9), frame)
+            ys.append(hair[0])
+            other_head = next(entry for entry in entries if entry[2] == 0x75)
+            self.assertEqual(other_head, (12 + facing % 2, 13, 0x75, 9))
+            # Lower OAM index still puts $74 above the overlapping $75.
+            shadow = m.addr('wShadowOAM')
+            tiles = [m.p.memory[shadow + i * 4 + 2] for i in range(40)]
+            self.assertLess(tiles.index(0x74), tiles.index(0x75))
+            before = m.p.memory[m.addr('wChrisHairBounceState')]
+            self.assertEqual(m.draw(0), entries)  # extra redraw isn't an animation tick
+            self.assertEqual(m.p.memory[m.addr('wChrisHairBounceState')], before)
+        # Absolute Y follows the current pose through the moving/static switch.
+        self.assertEqual(ys[8:24], [14, 15, 15, 15, 15, 15, 14, 14,
+                                  14, 13, 13, 12, 12, 12, 12, 13])
+        self.assertEqual(ys[15], ys[16])  # no absolute Y jump at frame 16 -> 17
+
+    def test_hair_bounce_requires_static_before_moving_and_settles_without_restart(self):
+        m = self.m
+        m.spawn(0, 'SPRITE_CHRIS')
+        m.put('wPlayerAction', 2)
+        # Seeing only moving -> static does not qualify for a bounce.
+        for facing in [1] * 8 + [2] * 8:
+            m.put('wPlayerFacing', facing)
+            m.call('UpdateChrisHairBounce')
+            self.assertLess(m.p.memory[m.addr('wChrisHairBounceState')], 3)
+        for facing in [3] * 8:
+            m.put('wPlayerFacing', facing)
+            m.call('UpdateChrisHairBounce')
+        m.put('wPlayerFacing', 0)
+        m.put('wPlayerAction', 1)  # settle to static when movement stops
+        ys = []
+        for _ in range(24):
+            m.call('UpdateChrisHairBounce')
+            ys.append(next(entry[0] for entry in m.draw(0) if entry[2] == 0x74))
+        self.assertEqual(ys, [14, 13, 13, 12, 12, 12, 12, 13] + [13] * 16)
+
+    def test_hair_bounce_cancels_on_direction_state_or_character_changes(self):
+        m = self.m
+        m.spawn(0, 'SPRITE_CHRIS')
+        m.put('wPlayerAction', 2)
+        for symbol, byte_offset, value in [('wPlayerFacing', 0, 12),
+                                          ('wPlayerState', 0, 1),
+                                          ('wPlayerSprite', 0, SPRITES['SPRITE_KRIS']),
+                                          ('wPlayerAction', 0, 3),
+                                          ('wPlayerFlags', 0, 8),
+                                          ('wPlayerFlags', 1, 0x20)]:
+            m.put('wPlayerState', 0)
+            m.put('wPlayerSprite', SPRITES['SPRITE_CHRIS'])
+            m.put('wPlayerAction', 2)
+            m.put('wPlayerFlags', 0)
+            m.p.memory[m.addr('wPlayerFlags') + 1] = 0
+            m.put('wPlayerFacing', 0)
+            m.put('wChrisHairBounceState', 7)
+            m.p.memory[m.addr(symbol) + byte_offset] = value
+            m.call('UpdateChrisHairBounce')
+            self.assertEqual(m.p.memory[m.addr('wChrisHairBounceState')], 0)
+
+    def test_running_and_npc_chris_do_not_render_walking_hair_bounce(self):
+        m = self.m
+        m.spawn(0, 'SPRITE_CHRIS_RUN')
+        m.put('wPlayerState', 1)
+        m.put('wChrisHairBounceState', 7)  # stale state during a graphics switch
+        self.assertEqual(next(entry[0] for entry in m.draw(0, 0) if entry[2] == 0x74), 13)
+        m.spawn(1, 'SPRITE_CHRIS')
+        self.assertEqual(len(m.draw(1, 0)), 4)
+
     def test_chris_overlay_is_player_walk_or_run_only_and_never_partial(self):
         m = self.m
         m.spawn(0, 'SPRITE_CHRIS')

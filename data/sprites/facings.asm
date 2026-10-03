@@ -159,6 +159,11 @@ FacingChrisStepUp3:
 	db  8,  8, RELATIVE_ATTRIBUTES | OAM_XFLIP, $86
 	db  8,  0, RELATIVE_ATTRIBUTES | OAM_XFLIP, $87
 
+ChrisHairBounceOffsets:
+; Cycle frames 10-16 use the moving pose; 17-24 use the next static pose.
+; Offsets are relative to the pose already rendered, not a fixed Y position.
+	db 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, -1, -1, -1, -1, 0
+
 ChrisOverlayFacings:
 ; entries correspond to the ordinary FACING_STEP_* constants
 	table_width 2

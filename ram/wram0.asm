@@ -1519,3 +1519,8 @@ SECTION "Player Overlay and Tree Palette Rendering", WRAM0
 ; Transient hardware palette selection and variable-size player OAM state.
 wTreeTrunkPalette:: db
 wPlayerCurrentOAMCount:: db
+
+; 0 = waiting for static, 1 = saw static, 2-9 = eight moving ticks,
+; 10-17 = eight following static ticks. Bounce offsets apply to states 3-17.
+; Updated once per object tick, not OAM draw.
+wChrisHairBounceState:: db

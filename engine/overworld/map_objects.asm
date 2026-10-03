@@ -2501,7 +2501,7 @@ HandleNPCStep::
 	inc a
 	cp NUM_OBJECT_STRUCTS
 	jr nz, .loop
-	ret
+	jmp UpdateChrisHairBounce
 
 .ResetStepVector
 	xor a
@@ -2516,12 +2516,74 @@ HandleNPCStep::
 	ldh [hPlayerStepDirection], a
 	ret
 
+UpdateChrisHairBounce:
+; Arm on downward static -> moving; bounce across moving and next static.
+; One call per HandleNPCStep tick; repeated OAM rebuilds only read this state.
+	ld a, [wPlayerSprite]
+	cp SPRITE_CHRIS
+	jr nz, .reset
+	ld a, [wPlayerState]
+	and a ; PLAYER_NORMAL
+	jr nz, .reset
+	ld a, [wPlayerFlags]
+	and INVISIBLE | SLIDING
+	jr nz, .reset
+	ld a, [wPlayerFlags + 1]
+	and OFF_SCREEN | FROZEN
+	jr nz, .reset
+	ld a, [wPlayerAction]
+	cp OBJECT_ACTION_STAND
+	jr z, .check_facing
+	cp OBJECT_ACTION_STEP
+	jr nz, .reset
+.check_facing
+	ld a, [wPlayerFacing]
+	cp FACING_STEP_UP_0
+	jr nc, .reset
+	ld hl, wChrisHairBounceState
+	bit 0, a ; static phases 0/2; moving phases 1/3
+	jr nz, .moving
+	ld a, [hl]
+	cp 2
+	jr c, .settled
+	cp 10
+	jr c, .start
+	cp 17
+	jr c, .advance
+.settled
+	ld [hl], 1
+	ret
+.moving
+	ld a, [hl]
+	and a
+	ret z ; no preceding static pose: no bounce
+	cp 2
+	jr c, .arm
+	cp 9
+	jr c, .advance
+	ret z ; hold the last moving tick until the pose changes
+	jr .arm ; another static -> moving transition starts a new cycle
+.advance
+	inc [hl]
+	ret
+.arm
+	ld [hl], 2
+	ret
+.start
+	ld [hl], 10
+	ret
+.reset
+	xor a
+	ld [wChrisHairBounceState], a
+	ret
+
 RefreshPlayerSprite:
 	ld a, movement_step_sleep_1
 	ld [wPlayerNextMovement], a
 	xor a
 	ld [wPlayerTurningDirection], a
 	ld [wPlayerStepFrame], a
+	ld [wChrisHairBounceState], a
 	call .TryResetPlayerAction
 	farcall CheckWarpFacingDown
 	call c, SpawnInFacingDown
@@ -3190,8 +3252,36 @@ InitSprites:
 	cpl
 	add OAM_SIZE + 1
 	ld [wPlayerCurrentOAMSlot], a
+	call .ApplyChrisHairBounce
 .no_chris_overlay
 	xor a
+	ret
+
+.ApplyChrisHairBounce
+	ld a, [wPlayerState]
+	and a ; running uses the shared alignment but never the walking bounce
+	ret nz
+	ld a, [wPlayerFacing]
+	cp FACING_STEP_UP_0
+	ret nc
+	ld a, [wChrisHairBounceState]
+	sub 3
+	cp 15
+	ret nc
+	ld e, a
+	ld d, 0
+	ld hl, ChrisHairBounceOffsets
+	add hl, de
+	ld e, [hl]
+	ld a, [wPlayerCurrentOAMSlot]
+	; Down overlays are stored backward as $76/$7c, $74, $75 in OAM.
+	; Add to the current pose's Y; $74's priority above $75 is unchanged.
+	add OBJ_SIZE
+	ld l, a
+	ld h, HIGH(wShadowOAM)
+	ld a, [hl]
+	add e
+	ld [hl], a
 	ret
 
 .ObjectStructPointers:
