@@ -255,7 +255,7 @@ ENDM
 	map_const ROUTE_32_POKECENTER_1F,                      6,  4 ; 11
 	map_const ROUTE_32_COAST_HOUSE,                        4,  4 ; 12
 	map_const MAGNET_TUNNEL_EAST,                         10, 10 ; 13
-	map_const VIOLET_OUTSKIRTS,                           20, 10 ; 14
+	map_const VIOLET_OUTSKIRTS,                           20,  9 ; 14
 	map_const VIOLET_OUTSKIRTS_HOUSE,                      4,  4 ; 15
 
 	newgroup                                                     ; 11

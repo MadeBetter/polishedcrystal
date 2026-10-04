@@ -39,10 +39,10 @@
 	tilecoll WALL, WALL, WALL, WALL ; 26
 	tilecoll WALL, WALL, WALL, WALL ; 27
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 28: Violet Red++ b3
-	tilecoll WALL, WALL, WALL, WALL ; 29: Violet Red++ b4
-	tilecoll WALL, WALL, DOOR, WALL ; 2a: Violet Red++ b5
+	tilecoll WALL, FLOOR, WALL, FLOOR ; 29: Outskirts Red++ 0c
+	tilecoll WALL, FLOOR, WALL, WALL ; 2a: Outskirts Red++ 28
 	tilecoll WALL, WALL, WALL, WALL ; 2b
-	tilecoll WALL, WALL, FLOOR, FLOOR ; 2c: Violet Red++ b6
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 2c: Outskirts Red++ 29
 	tilecoll LEDGE_DOWN, FLOOR, WALL, FLOOR ; 2d
 	tilecoll LEDGE_RIGHT, WALL, LEDGE_RIGHT, WALL ; 2e
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 2f
@@ -74,7 +74,7 @@
 	tilecoll WALL, WALL, WALL, WALL ; 49: Violet Red++ c7
 	tilecoll WALL, FLOOR, WALL, WALL ; 4a
 	tilecoll FLOOR, WALL, WALL, WALL ; 4b
-	tilecoll TOP_WALL, TOP_WALL, FLOOR, FLOOR ; 4c
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 4c: Outskirts Red++ 5d
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 4d
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 4e
 	tilecoll BOTTOM_WALL, FLOOR, CAVE, WALL ; 4f
@@ -98,21 +98,21 @@
 	tilecoll WALL, WALL, WALL, WALL ; 61: Violet PNG correction (2,18)
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; 62: Violet berry tree (5,15)
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 63: Violet berry tree (5,16)
-	tilecoll WALL, FLOOR, WALL, WALL ; 64
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 65
-	tilecoll FLOOR, WALL, WALL, WALL ; 66
-	tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WARP_CARPET_DOWN ; 67
-	tilecoll WALL, WALL, WALL, FLOOR ; 68
-	tilecoll WALL, WALL, FLOOR, FLOOR ; 69
-	tilecoll WALL, WALL, FLOOR, WALL ; 6a
-	tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WARP_CARPET_DOWN ; 6b
-	tilecoll WALL, FLOOR, WALL, FLOOR ; 6c
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 6d
-	tilecoll FLOOR, WALL, FLOOR, WALL ; 6e
+	tilecoll WALL, WALL, WALL, WALL ; 64: Outskirts Red++ 63
+	tilecoll WALL, WALL, WALL, WALL ; 65: Outskirts Red++ c4
+	tilecoll WALL, WALL, WALL, WALL ; 66: Outskirts Red++ c5
+	tilecoll WALL, WALL, WALL, WALL ; 67: Outskirts Red++ cc
+	tilecoll WALL, WALL, WALL, WALL ; 68: Outskirts Red++ cd
+	tilecoll WALL, WALL, WALL, WALL ; 69: Outskirts Red++ ce
+	tilecoll WALL, WALL, FLOOR, WALL ; 6a: Outskirts Red++ cf
+	tilecoll WALL, WALL, FLOOR, WALL ; 6b: Outskirts Red++ d0
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 6c: Outskirts Red++ d1
+	tilecoll WALL, WALL, WALL, WALL ; 6d: Outskirts Red++ d2
+	tilecoll FLOOR, WALL, FLOOR, WALL ; 6e: Outskirts Red++ d3
 	tilecoll FLOOR, WARP_CARPET_RIGHT, FLOOR, WARP_CARPET_RIGHT ; 6f
-	tilecoll WALL, FLOOR, WALL, WALL ; 70
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 71
-	tilecoll FLOOR, WALL, WALL, WALL ; 72
+	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 70: Outskirts Red++ d7
+	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 71: Outskirts Red++ db
+	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 72: Outskirts Red++ df
 	tilecoll WARP_CARPET_LEFT, FLOOR, WARP_CARPET_LEFT, FLOOR ; 73
 	tilecoll TALL_GRASS, TALL_GRASS, WALL, WALL ; 74
 	tilecoll WALL, WALL, TALL_GRASS, TALL_GRASS ; 75
@@ -120,24 +120,24 @@
 	tilecoll TALL_GRASS, TALL_GRASS, WALL, WALL ; 77
 	tilecoll WALL, WALL, WALL, WALL ; 78
 	tilecoll WALL, WALL, WALL, WALL ; 79
-	tilecoll WATER, WATER, WATER, WATER ; 7a
+	tilecoll WALL, WALL, WALL, WALL ; 7a: Outskirts PNG correction (4,5)
 	tilecoll WALL, WALL, WALL, WALL ; 7b
-	tilecoll WALL, WALL, WALL, WALL ; 7c
+	tilecoll FLOOR, FLOOR, HEADBUTT_TREE, FLOOR ; 7c: Outskirts Route 42 preview 3e
 	tilecoll WALL, WALL, WALL, WALL ; 7d
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 7e
-	tilecoll WALL, WALL, FLOOR, FLOOR ; 7f
-	tilecoll WALL, WALL, WALL, WALL ; 80
-	tilecoll WALL, WALL, WALL, WALL ; 81
-	tilecoll WALL, WALL, FLOOR, FLOOR ; 82
+	tilecoll FLOOR, FLOOR, FLOOR, HEADBUTT_TREE ; 7f: Outskirts Route 42 preview 3f
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, FLOOR, FLOOR ; 80: Outskirts Route 42 preview 5d
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, FLOOR, HEADBUTT_TREE ; 81: Outskirts Route 42 preview 5e
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 82: Outskirts Route 42 preview 61
 	tilecoll WALL, WALL, WALL, WALL ; 83
 	tilecoll WALL, WALL, WALL, WALL ; 84
-	tilecoll WALL, WALL, WALL, WALL ; 85
+	tilecoll FLOOR, HEADBUTT_TREE, FLOOR, HEADBUTT_TREE ; 85: Outskirts Route 42 preview 62
 	tilecoll WALL, WALL, WALL, WALL ; 86
 	tilecoll WALL, WALL, WALL, DOOR ; 87
 	tilecoll WALL, WALL, WALL, WALL ; 88
-	tilecoll WALL, WALL, DOOR, WALL ; 89
+	tilecoll FLOOR, FLOOR, HEADBUTT_TREE, HEADBUTT_TREE ; 89: Outskirts Route 42 preview 65
 	tilecoll WALL, WALL, WALL, WALL ; 8a
-	tilecoll WALL, WALL, WALL, WALL ; 8b
+	tilecoll FLOOR, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 8b: Outskirts Route 42 preview 66
 	tilecoll WALL, WALL, WALL, WALL ; 8c
 	tilecoll WALL, WALL, WALL, WALL ; 8d
 	tilecoll WALL, WALL, WALL, WALL ; 8e
@@ -162,10 +162,10 @@
 	tilecoll WALL, WALL, WALL, WALL ; a1
 	tilecoll WALL, WALL, CAVE, WALL ; a2
 	tilecoll WATER, WATER, WATER, WATER ; a3: Violet Red++ a3
-	tilecoll WALL, WALL, WALL, WALL ; a4
+	tilecoll WALL, TOP_WALL, WALL, FLOOR ; a4: Outskirts Route 42 preview 6a
 	tilecoll WALL, WALL, WALL, WALL ; a5
 	tilecoll FLOOR, FLOOR, WALL, WALL ; a6
-	tilecoll WALL, FLOOR, WALL, WALL ; a7
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; a7: Violet Outskirts left-side berry tree
 	tilecoll WALL, WALL, WALL, WALL ; a8
 	tilecoll WALL, WALL, WALL, WALL ; a9
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; aa
@@ -201,7 +201,7 @@
 	tilecoll WALL, WALL, WALL, DOOR ; c8: Violet Red++ c8
 	tilecoll WALL, WALL, WALL, WALL ; c9: Violet Red++ c9
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; ca
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; cb
+	tilecoll FLOOR, WALL, FLOOR, WALL ; cb: Outskirts Red++ cb
 	tilecoll FLOOR, FLOOR, WALL, WALL ; cc
 	tilecoll FLOOR, FLOOR, WALL, WALL ; cd
 	tilecoll WALL, WALL, WALL, WALL ; ce

@@ -374,7 +374,7 @@ ENDM
 	map_attributes Route32Coast, ROUTE_32_COAST, $35
 	connection north, CherrygroveBay, CHERRYGROVE_BAY, 0
 
-	map_attributes VioletOutskirts, VIOLET_OUTSKIRTS, $5
+	map_attributes VioletOutskirts, VIOLET_OUTSKIRTS, $f
 	connection north, Route42, ROUTE_42, -5
 	connection south, VioletCity, VIOLET_CITY, 0
 
