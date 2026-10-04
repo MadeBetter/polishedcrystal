@@ -244,7 +244,7 @@ ENDM
 	newgroup                                                     ; 10
 	map_const ROUTE_32,                                   10, 45 ;  1
 	map_const ROUTE_32_COAST,                             15, 35 ;  2
-	map_const VIOLET_CITY,                                20, 18 ;  3
+	map_const VIOLET_CITY,                                20, 20 ;  3
 	map_const VIOLET_MART,                                 6,  4 ;  4
 	map_const VIOLET_GYM,                                  5,  9 ;  5
 	map_const EARLS_POKEMON_ACADEMY,                       4,  8 ;  6

@@ -1,13 +1,17 @@
 LoadMapGroupRoof::
 	; RedPlusPlus outdoor tilesets use their common graphics in the slots
-	; normally reserved for Polished Crystal's map-group roofs. Route 46
-	; shares map group 5 with maps that still need the original Azalea roof,
-	; so select the matching replacement by tileset during the gradual port.
+	; normally reserved for Polished Crystal's map-group roofs. Their map
+	; groups also contain unported maps, so choose the replacement by tileset.
 	ld a, [wMapTileset]
+	cp TILESET_NEW_BARK_CHERRYGROVE
+	jr z, .redplusplus
 	cp TILESET_AZALEA_BLACKTHORN
+	jr nz, .map_group
+.redplusplus
 	ld a, ROOF_REDPLUSPLUS_NEW_BARK
-	jr z, .got_roof
+	jr .got_roof
 
+.map_group
 	ld a, [wMapGroup]
 	ld e, a
 	ld d, 0

@@ -3,43 +3,48 @@ VioletCity_MapScriptHeader:
 
 	def_callbacks
 	callback MAPCALLBACK_NEWMAP, VioletCityFlyPoint
+	callback MAPCALLBACK_CMDQUEUE, VioletCitySetUpPaletteSwap
 
 	def_warp_events
-	warp_event  9, 17, VIOLET_MART, 2
-	warp_event 18, 17, VIOLET_GYM, 1
-	warp_event 30, 17, EARLS_POKEMON_ACADEMY, 1
-	warp_event  3, 15, VIOLET_NICKNAME_SPEECH_HOUSE, 1
-	warp_event 31, 25, VIOLET_POKECENTER_1F, 1
-	warp_event 21, 29, VIOLET_ONIX_TRADE_HOUSE, 1
-	warp_event 23,  1, SPROUT_TOWER_1F, 1
-	warp_event 39, 24, ROUTE_31_VIOLET_GATE, 1
-	warp_event 39, 25, ROUTE_31_VIOLET_GATE, 2
-	warp_event  0,  8, ROUTE_36_VIOLET_GATE, 3
-	warp_event  0,  9, ROUTE_36_VIOLET_GATE, 4
+	warp_event  9, 21, VIOLET_MART, 2
+	warp_event 18, 21, VIOLET_GYM, 1
+	warp_event 30, 21, EARLS_POKEMON_ACADEMY, 1
+	warp_event  3, 19, VIOLET_NICKNAME_SPEECH_HOUSE, 1
+	warp_event 31, 29, VIOLET_POKECENTER_1F, 1
+	warp_event 21, 33, VIOLET_ONIX_TRADE_HOUSE, 1
+	warp_event 23,  3, SPROUT_TOWER_1F, 1
+	warp_event 39, 28, ROUTE_31_VIOLET_GATE, 1
+	warp_event 39, 29, ROUTE_31_VIOLET_GATE, 2
+	warp_event  0, 12, ROUTE_36_VIOLET_GATE, 3
+	warp_event  0, 13, ROUTE_36_VIOLET_GATE, 4
+	; Deferred RedPlusPlus south gate: Route 32 warp 5 is currently our
+	; hidden grotto, not this gate. Enable these when its destination is ported.
+	; warp_event 13, 37, ROUTE_32, 5
+	; warp_event 14, 37, ROUTE_32, 5
 
 	def_coord_events
 
 	def_bg_events
-	bg_event 24, 20, BGEVENT_JUMPTEXT, VioletCitySignText
-	bg_event 19, 17, BGEVENT_JUMPTEXT, VioletGymSignText
-	bg_event 25,  3, BGEVENT_JUMPTEXT, SproutTowerSignText
-	bg_event 27, 17, BGEVENT_JUMPTEXT, EarlsPokemonAcademySignText
-	bg_event 37, 14, BGEVENT_ITEM + HYPER_POTION, EVENT_VIOLET_CITY_HIDDEN_HYPER_POTION
-	bg_event 21,  9, BGEVENT_ITEM + POKE_BALL, EVENT_VIOLET_CITY_HIDDEN_POKE_BALL
+	bg_event 24, 24, BGEVENT_JUMPTEXT, VioletCitySignText
+	bg_event 16, 21, BGEVENT_JUMPTEXT, VioletGymSignText
+	bg_event 25,  5, BGEVENT_JUMPTEXT, SproutTowerSignText
+	bg_event 27, 21, BGEVENT_JUMPTEXT, EarlsPokemonAcademySignText
+	bg_event 37, 18, BGEVENT_ITEM + HYPER_POTION, EVENT_VIOLET_CITY_HIDDEN_HYPER_POTION
+	bg_event 21, 13, BGEVENT_ITEM + POKE_BALL, EVENT_VIOLET_CITY_HIDDEN_POKE_BALL
 
 	def_object_events
-	object_event 13, 16, SPRITE_FAT_GUY, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, VioletCityEarlScript, EVENT_VIOLET_CITY_EARL
-	object_event 28, 28, SPRITE_CUTE_GIRL, SPRITEMOVEDATA_WANDER, 2, 2, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityLassText, -1
-	object_event 26, 14, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_WANDER, 2, 1, (1 << MORN) | (1 << DAY), 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityCooltrainerM1Text, -1
-	object_event 26, 14, SPRITE_ACE_TRAINER_F, SPRITEMOVEDATA_WANDER, 2, 1, (1 << EVE) | (1 << NITE), 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityCooltrainerFText, -1
-	object_event 17, 20, SPRITE_GRAMPS, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 1, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityGrampsText, -1
-	object_event  5, 18, SPRITE_YOUNGSTER, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityYoungsterText, -1
-	object_event 26,  9, SPRITE_FAT_GUY, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityFisherText, -1
-	object_event 35, 25, SPRITE_COOL_DUDE, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityCooltrainerM2Text, -1
-	cuttree_event 36, 19, EVENT_VIOLET_CITY_CUT_TREE
-	fruittree_event 14, 29, FRUITTREE_VIOLET_CITY, CHERI_BERRY, PAL_NPC_RED
-	itemball_event 14,  4, PP_UP, 1, EVENT_VIOLET_CITY_PP_UP
-	itemball_event 35,  8, RARE_CANDY, 1, EVENT_VIOLET_CITY_RARE_CANDY
+	object_event 13, 21, SPRITE_FAT_GUY, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, VioletCityEarlScript, EVENT_VIOLET_CITY_EARL
+	object_event 28, 32, SPRITE_CUTE_GIRL, SPRITEMOVEDATA_WANDER, 2, 2, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityLassText, -1
+	object_event 26, 18, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_WANDER, 2, 1, (1 << MORN) | (1 << DAY), 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityCooltrainerM1Text, -1
+	object_event 26, 18, SPRITE_ACE_TRAINER_F, SPRITEMOVEDATA_WANDER, 2, 1, (1 << EVE) | (1 << NITE), 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityCooltrainerFText, -1
+	object_event 17, 24, SPRITE_GRAMPS, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 1, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityGrampsText, -1
+	object_event  5, 22, SPRITE_YOUNGSTER, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityYoungsterText, -1
+	object_event 26, 13, SPRITE_FAT_GUY, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityFisherText, -1
+	object_event 35, 29, SPRITE_COOL_DUDE, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_COMMAND, jumptextfaceplayer, VioletCityCooltrainerM2Text, -1
+	cuttree_event 36, 25, EVENT_VIOLET_CITY_CUT_TREE
+	fruittree_event 11, 32, FRUITTREE_VIOLET_CITY, CHERI_BERRY, PAL_NPC_RED
+	itemball_event 14,  6, PP_UP, 1, EVENT_VIOLET_CITY_PP_UP
+	itemball_event 35, 12, RARE_CANDY, 1, EVENT_VIOLET_CITY_RARE_CANDY
 
 	object_const_def
 	const VIOLETCITY_EARL
@@ -47,6 +52,19 @@ VioletCity_MapScriptHeader:
 VioletCityFlyPoint:
 	setflag ENGINE_FLYPOINT_VIOLET
 	endcallback
+
+VioletCitySetUpPaletteSwap:
+	usepaletteswap .PaletteSwap
+	endcallback
+
+.PaletteSwap:
+	; The southwest station and house are out of view of the pond and
+	; purple roofs, so reuse their palette slots through the existing queue.
+	paletteswap 0, 6, 24, 40, PAL_BG_ROOF, VioletCityRoofPalettes, VioletCityStationPalettes
+	; The blue house extends farther east than the station. Keep its roof
+	; palette selected until the whole building has scrolled off screen.
+	paletteswap 0, 10, 26, 40, PAL_BG_WATER, VioletCityWaterPalettes, OverworldWaterPalettes
+	db -1 ; end
 
 VioletCityEarlScript:
 	applymovement VIOLETCITY_EARL, VioletCitySpinningEarl_MovementData
@@ -88,7 +106,7 @@ VioletCityEarlScript:
 	end
 
 VioletCityFollowEarl_MovementData:
-	run_step_down
+	; Earl starts one tile farther south to avoid the relocated tree base.
 	run_step_down
 	turn_head_down
 	turn_head_left

@@ -1,54 +1,54 @@
 	tilecoll WALL, WALL, WALL, WALL ; 00
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 01
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 01: Violet Red++ 8c
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 02
 	tilecoll TALL_GRASS, TALL_GRASS, TALL_GRASS, TALL_GRASS ; 03
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 04: right-side berry tree (Route 30); left-side variant is fe
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 05
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 06
 	tilecoll WALL, WALL, WALL, WALL ; 07
-	tilecoll WALL, WALL, WALL, FLOOR ; 08
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 08: Violet Red++ 8d
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 09
-	tilecoll WALL, WALL, FLOOR, WALL ; 0a
+	tilecoll WALL, WALL, WALL, WALL ; 0a: Violet Red++ 96
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 0b
-	tilecoll WALL, FLOOR, WALL, FLOOR ; 0c
-	tilecoll WALL, WALL, WALL, WALL ; 0d
+	tilecoll WALL, WALL, WALL, WALL ; 0c: Violet Red++ 97
+	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 0d: Violet Red++ 99
 	tilecoll FLOOR, WALL, FLOOR, WALL ; 0e
 	tilecoll WALL, WALL, WALL, WALL ; 0f
-	tilecoll WALL, FLOOR, WALL, WALL ; 10
+	tilecoll WALL, WALL, WALL, WALL ; 10: Violet Red++ 9c
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 11
-	tilecoll FLOOR, WALL, WALL, WALL ; 12
+	tilecoll WALL, WALL, WALL, WALL ; 12: Violet Red++ 9d
 	tilecoll WALL, WALL, WALL, WALL ; 13
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; 14
-	tilecoll FLOOR, FLOOR, WALL, FLOOR ; 15
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 15: Violet Red++ 9f
 	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 16
-	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 17
+	tilecoll WALL, WALL, WALL, WALL ; 17: Violet Red++ a0
 	tilecoll BUOY, BUOY, BUOY, WATER ; 18
 	tilecoll BUOY, BUOY, WATER, WATER ; 19
 	tilecoll BUOY, BUOY, WATER, BUOY ; 1a
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 1b
 	tilecoll BUOY, WATER, BUOY, WATER ; 1c
-	tilecoll BUOY, BUOY, BUOY, BUOY ; 1d
-	tilecoll WATER, BUOY, WATER, BUOY ; 1e
+	tilecoll WALL, WALL, DOOR, WALL ; 1d: Violet Red++ a1
+	tilecoll WATER, WATER, WATER, WATER ; 1e: Violet Red++ a2
 	tilecoll WALL, WALL, WALL, WALL ; 1f
-	tilecoll BUOY, WATER, BUOY, BUOY ; 20
+	tilecoll WATER, WATER, FLOOR, FLOOR ; 20: Violet Red++ af
 	tilecoll WATER, WATER, BUOY, BUOY ; 21
-	tilecoll WATER, BUOY, BUOY, BUOY ; 22
+	tilecoll WALL, WALL, WALL, WALL ; 22: Violet Red++ b0
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 23
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 24
 	tilecoll WALL, WALL, WALL, WALL ; 25
 	tilecoll WALL, WALL, WALL, WALL ; 26
 	tilecoll WALL, WALL, WALL, WALL ; 27
-	tilecoll WALL, FLOOR, WALL, WALL ; 28
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 29
-	tilecoll FLOOR, WALL, WALL, WALL ; 2a
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 28: Violet Red++ b3
+	tilecoll WALL, WALL, WALL, WALL ; 29: Violet Red++ b4
+	tilecoll WALL, WALL, DOOR, WALL ; 2a: Violet Red++ b5
 	tilecoll WALL, WALL, WALL, WALL ; 2b
-	tilecoll WALL, LEDGE_LEFT, WALL, LEDGE_LEFT ; 2c
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 2c: Violet Red++ b6
 	tilecoll LEDGE_DOWN, FLOOR, WALL, FLOOR ; 2d
 	tilecoll LEDGE_RIGHT, WALL, LEDGE_RIGHT, WALL ; 2e
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 2f
-	tilecoll WALL, LEDGE_DOWN_LEFT, WALL, WALL ; 30
+	tilecoll WALL, FLOOR, WALL, FLOOR ; 30: Violet Red++ b8
 	tilecoll LEDGE_DOWN, LEDGE_DOWN, WALL, WALL ; 31
-	tilecoll LEDGE_DOWN_RIGHT, WALL, WALL, WALL ; 32
+	tilecoll FLOOR, WALL, FLOOR, WALL ; 32: Violet Red++ b9
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 33
 	tilecoll WALL, LEDGE_LEFT, WALL, LEDGE_LEFT ; 34
 	tilecoll LEDGE_DOWN, FLOOR, WALL, FLOOR ; 35
@@ -61,43 +61,43 @@
 	tilecoll WATER, WATER, WATER, WATER ; 3c
 	tilecoll WATER, WATER, WATER, WATER ; 3d
 	tilecoll WATER, WATER, WATER, WATER ; 3e
-	tilecoll WATER, WATER, WATER, WATER ; 3f
+	tilecoll WALL, FLOOR, WALL, FLOOR ; 3f: Violet Red++ ba
 	tilecoll WATER, WATER, WATER, WATER ; 40
 	tilecoll WATER, WATER, WATER, WATER ; 41
 	tilecoll WATER, WATER, WATER, WATER ; 42
 	tilecoll WATER, WATER, WATER, WATER ; 43
-	tilecoll WALL, TOP_WALL, WALL, FLOOR ; 44
-	tilecoll TOP_WALL, WALL, FLOOR, WALL ; 45
-	tilecoll WALL, TOP_WALL, WALL, FLOOR ; 46
+	tilecoll FLOOR, WALL, FLOOR, WALL ; 44: Violet Red++ bb
+	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 45: Violet Red++ bf
+	tilecoll WATER, WATER, WALL, WALL ; 46: Violet Red++ c0
 	tilecoll TOP_WALL, WALL, FLOOR, WALL ; 47
 	tilecoll WALL, FLOOR, WALL, FLOOR ; 48
-	tilecoll FLOOR, WALL, FLOOR, WALL ; 49
+	tilecoll WALL, WALL, WALL, WALL ; 49: Violet Red++ c7
 	tilecoll WALL, FLOOR, WALL, WALL ; 4a
 	tilecoll FLOOR, WALL, WALL, WALL ; 4b
 	tilecoll TOP_WALL, TOP_WALL, FLOOR, FLOOR ; 4c
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 4d
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 4e
 	tilecoll BOTTOM_WALL, FLOOR, CAVE, WALL ; 4f
-	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 50
+	tilecoll WALL, FLOOR, WALL, FLOOR ; 50: Violet Red++ ca
 	tilecoll FLOOR, FLOOR, WALL, FLOOR ; 51
-	tilecoll WALL, TOP_WALL, WALL, FLOOR ; 52
-	tilecoll TOP_WALL, WALL, FLOOR, WALL ; 53
-	tilecoll WALL, WALL, FLOOR, FLOOR ; 54
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 55
+	tilecoll WALL, WALL, WALL, WALL ; 52: Violet PNG correction (8,10)
+	tilecoll WALL, WALL, DOOR, WALL ; 53: Violet PNG correction (9,10)
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 54: Violet PNG correction (10,10)
+	tilecoll TOP_WALL, TOP_WALL, FLOOR, FLOOR ; 55: Violet PNG correction (0,14)
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 56
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 57
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 58
+	tilecoll BOTTOM_WALL, FLOOR, CAVE, WALL ; 58: Violet PNG correction (0,15)
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 59
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 5a
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 5b
-	tilecoll WALL, WALL, WALL, FLOOR ; 5c
-	tilecoll WALL, WALL, FLOOR, FLOOR ; 5d
-	tilecoll WALL, WALL, FLOOR, WALL ; 5e
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 5c: Violet PNG correction (0,16)
+	tilecoll WALL, WALL, WALL, WALL ; 5d: Violet PNG correction (1,17)
+	tilecoll WALL, WALL, WALL, WALL ; 5e: Violet PNG correction (2,17)
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; 5f
-	tilecoll WALL, FLOOR, WALL, FLOOR ; 60
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 61
-	tilecoll FLOOR, WALL, FLOOR, WALL ; 62
-	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 63
+	tilecoll WALL, WALL, WALL, DOOR ; 60: Violet PNG correction (1,18)
+	tilecoll WALL, WALL, WALL, WALL ; 61: Violet PNG correction (2,18)
+	tilecoll WALL, FLOOR, FLOOR, FLOOR ; 62: Violet berry tree (5,15)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 63: Violet berry tree (5,16)
 	tilecoll WALL, FLOOR, WALL, WALL ; 64
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 65
 	tilecoll FLOOR, WALL, WALL, WALL ; 66
@@ -150,18 +150,18 @@
 	tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WALL ; 95
 	tilecoll TALL_GRASS, TALL_GRASS, FLOOR, FLOOR ; 96
 	tilecoll FLOOR, FLOOR, TALL_GRASS, TALL_GRASS ; 97
-	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 98
+	tilecoll FLOOR, FLOOR, WALL, FLOOR ; 98: Violet Red++ 98
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 99
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 9a
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 9b
+	tilecoll WALL, WALL, WALL, DOOR ; 9a: Violet Red++ 9a
+	tilecoll WALL, WALL, WALL, WALL ; 9b: Violet Red++ 9b
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 9c
 	tilecoll FLOOR, WALL, WALL, WALL ; 9d
-	tilecoll FLOOR, WALL, FLOOR, WALL ; 9e
+	tilecoll WALL, WALL, WALL, WALL ; 9e: Violet Red++ 9e
 	tilecoll WALL, FLOOR, WALL, WALL ; 9f
 	tilecoll WALL, WALL, WALL, WALL ; a0
 	tilecoll WALL, WALL, WALL, WALL ; a1
 	tilecoll WALL, WALL, CAVE, WALL ; a2
-	tilecoll WALL, WALL, FLOOR, WALL ; a3
+	tilecoll WATER, WATER, WATER, WATER ; a3: Violet Red++ a3
 	tilecoll WALL, WALL, WALL, WALL ; a4
 	tilecoll WALL, WALL, WALL, WALL ; a5
 	tilecoll FLOOR, FLOOR, WALL, WALL ; a6
@@ -170,13 +170,13 @@
 	tilecoll WALL, WALL, WALL, WALL ; a9
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; aa
 	tilecoll FLOOR, FLOOR, WALL, WALL ; ab
-	tilecoll WALL, WALL, WALL, WALL ; ac
-	tilecoll WALL, WALL, WALL, WALL ; ad
-	tilecoll WALL, WALL, WALL, WALL ; ae
+	tilecoll WATER, WATER, FLOOR, FLOOR ; ac: Violet Red++ ac
+	tilecoll WATER, WATER, FLOOR, FLOOR ; ad: Violet Red++ ad
+	tilecoll WATER, WATER, FLOOR, FLOOR ; ae: Violet Red++ ae
 	tilecoll WALL, WALL, WALL, WALL ; af
 	tilecoll WALL, WALL, FLOOR, FLOOR ; b0
-	tilecoll WALL, WALL, WALL, WALL ; b1
-	tilecoll WALL, WALL, WALL, WALL ; b2
+	tilecoll WALL, WALL, WALL, WALL ; b1: Violet Red++ b1
+	tilecoll WALL, WALL, WALL, WALL ; b2: Violet Red++ b2
 	tilecoll WALL, WALL, WALL, WALL ; b3
 	tilecoll WATER, WATER, WATER, WATER ; b4
 	tilecoll WATER, WATER, WATER, WATER ; b5
@@ -186,20 +186,20 @@
 	tilecoll WATER, WATER, WATER, WATER ; b9
 	tilecoll WATER, WATER, WATER, WATER ; ba
 	tilecoll WATER, WATER, WATER, WATER ; bb
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; bc
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; bd
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; be
+	tilecoll WALL, FLOOR, FLOOR, FLOOR ; bc: Violet Red++ bc
+	tilecoll FLOOR, WALL, FLOOR, FLOOR ; bd: Violet Red++ bd
+	tilecoll WALL, FLOOR, FLOOR, FLOOR ; be: Violet Red++ be
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; bf
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c0
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c1
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c2
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c3
+	tilecoll WATER, WATER, FLOOR, FLOOR ; c1: Violet Red++ c1
+	tilecoll WATER, WATER, WALL, WALL ; c2: Violet Red++ c2
+	tilecoll WATER, WATER, WALL, WALL ; c3: Violet Red++ c3
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c4
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c5
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c6
+	tilecoll WALL, WALL, WALL, WALL ; c6: Violet Red++ c6
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c7
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c8
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c9
+	tilecoll WALL, WALL, WALL, DOOR ; c8: Violet Red++ c8
+	tilecoll WALL, WALL, WALL, WALL ; c9: Violet Red++ c9
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; ca
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; cb
 	tilecoll FLOOR, FLOOR, WALL, WALL ; cc

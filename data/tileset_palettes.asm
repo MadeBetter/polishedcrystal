@@ -21,6 +21,15 @@ INCLUDE "gfx/tilesets/palette-swap/bg-green.pal"
 OverworldWaterPalettes::
 INCLUDE "gfx/tilesets/palette-swap/bg-water.pal"
 
+VioletCityRoofPalettes::
+INCLUDE "gfx/tilesets/palette-swap/violet-roof.pal"
+
+VioletCityWaterPalettes::
+INCLUDE "gfx/tilesets/palette-swap/violet-water.pal"
+
+VioletCityStationPalettes::
+INCLUDE "gfx/tilesets/palette-swap/violet-station.pal"
+
 OverworldYellowPalettes::
 INCLUDE "gfx/tilesets/palette-swap/bg-yellow.pal"
 
