@@ -168,7 +168,7 @@
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; a7: Violet Outskirts left-side berry tree
 	tilecoll WALL, WALL, WALL, WALL ; a8
 	tilecoll WALL, WALL, WALL, WALL ; a9
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; aa
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; aa: shared Route 36/Violet west gate tree (same graphics/priority in both tilesets)
 	tilecoll FLOOR, FLOOR, WALL, WALL ; ab
 	tilecoll WATER, WATER, FLOOR, FLOOR ; ac: Violet Red++ ac
 	tilecoll WATER, WATER, FLOOR, FLOOR ; ad: Violet Red++ ad
