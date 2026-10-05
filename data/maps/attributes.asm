@@ -23,7 +23,7 @@ ENDM
 	; Keep the reference's closed north tree line until the outskirts are ported.
 	connection north, VioletOutskirts, VIOLET_OUTSKIRTS, 0
 	connection south, Route32, ROUTE_32, 0
-	connection west, Route36, ROUTE_36, 2
+	connection west, Route36, ROUTE_36, 1
 	connection east, Route31, ROUTE_31, 11
 
 	map_attributes AzaleaTown, AZALEA_TOWN, $5
@@ -110,7 +110,7 @@ ENDM
 	connection north, Route34Coast, ROUTE_34_COAST, 0
 
 	map_attributes Route35, ROUTE_35, $5
-	connection north, Route36, ROUTE_36, 9
+	connection north, Route36, ROUTE_36, 8
 	connection south, GoldenrodCity, GOLDENROD_CITY, -5
 
 	map_attributes Route35CoastNorth, ROUTE_35_COAST_NORTH, $35
@@ -124,14 +124,14 @@ ENDM
 	map_attributes OlivineCityRoute35CoastDual, OLIVINE_CITY_ROUTE_35_COAST_DUAL, $35
 	connection south, Route35CoastSouth, ROUTE_35_COAST_SOUTH, 0
 
-	map_attributes Route36, ROUTE_36, $5
-	connection north, Route37, ROUTE_37, 3
-	connection south, Route35, ROUTE_35, -9
-	connection east, VioletCity, VIOLET_CITY, -2
+	map_attributes Route36, ROUTE_36, $f
+	connection north, Route37, ROUTE_37, 4
+	connection south, Route35, ROUTE_35, -8
+	connection east, VioletCity, VIOLET_CITY, -1
 
 	map_attributes Route37, ROUTE_37, $5
 	connection north, EcruteakCity, ECRUTEAK_CITY, -5
-	connection south, Route36, ROUTE_36, -3
+	connection south, Route36, ROUTE_36, -4
 
 	map_attributes Route38, ROUTE_38, $5
 	connection west, Route39, ROUTE_39, -8
@@ -386,7 +386,7 @@ ENDM
 	DEF MAP_FAKE_ROUTE_36    EQU MAP_ROUTE_36
 	DEF FAKE_ROUTE_36_WIDTH  EQU ROUTE_36_WIDTH
 	DEF FAKE_ROUTE_36_HEIGHT EQU ROUTE_36_HEIGHT - 1
-	connection north, FakeRoute36, FAKE_ROUTE_36, -11
+	connection north, FakeRoute36, FAKE_ROUTE_36, -12
 	PURGE GROUP_FAKE_ROUTE_36, MAP_FAKE_ROUTE_36, FAKE_ROUTE_36_WIDTH, FAKE_ROUTE_36_HEIGHT
 	connection east, Route32, ROUTE_32, 10
 

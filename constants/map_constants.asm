@@ -713,6 +713,6 @@ ENDM
 
 	newgroup                                                     ; 39
 	map_const ROUTE_35,                                   12, 18 ;  1
-	map_const ROUTE_36,                                   23,  9 ;  2
+	map_const ROUTE_36,                                   24, 10 ;  2
 
 DEF NUM_MAP_GROUPS EQU const_value ; 37

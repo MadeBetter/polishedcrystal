@@ -7,40 +7,40 @@ Route36_MapScriptHeader:
 	callback MAPCALLBACK_OBJECTS, Route36ArthurCallback
 
 	def_warp_events
-	warp_event  4,  8, ROUTE_36_NATIONAL_PARK_GATE, 3
-	warp_event  4,  9, ROUTE_36_NATIONAL_PARK_GATE, 4
-	warp_event 33, 13, ROUTE_36_RUINS_OF_ALPH_GATE, 1
-	warp_event 34, 13, ROUTE_36_RUINS_OF_ALPH_GATE, 2
-	warp_event 41,  8, ROUTE_36_VIOLET_GATE, 1
-	warp_event 41,  9, ROUTE_36_VIOLET_GATE, 2
-	warp_event 12, 12, HIDDEN_TREE_GROTTO, 1
+	warp_event  6, 10, ROUTE_36_NATIONAL_PARK_GATE, 3
+	warp_event  6, 11, ROUTE_36_NATIONAL_PARK_GATE, 4
+	warp_event 35, 15, ROUTE_36_RUINS_OF_ALPH_GATE, 1
+	warp_event 36, 15, ROUTE_36_RUINS_OF_ALPH_GATE, 2
+	warp_event 43, 10, ROUTE_36_VIOLET_GATE, 1
+	warp_event 43, 11, ROUTE_36_VIOLET_GATE, 2
+	warp_event 41,  7, HIDDEN_TREE_GROTTO, 1
 
 	def_coord_events
-	coord_event  6,  7, SCENE_ROUTE36_SUICUNE, Route36SuicuneScript
-	coord_event  8,  7, SCENE_ROUTE36_SUICUNE, Route36SuicuneScript
+	coord_event  8,  9, SCENE_ROUTE36_SUICUNE, Route36SuicuneScript
+	coord_event 10,  9, SCENE_ROUTE36_SUICUNE, Route36SuicuneScript
 
 	def_bg_events
-	bg_event 15,  1, BGEVENT_JUMPTEXT, Route36TrainerTips2Text
-	bg_event 31, 11, BGEVENT_JUMPTEXT, RuinsOfAlphNorthSignText
-	bg_event 39,  7, BGEVENT_JUMPTEXT, Route36SignText
-	bg_event  7,  7, BGEVENT_JUMPTEXT, Route36TrainerTips1Text
-	bg_event 33,  4, BGEVENT_JUMPTEXT, Route36AdvancedTips1Text
-	bg_event 16,  7, BGEVENT_JUMPTEXT, Route36AdvancedTips2Text
-	bg_event 12, 11, BGEVENT_JUMPSTD, treegrotto, HIDDENGROTTO_ROUTE_36
-	bg_event 13, 11, BGEVENT_JUMPSTD, treegrotto, HIDDENGROTTO_ROUTE_36
+	bg_event 17,  1, BGEVENT_JUMPTEXT, Route36TrainerTips2Text
+	bg_event 33, 13, BGEVENT_JUMPTEXT, RuinsOfAlphNorthSignText
+	bg_event 41,  9, BGEVENT_JUMPTEXT, Route36SignText
+	bg_event  9,  9, BGEVENT_JUMPTEXT, Route36TrainerTips1Text
+	bg_event 37,  7, BGEVENT_JUMPTEXT, Route36AdvancedTips1Text
+	bg_event  5, 12, BGEVENT_JUMPTEXT, Route36AdvancedTips2Text
+	bg_event 40,  6, BGEVENT_JUMPSTD, treegrotto, HIDDENGROTTO_ROUTE_36
+	bg_event 41,  6, BGEVENT_JUMPSTD, treegrotto, HIDDENGROTTO_ROUTE_36
 
 	def_object_events
-	object_event 21,  9, SPRITE_WEIRD_TREE, SPRITEMOVEDATA_SUDOWOODO, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, SudowoodoScript, EVENT_ROUTE_36_SUDOWOODO
-	object_event 33,  6, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_WANDER, 1, 1, -1, 0, OBJECTTYPE_SCRIPT, 0, ArthurScript, EVENT_ROUTE_36_ARTHUR_OF_THURSDAY
-	object_event 19, 12, SPRITE_CUTE_GIRL, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, Route36FloriaScript, EVENT_FLORIA_AT_SUDOWOODO
-	pokemon_event  7,  6, SUICUNE, SPRITEMOVEDATA_POKEMON, -1, PAL_MON_AZURE, ClearText, EVENT_SAW_SUICUNE_ON_ROUTE_36
-	object_event 12,  6, SPRITE_ACE_TRAINER_F, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, Route36CooltrainerfChiaraScript, -1
-	object_event  6, 13, SPRITE_PSYCHIC, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerPsychicMark, -1
-	object_event 17, 14, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 5, TrainerSchoolboyAlan1, -1
-	object_event 37,  9, SPRITE_CUTE_GIRL, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 2, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, Route36LassScript, -1
-	object_event 28,  9, SPRITE_FAT_GUY, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, Route36RockSmashGuyScript, -1
-	fruittree_event  7,  4, FRUITTREE_ROUTE_36, RAWST_BERRY, PAL_NPC_TEAL
-	object_event 30,  5, SPRITE_SCHOOLGIRL, SPRITEMOVEDATA_SPINRANDOM_FAST, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 2, GenericTrainerSchoolgirlMolly, -1
+	object_event 22, 10, SPRITE_WEIRD_TREE, SPRITEMOVEDATA_SUDOWOODO, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, SudowoodoScript, EVENT_ROUTE_36_SUDOWOODO
+	object_event 35,  8, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_WANDER, 1, 1, -1, 0, OBJECTTYPE_SCRIPT, 0, ArthurScript, EVENT_ROUTE_36_ARTHUR_OF_THURSDAY
+	object_event 21, 14, SPRITE_CUTE_GIRL, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, Route36FloriaScript, EVENT_FLORIA_AT_SUDOWOODO
+	pokemon_event  9,  8, SUICUNE, SPRITEMOVEDATA_POKEMON, -1, PAL_MON_AZURE, ClearText, EVENT_SAW_SUICUNE_ON_ROUTE_36
+	object_event 14,  8, SPRITE_ACE_TRAINER_F, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, Route36CooltrainerfChiaraScript, -1
+	object_event  8, 15, SPRITE_PSYCHIC, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerPsychicMark, -1
+	object_event 19, 16, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 5, TrainerSchoolboyAlan1, -1
+	object_event 39, 11, SPRITE_CUTE_GIRL, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 2, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, Route36LassScript, -1
+	object_event 30, 11, SPRITE_FAT_GUY, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, Route36RockSmashGuyScript, -1
+	fruittree_event  9,  6, FRUITTREE_ROUTE_36, RAWST_BERRY, PAL_NPC_TEAL
+	object_event 32,  7, SPRITE_SCHOOLGIRL, SPRITEMOVEDATA_SPINRANDOM_FAST, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 2, GenericTrainerSchoolgirlMolly, -1
 
 	object_const_def
 	const ROUTE36_WEIRD_TREE
@@ -544,8 +544,8 @@ Route36SuicuneMovement:
 	fast_jump_step_down
 	fast_jump_step_down
 	fast_jump_step_right
-	fast_jump_step_right
-	fast_jump_step_right
+	fast_jump_step_down
+	fast_jump_step_down
 	step_end
 
 UseSquirtbottleText:

@@ -65,6 +65,11 @@ Tilesets::
 	tileset TilesetPeaks
 	tileset TilesetHideout
 	tileset TilesetKantoGym
+	; Polished Map++ uses redplusplus_ecruteak.redplusplus_johto_common.png
+	; (a link to the shared bank-1 PNG) with these Ecruteak block tables.
+	dbas TilesetRedPlusPlusEcruteakMeta, TilesetRedPlusPlusEcruteakColl, TilesetRedPlusPlusEcruteakAttr
+	dba TilesetNewBarkCherrygroveGFX0, TilesetNewBarkCherrygroveGFX1, TilesetNewBarkCherrygroveGFX2
+	fardw TilesetNewBarkCherrygroveAnim
 	assert_table_length NUM_TILESETS
 
 
@@ -192,6 +197,11 @@ SECTION "Tileset Data - new bark cherrygrove", ROMX
 TilesetNewBarkCherrygroveMeta:: INCBIN "data/tilesets/new_bark_cherrygrove_metatiles.bin.lzp"
 TilesetNewBarkCherrygroveAttr:: INCBIN "data/tilesets/new_bark_cherrygrove_attributes.bin.lzp"
 TilesetNewBarkCherrygroveColl:: INCBIN "data/tilesets/new_bark_cherrygrove_collision.bin.lzp"
+
+SECTION "RedPlusPlus Ecruteak Blocks", ROMX
+TilesetRedPlusPlusEcruteakMeta:: INCBIN "data/tilesets/redplusplus_ecruteak_metatiles.bin.lzp"
+TilesetRedPlusPlusEcruteakAttr:: INCBIN "data/tilesets/redplusplus_ecruteak_attributes.bin.lzp"
+TilesetRedPlusPlusEcruteakColl:: INCBIN "data/tilesets/redplusplus_ecruteak_collision.bin.lzp"
 
 
 SECTION "Tileset Graphics - azalea blackthorn vram0", ROMX
