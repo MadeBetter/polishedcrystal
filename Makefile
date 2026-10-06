@@ -163,8 +163,9 @@ $(ROM_NAME).patch: $(ROM_NAME)_vc.gbc $(ROM_NAME).$(EXTENSION) vc.patch.template
 	tools/make_patch $(ROM_NAME)_vc.sym $^ $@
 
 .$(EXTENSION): tools/bankends
-$(ROM_NAME).$(EXTENSION): $(crystal_obj) layout.link
+$(ROM_NAME).$(EXTENSION): $(crystal_obj) layout.link tools/pad_rom.py
 	$Q$(RGBLINK) $(RGBLINKFLAGS) -l layout.link -o $@ $(filter %.o,$^)
+	$Qpython3 tools/pad_rom.py $@ 4194304 $(FILLER)
 	$Q$(RGBFIX) $(RGBFIXFLAGS) $@
 	$Qtools/bankends -q $(ROM_NAME).map >&2
 

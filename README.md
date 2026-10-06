@@ -20,6 +20,24 @@ The previous official version was [v3.1.1](https://github.com/Rangi42/polishedcr
 
 *If you have any questions about playing or patching, [read the FAQ](FAQ.md)!*
 
+## MBC30 builds
+
+This branch builds a **4 MiB MBC30 ROM** (256 banks), retaining the existing
+32 KiB save RAM and RTC implementation. Use an emulator or flashcart with
+MBC30 support; ordinary MBC3 hardware cannot address the upper ROM banks.
+[Pan Docs](https://gbdev.io/pandocs/MBC3.html#mbc30) describes the mapper.
+
+The header retains cartridge type `$10` (MBC3 + timer + RAM + battery), with
+ROM size `$07` (4 MiB) and RAM size `$03` (32 KiB). The normal ROM build pads
+unused space with `$ff` and rejects linked ROMs larger than 4 MiB rather than
+truncating them. The bank-space checker covers all 256 banks. This conversion
+does not change the save-data format; emulator-specific RTC metadata is unchanged.
+The legacy Virtual Console target is not verified for MBC30.
+
+After building, run `python3 utils/test_mbc30.py` to verify ROM size, header
+checksums, bank limits, and non-destructive `$ff` padding. An optional ROM path
+can be supplied to check another build variant. These tests do not use save files.
+
 ## What’s New in v3.2.3
 
 Below is a brief summary of the major changes and additions. A more detailed changelog will be released soon.

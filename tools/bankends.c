@@ -4,7 +4,8 @@
 
 #include "parsemap.h"
 
-#define BANKS 128
+/* MBC30 addresses 256 ROM banks (4 MiB); save RAM remains unchanged. */
+#define BANKS 256
 #define BANKSIZE 0x4000
 #define ROMSIZE (BANKS * BANKSIZE)
 
