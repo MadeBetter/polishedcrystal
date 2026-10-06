@@ -65,13 +65,13 @@ DEF TILESET_LENGTH EQU 18
 ; MapGroupRoofs values (see data/maps/roofs.asm)
 ; MapGroupRoofGFX indexes (see engine/tilesets/mapgroup_roofs.asm)
 	const_def
-	const ROOF_NEW_BARK ; 0
+	const ROOF_NEW_BARK            ; 0
 	const ROOF_REDPLUSPLUS_NEW_BARK ; 1
-	const ROOF_VIOLET   ; 2
-	const ROOF_AZALEA   ; 3
-	const ROOF_OLIVINE  ; 4
-	const ROOF_PARK     ; 5
-	const ROOF_SINJOH   ; 6
+	const ROOF_VIOLET              ; 2
+	const ROOF_AZALEA              ; 3
+	const ROOF_OLIVINE             ; 4
+	const ROOF_PARK                ; 5
+	const ROOF_SINJOH              ; 6
 DEF NUM_ROOFS EQU const_value
 
 ; roof length (see gfx/tilesets/roofs)

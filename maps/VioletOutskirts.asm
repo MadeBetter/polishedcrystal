@@ -79,8 +79,8 @@ VioletOutskirtsPrepareNorthConnection:
 	ld e, [hl]
 .store
 	pop hl
-	ld [hl], e
-	inc hl
+	ld a, e
+	ld [hli], a
 	dec b
 	jr nz, .block
 	ret

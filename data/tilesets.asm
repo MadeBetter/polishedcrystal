@@ -198,7 +198,9 @@ TilesetNewBarkCherrygroveMeta:: INCBIN "data/tilesets/new_bark_cherrygrove_metat
 TilesetNewBarkCherrygroveAttr:: INCBIN "data/tilesets/new_bark_cherrygrove_attributes.bin.lzp"
 TilesetNewBarkCherrygroveColl:: INCBIN "data/tilesets/new_bark_cherrygrove_collision.bin.lzp"
 
-SECTION "RedPlusPlus Ecruteak Blocks", ROMX
+
+SECTION "Tileset Data - redplusplus ecruteak", ROMX
+
 TilesetRedPlusPlusEcruteakMeta:: INCBIN "data/tilesets/redplusplus_ecruteak_metatiles.bin.lzp"
 TilesetRedPlusPlusEcruteakAttr:: INCBIN "data/tilesets/redplusplus_ecruteak_attributes.bin.lzp"
 TilesetRedPlusPlusEcruteakColl:: INCBIN "data/tilesets/redplusplus_ecruteak_collision.bin.lzp"
