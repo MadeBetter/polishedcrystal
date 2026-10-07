@@ -48,6 +48,7 @@ class UnusedBlockTests(unittest.TestCase):
             key = tileset.lower()
             if key not in {
                 "new_bark_cherrygrove", "azalea_blackthorn", "redplusplus_ecruteak",
+                "redplusplus_route32",
             }:
                 continue
             with self.subTest(map=name):
