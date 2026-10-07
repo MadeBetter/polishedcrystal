@@ -17,10 +17,9 @@ VioletCity_MapScriptHeader:
 	warp_event 39, 29, ROUTE_31_VIOLET_GATE, 2
 	warp_event  0, 12, ROUTE_36_VIOLET_GATE, 3
 	warp_event  0, 13, ROUTE_36_VIOLET_GATE, 4
-	; Deferred RedPlusPlus south gate: Route 32 warp 5 is currently our
-	; hidden grotto, not this gate. Enable these when its destination is ported.
-	; warp_event 13, 37, ROUTE_32, 5
-	; warp_event 14, 37, ROUTE_32, 5
+	; Route 32 keeps its hidden grotto at warp 5; the south gate uses warp 6.
+	warp_event 13, 37, ROUTE_32, 6
+	warp_event 14, 37, ROUTE_32, 6
 
 	def_coord_events
 

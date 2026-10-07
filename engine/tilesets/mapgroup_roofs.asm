@@ -7,6 +7,8 @@ LoadMapGroupRoof::
 	jr z, .redplusplus
 	cp TILESET_REDPLUSPLUS_ECRUTEAK
 	jr z, .redplusplus
+	cp TILESET_REDPLUSPLUS_ROUTE32
+	jr z, .redplusplus
 	cp TILESET_AZALEA_BLACKTHORN
 	jr nz, .map_group
 .redplusplus

@@ -1,32 +1,32 @@
 	tilecoll WALL, WALL, WALL, WALL ; 00
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 01: Violet Red++ 8c
+	tilecoll WALL, WALL, WALL, WALL ; 01: Route 32 reference (2,4)
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 02
 	tilecoll TALL_GRASS, TALL_GRASS, TALL_GRASS, TALL_GRASS ; 03
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 04: right-side berry tree (Route 30); left-side variant is fe
+	tilecoll WALL, WALL, WALL, WALL ; 04: Route 32 reference (3,8)
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 05
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 06
+	tilecoll WALL, WALL, WALL, WALL ; 06: Route 32 reference (2,9)
 	tilecoll WALL, WALL, WALL, WALL ; 07
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 08: Violet Red++ 8d
+	tilecoll WALL, WALL, DOOR, WALL ; 08: Route 32 reference (3,9)
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 09
-	tilecoll WALL, WALL, WALL, WALL ; 0a: Violet Red++ 96
+	tilecoll WALL, TOP_WALL, WALL, FLOOR ; 0a: Route 32 reference (8,9)
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 0b
-	tilecoll WALL, WALL, WALL, WALL ; 0c: Violet Red++ 97
-	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 0d: Violet Red++ 99
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 0c: Route 32 reference (2,10)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 0d: Route 32 reference (0,11)
 	tilecoll FLOOR, WALL, FLOOR, WALL ; 0e
 	tilecoll WALL, WALL, WALL, WALL ; 0f
-	tilecoll WALL, WALL, WALL, WALL ; 10: Violet Red++ 9c
+	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 10: Route 32 reference (6,16)
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 11
-	tilecoll WALL, WALL, WALL, WALL ; 12: Violet Red++ 9d
+	tilecoll WATER, WATER, WATER, WATER ; 12: Route 32 reference (5,27)
 	tilecoll WALL, WALL, WALL, WALL ; 13
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; 14
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 15: Violet Red++ 9f
 	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 16
-	tilecoll WALL, WALL, WALL, WALL ; 17: Violet Red++ a0
+	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 17: Route 32 reference (7,11)
 	tilecoll BUOY, BUOY, BUOY, WATER ; 18
 	tilecoll BUOY, BUOY, WATER, WATER ; 19
-	tilecoll BUOY, BUOY, WATER, BUOY ; 1a
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 1a: interior forest, same graphics/priority as 0f
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 1b
-	tilecoll BUOY, WATER, BUOY, WATER ; 1c
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 1c: interior forest base, same graphics/priority as 13
 	tilecoll WALL, WALL, DOOR, WALL ; 1d: Violet Red++ a1
 	tilecoll WATER, WATER, WATER, WATER ; 1e: Violet Red++ a2
 	tilecoll WALL, WALL, WALL, WALL ; 1f
@@ -40,7 +40,7 @@
 	tilecoll WALL, WALL, WALL, WALL ; 27
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 28: Violet Red++ b3
 	tilecoll WALL, FLOOR, WALL, FLOOR ; 29: Outskirts Red++ 0c
-	tilecoll WALL, FLOOR, WALL, WALL ; 2a: Outskirts Red++ 28
+	tilecoll FLOOR, WALL, WALL, WALL ; 2a: Route 32 reference (4,9)
 	tilecoll WALL, WALL, WALL, WALL ; 2b
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 2c: Outskirts Red++ 29
 	tilecoll LEDGE_DOWN, FLOOR, WALL, FLOOR ; 2d
@@ -48,7 +48,7 @@
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 2f
 	tilecoll WALL, FLOOR, WALL, FLOOR ; 30: Violet Red++ b8
 	tilecoll LEDGE_DOWN, LEDGE_DOWN, WALL, WALL ; 31
-	tilecoll FLOOR, WALL, FLOOR, WALL ; 32: Violet Red++ b9
+	tilecoll LEDGE_DOWN_RIGHT, WALL, WALL, WALL ; 32: Route 32 reference (0,8)
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 33
 	tilecoll WALL, LEDGE_LEFT, WALL, LEDGE_LEFT ; 34
 	tilecoll LEDGE_DOWN, FLOOR, WALL, FLOOR ; 35
@@ -61,29 +61,29 @@
 	tilecoll WATER, WATER, WATER, WATER ; 3c
 	tilecoll WATER, WATER, WATER, WATER ; 3d
 	tilecoll WATER, WATER, WATER, WATER ; 3e
-	tilecoll WALL, FLOOR, WALL, FLOOR ; 3f: Violet Red++ ba
+	tilecoll WATER, WATER, WATER, WATER ; 3f: Route 32 reference (8,23)
 	tilecoll WATER, WATER, WATER, WATER ; 40
 	tilecoll WATER, WATER, WATER, WATER ; 41
 	tilecoll WATER, WATER, WATER, WATER ; 42
 	tilecoll WATER, WATER, WATER, WATER ; 43
-	tilecoll FLOOR, WALL, FLOOR, WALL ; 44: Violet Red++ bb
-	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 45: Violet Red++ bf
-	tilecoll WATER, WATER, WALL, WALL ; 46: Violet Red++ c0
+	tilecoll WALL, WALL, WALL, WALL ; 44: Route 32 reference (2,8)
+	tilecoll TOP_WALL, WALL, FLOOR, WALL ; 45: Route 32 reference (0,4)
+	tilecoll WALL, TOP_WALL, WALL, FLOOR ; 46: Route 32 reference (7,5)
 	tilecoll TOP_WALL, WALL, FLOOR, WALL ; 47
 	tilecoll WALL, FLOOR, WALL, FLOOR ; 48
-	tilecoll WALL, WALL, WALL, WALL ; 49: Violet Red++ c7
+	tilecoll FLOOR, WALL, FLOOR, WALL ; 49: Route 32 reference (0,5)
 	tilecoll WALL, FLOOR, WALL, WALL ; 4a
 	tilecoll FLOOR, WALL, WALL, WALL ; 4b
-	tilecoll WALL, WALL, FLOOR, FLOOR ; 4c: Outskirts Red++ 5d
+	tilecoll TOP_WALL, TOP_WALL, FLOOR, FLOOR ; 4c: Route 32 reference (8,5)
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 4d
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 4e
 	tilecoll BOTTOM_WALL, FLOOR, CAVE, WALL ; 4f
 	tilecoll WALL, FLOOR, WALL, FLOOR ; 50: Violet Red++ ca
 	tilecoll FLOOR, FLOOR, WALL, FLOOR ; 51
-	tilecoll WALL, WALL, WALL, WALL ; 52: Violet PNG correction (8,10)
-	tilecoll WALL, WALL, DOOR, WALL ; 53: Violet PNG correction (9,10)
+	tilecoll WALL, TOP_WALL, WALL, FLOOR ; 52: Route 32 reference (10,16)
+	tilecoll TOP_WALL, WALL, FLOOR, WALL ; 53: Route 32 reference (11,16)
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 54: Violet PNG correction (10,10)
-	tilecoll TOP_WALL, TOP_WALL, FLOOR, FLOOR ; 55: Violet PNG correction (0,14)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 55: Route 32 reference (8,16)
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 56
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 57
 	tilecoll BOTTOM_WALL, FLOOR, CAVE, WALL ; 58: Violet PNG correction (0,15)

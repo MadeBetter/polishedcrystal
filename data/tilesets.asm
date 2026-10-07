@@ -70,6 +70,11 @@ Tilesets::
 	dbas TilesetRedPlusPlusEcruteakMeta, TilesetRedPlusPlusEcruteakColl, TilesetRedPlusPlusEcruteakAttr
 	dba TilesetNewBarkCherrygroveGFX0, TilesetNewBarkCherrygroveGFX1, TilesetNewBarkCherrygroveGFX2
 	fardw TilesetNewBarkCherrygroveAnim
+	; Route 32 shares common terrain, with six reference-only yellow-entrance tiles
+	; in bank 1's second half. Keep northern connection block IDs shared.
+	dbas TilesetRedPlusPlusRoute32Meta, TilesetRedPlusPlusRoute32Coll, TilesetRedPlusPlusRoute32Attr
+	dba TilesetNewBarkCherrygroveGFX0, TilesetNewBarkCherrygroveGFX1, TilesetRedPlusPlusRoute32GFX2
+	fardw TilesetNewBarkCherrygroveAnim
 	assert_table_length NUM_TILESETS
 
 
@@ -204,6 +209,18 @@ SECTION "Tileset Data - redplusplus ecruteak", ROMX
 TilesetRedPlusPlusEcruteakMeta:: INCBIN "data/tilesets/redplusplus_ecruteak_metatiles.bin.lzp"
 TilesetRedPlusPlusEcruteakAttr:: INCBIN "data/tilesets/redplusplus_ecruteak_attributes.bin.lzp"
 TilesetRedPlusPlusEcruteakColl:: INCBIN "data/tilesets/redplusplus_ecruteak_collision.bin.lzp"
+
+
+SECTION "Tileset Graphics - redplusplus route32 vram2", ROMX
+
+TilesetRedPlusPlusRoute32GFX2:: INCBIN "gfx/tilesets/redplusplus_route32.redplusplus_johto_common.2bpp.vram1.lzp"
+
+
+SECTION "Tileset Data - redplusplus route32", ROMX
+
+TilesetRedPlusPlusRoute32Meta:: INCBIN "data/tilesets/redplusplus_route32_metatiles.bin.lzp"
+TilesetRedPlusPlusRoute32Attr:: INCBIN "data/tilesets/redplusplus_route32_attributes.bin.lzp"
+TilesetRedPlusPlusRoute32Coll:: INCBIN "data/tilesets/redplusplus_route32_collision.bin.lzp"
 
 
 SECTION "Tileset Graphics - azalea blackthorn vram0", ROMX

@@ -22,7 +22,7 @@ ENDM
 	map_attributes VioletCity, VIOLET_CITY, $f
 	; Keep the reference's closed north tree line until the outskirts are ported.
 	connection north, VioletOutskirts, VIOLET_OUTSKIRTS, 0
-	connection south, Route32, ROUTE_32, 0
+	connection south, Route32, ROUTE_32, -2
 	connection west, Route36, ROUTE_36, 1
 	connection east, Route31, ROUTE_31, 11
 
@@ -87,8 +87,8 @@ ENDM
 	connection south, Route30, ROUTE_30, 10
 	connection west, VioletCity, VIOLET_CITY, -11
 
-	map_attributes Route32, ROUTE_32, $5
-	connection north, VioletCity, VIOLET_CITY, 0
+	map_attributes Route32, ROUTE_32, $f
+	connection north, VioletCity, VIOLET_CITY, 2
 	connection south, Route33, ROUTE_33, 0
 	connection west, MagnetTunnelEast, MAGNET_TUNNEL_EAST, 10
 	connection east, CherrygroveBay, CHERRYGROVE_BAY, 12

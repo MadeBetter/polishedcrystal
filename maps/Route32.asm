@@ -8,55 +8,58 @@ Route32_MapScriptHeader:
 	def_callbacks
 	callback MAPCALLBACK_NEWMAP, Route32FlyPoint
 	callback MAPCALLBACK_OBJECTS, Route32Frieda
+	callback MAPCALLBACK_CMDQUEUE, Route32SetUpPaletteSwap
 
 	def_warp_events
-	warp_event 11, 73, ROUTE_32_POKECENTER_1F, 1
-	warp_event  4,  2, ROUTE_32_RUINS_OF_ALPH_GATE, 3
-	warp_event  4,  3, ROUTE_32_RUINS_OF_ALPH_GATE, 4
-	warp_event  6, 79, UNION_CAVE_1F, 4
-	warp_event  4, 24, HIDDEN_TREE_GROTTO, 1
+	warp_event 15, 77, ROUTE_32_POKECENTER_1F, 1
+	warp_event  8,  6, ROUTE_32_RUINS_OF_ALPH_GATE, 3
+	warp_event  8,  7, ROUTE_32_RUINS_OF_ALPH_GATE, 4
+	warp_event 10, 83, UNION_CAVE_1F, 4
+	warp_event  9, 28, HIDDEN_TREE_GROTTO, 1
+	warp_event 17,  1, VIOLET_CITY, 12
+	; The reference-only yellow entrance at (6,19) is reserved for later.
 
 	def_coord_events
-	coord_event 18,  8, SCENE_ROUTE32_COOLTRAINER_M_BLOCKS, Route32CooltrainerMStopsYou
-	coord_event 10, 24, SCENE_ROUTE32_LYRA_GROTTOES, Route32LyraIntroducesHiddenGrottoes1
-	coord_event 11, 24, SCENE_ROUTE32_LYRA_GROTTOES, Route32LyraIntroducesHiddenGrottoes2
-	coord_event 12, 24, SCENE_ROUTE32_LYRA_GROTTOES, Route32LyraIntroducesHiddenGrottoes3
-	coord_event 13, 24, SCENE_ROUTE32_LYRA_GROTTOES, Route32LyraIntroducesHiddenGrottoes4
-	coord_event  7, 71, SCENE_ROUTE32_OFFER_SLOWPOKETAIL, Route32WannaBuyASlowpokeTailScript
+	coord_event 22, 14, SCENE_ROUTE32_COOLTRAINER_M_BLOCKS, Route32CooltrainerMStopsYou
+	coord_event 14, 28, SCENE_ROUTE32_LYRA_GROTTOES, Route32LyraIntroducesHiddenGrottoes1
+	coord_event 15, 28, SCENE_ROUTE32_LYRA_GROTTOES, Route32LyraIntroducesHiddenGrottoes2
+	coord_event 16, 28, SCENE_ROUTE32_LYRA_GROTTOES, Route32LyraIntroducesHiddenGrottoes3
+	coord_event 17, 28, SCENE_ROUTE32_LYRA_GROTTOES, Route32LyraIntroducesHiddenGrottoes4
+	coord_event 11, 75, SCENE_ROUTE32_OFFER_SLOWPOKETAIL, Route32WannaBuyASlowpokeTailScript
 
 	def_bg_events
-	bg_event 13,  5, BGEVENT_JUMPTEXT, Route32SignText
-	bg_event  7,  1, BGEVENT_JUMPTEXT, Route32RuinsSignText
-	bg_event 10, 84, BGEVENT_JUMPTEXT, Route32UnionCaveSignText
-	bg_event 14,  1, BGEVENT_JUMPTEXT, Route32AdvancedTips1Text
-	bg_event  1, 59, BGEVENT_JUMPTEXT, Route32AdvancedTips2Text
+	bg_event 17,  9, BGEVENT_JUMPTEXT, Route32SignText
+	bg_event 13,  5, BGEVENT_JUMPTEXT, Route32RuinsSignText
+	bg_event 14, 88, BGEVENT_JUMPTEXT, Route32UnionCaveSignText
+	; The northwest sign is in the future entrance area; use the north gate plaque.
+	bg_event 19,  4, BGEVENT_JUMPTEXT, Route32AdvancedTips1Text
+	bg_event  5, 63, BGEVENT_JUMPTEXT, Route32AdvancedTips2Text
 	bg_event 12, 67, BGEVENT_ITEM + GREAT_BALL, EVENT_ROUTE_32_HIDDEN_GREAT_BALL_1
-	bg_event 11, 40, BGEVENT_ITEM + SUPER_POTION, EVENT_ROUTE_32_HIDDEN_SUPER_POTION_1
-	bg_event  8, 10, BGEVENT_ITEM + SUPER_POTION, EVENT_ROUTE_32_HIDDEN_SUPER_POTION_2
-	bg_event 18, 49, BGEVENT_ITEM + GOLD_LEAF, EVENT_ROUTE_32_HIDDEN_GOLD_LEAF
-	bg_event  8, 80, BGEVENT_ITEM + GREAT_BALL, EVENT_ROUTE_32_HIDDEN_GREAT_BALL_2
-	bg_event  4, 23, BGEVENT_JUMPSTD, treegrotto, HIDDENGROTTO_ROUTE_32
-	bg_event  5, 23, BGEVENT_JUMPSTD, treegrotto, HIDDENGROTTO_ROUTE_32
+	bg_event 15, 44, BGEVENT_ITEM + SUPER_POTION, EVENT_ROUTE_32_HIDDEN_SUPER_POTION_1
+	bg_event 12, 14, BGEVENT_ITEM + SUPER_POTION, EVENT_ROUTE_32_HIDDEN_SUPER_POTION_2
+	bg_event 22, 53, BGEVENT_ITEM + GOLD_LEAF, EVENT_ROUTE_32_HIDDEN_GOLD_LEAF
+	bg_event 11, 84, BGEVENT_ITEM + GREAT_BALL, EVENT_ROUTE_32_HIDDEN_GREAT_BALL_2
+	bg_event  8, 27, BGEVENT_JUMPSTD, treegrotto, HIDDENGROTTO_ROUTE_32
+	bg_event  9, 27, BGEVENT_JUMPSTD, treegrotto, HIDDENGROTTO_ROUTE_32
 
 	def_object_events
-	object_event 19,  8, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, Route32CooltrainermPetrieScript, -1
-	object_event  7, 70, SPRITE_FAT_GUY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, SlowpokeTailSalesmanScript, EVENT_SLOWPOKE_WELL_ROCKETS
-	object_event 12, 67, SPRITE_LASS, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, FriedaScript, EVENT_ROUTE_32_FRIEDA_OF_FRIDAY
-	object_event 13, 29, SPRITE_LYRA, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_LYRA_ROUTE_32
-	object_event  8, 49, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 1, GenericTrainerFisherJustin, -1
-	object_event 12, 56, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 3, TrainerFisherRalph1, -1
-	object_event 12, 33, SPRITE_PICNICKER, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 1, TrainerPicnickerLiz1, -1
-	object_event  6, 48, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 1, GenericTrainerFisherHenry, -1
-	object_event 16, 18, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerYoungsterAlbert, -1
-	object_event  4, 63, SPRITE_YOUNGSTER, SPRITEMOVEDATA_SPINRANDOM_FAST, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerYoungsterGordon, -1
-	object_event  3, 45, SPRITE_CAMPER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerCamperRoland, -1
-	object_event 11, 82, SPRITE_BIRD_KEEPER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerBird_keeperPeter, -1
-	itemball_event  6, 53, GREAT_BALL, 1, EVENT_ROUTE_32_GREAT_BALL
-	object_event 15, 13, SPRITE_FAT_GUY, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, Route32RoarTMGuyScript, -1
-	itemball_event  6, 32, REPEL, 1, EVENT_ROUTE_32_REPEL
-	cuttree_event 10, 19, EVENT_ROUTE_32_CUT_TREE
-	cuttree_event -1, 29, EVENT_MAGNET_TUNNEL_EAST_CUT_TREE
-	cuttree_event 19, 32, EVENT_CHERRYGROVE_BAY_CUT_TREE_1
+	object_event 23, 14, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, Route32CooltrainermPetrieScript, -1
+	object_event 11, 74, SPRITE_FAT_GUY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, SlowpokeTailSalesmanScript, EVENT_SLOWPOKE_WELL_ROCKETS
+	object_event 17, 71, SPRITE_LASS, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, FriedaScript, EVENT_ROUTE_32_FRIEDA_OF_FRIDAY
+	object_event 17, 33, SPRITE_LYRA, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_LYRA_ROUTE_32
+	object_event 10, 52, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 1, GenericTrainerFisherJustin, -1
+	object_event 16, 60, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 3, TrainerFisherRalph1, -1
+	object_event 15, 35, SPRITE_PICNICKER, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 1, TrainerPicnickerLiz1, -1
+	object_event 12, 53, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 1, GenericTrainerFisherHenry, -1
+	object_event 20, 22, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerYoungsterAlbert, -1
+	object_event  8, 67, SPRITE_YOUNGSTER, SPRITEMOVEDATA_SPINRANDOM_FAST, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerYoungsterGordon, -1
+	object_event  7, 49, SPRITE_CAMPER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerCamperRoland, -1
+	object_event 15, 86, SPRITE_BIRD_KEEPER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 3, GenericTrainerBird_keeperPeter, -1
+	itemball_event  9, 57, GREAT_BALL, 1, EVENT_ROUTE_32_GREAT_BALL
+	object_event 19, 17, SPRITE_FAT_GUY, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, Route32RoarTMGuyScript, -1
+	itemball_event  1, 33, REPEL, 1, EVENT_ROUTE_32_REPEL
+	cuttree_event 14, 23, EVENT_ROUTE_32_CUT_TREE
+	cuttree_event -1, 30, EVENT_MAGNET_TUNNEL_EAST_CUT_TREE
 
 	object_const_def
 	const ROUTE32_COOLTRAINER_M
@@ -67,6 +70,15 @@ Route32_MapScriptHeader:
 Route32FlyPoint:
 	setflag ENGINE_FLYPOINT_UNION_CAVE
 	endcallback
+
+Route32SetUpPaletteSwap:
+	usepaletteswap .PaletteSwap
+	endcallback
+
+.PaletteSwap:
+	; The yellow entrance and pier are far enough apart to reuse the roof slot.
+	paletteswap 0, 24, 40, 70, PAL_BG_ROOF, VioletCityStationPalettes, Route32PierPalettes
+	db -1 ; end
 
 Route32Frieda:
 	readvar VAR_WEEKDAY

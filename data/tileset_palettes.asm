@@ -30,6 +30,9 @@ INCLUDE "gfx/tilesets/palette-swap/violet-water.pal"
 VioletCityStationPalettes::
 INCLUDE "gfx/tilesets/palette-swap/violet-station.pal"
 
+Route32PierPalettes::
+INCLUDE "gfx/tilesets/palette-swap/route32-pier.pal"
+
 OverworldYellowPalettes::
 INCLUDE "gfx/tilesets/palette-swap/bg-yellow.pal"
 

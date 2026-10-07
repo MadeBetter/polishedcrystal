@@ -242,7 +242,7 @@ ENDM
 	map_const ROUTE_40,                                   10, 20 ;  8
 
 	newgroup                                                     ; 10
-	map_const ROUTE_32,                                   10, 45 ;  1
+	map_const ROUTE_32,                                   12, 46 ;  1
 	map_const ROUTE_32_COAST,                             15, 35 ;  2
 	map_const VIOLET_CITY,                                20, 20 ;  3
 	map_const VIOLET_MART,                                 6,  4 ;  4

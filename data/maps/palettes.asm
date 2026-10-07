@@ -45,6 +45,7 @@ SpecialBGPalettes:
 	special_bg_pal map,      VIRIDIAN_GYM,                SINGLE,      GRAY,   6, ViridianGymPalette
 	special_bg_pal map,      FIGHTING_DOJO,               SINGLE,      GREEN,  5, FightingDojoPalette
 	special_bg_pal map,      VIOLET_CITY,                 TIMEWEATHER, GRAY,   7, VioletCityRedPlusPlusPalette
+	special_bg_pal map,      ROUTE_32,                    TIMEWEATHER, ROOF,   1, Route32EntrancePalette
 	special_bg_pal map,      MURKY_SWAMP,                 SINGLE,      GRAY,   7, MurkySwampPalette
 	special_bg_pal map,      GOLDENROD_DEPT_STORE_ROOF,   TIMEWEATHER, GRAY,   7, GoldenrodDeptStoreRoofPalette
 	special_bg_pal map,      GOLDENROD_MUSEUM_1F,         SINGLE,      YELLOW, 1, GoldenrodMuseumPalette
@@ -825,6 +826,9 @@ rept 7
 endr
 endr
 endc
+
+Route32EntrancePalette:
+INCLUDE "gfx/tilesets/palette-swap/violet-station.pal"
 
 VioletEcruteakPalette:
 if !DEF(MONOCHROME)
