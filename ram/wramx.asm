@@ -640,6 +640,13 @@ wFishingResult:: db
 wFieldMoveDataEnd::
 
 NEXTU
+; Headbutt BG animation (the original screen buffers remain untouched)
+wHeadbuttTilemapPointer:: dw
+wHeadbuttBGMapPointer:: dw
+wHeadbuttTreeVariant:: db
+wHeadbuttShakeState:: db
+
+NEXTU
 ; hidden items
 wCurMapScriptBank:: db
 wRemainingBGEventCount:: db

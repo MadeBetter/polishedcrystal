@@ -27,6 +27,17 @@ _LoadStandardMaybeOpaqueFont:
 	ldh [hRequestOpaque1bpp], a
 	jmp GetMaybeOpaque1bpp
 
+RestoreHeadbuttFontTiles::
+; ReanchorMap loads the non-opaque selected font before Headbutt starts.
+	call LoadStandardFontPointer
+	ld de, (HEADBUTT_BG_TILE - 'A') * TILE_1BPP_SIZE
+	add hl, de
+	ld d, h
+	ld e, l
+	ld hl, vTiles0 tile HEADBUTT_BG_TILE
+	lb bc, BANK(FontTiles), NUM_HEADBUTT_BG_TILES
+	jmp Get1bpp
+
 LoadStandardFontPointer::
 	ld hl, .FontPointers
 	ld a, [wOptions2]

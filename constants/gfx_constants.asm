@@ -1,5 +1,10 @@
 DEF TILE_1BPP_SIZE EQU TILE_SIZE / 2 ; bytes
 
+; Headbutt temporarily borrows seven standard-font tiles in VRAM bank 0.
+; Restore the selected font before returning to text or battle code.
+DEF HEADBUTT_BG_TILE EQU $e0
+DEF NUM_HEADBUTT_BG_TILES EQU 7
+
 DEF METATILE_WIDTH EQU 4 ; tiles
 DEF SCREEN_META_WIDTH  EQU 6 ; metatiles
 DEF SCREEN_META_HEIGHT EQU 5 ; metatiles

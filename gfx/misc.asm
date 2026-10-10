@@ -25,6 +25,8 @@ SECTION "Overworld Effect Graphics", ROMX
 OverworldEffectGFX:: INCBIN "gfx/overworld/overworld.2bpp.lzp"
 HeadbuttTreeGFX::    INCBIN "gfx/overworld/headbutt_tree.2bpp.lzp"
 HeadbuttTree2GFX::   INCBIN "gfx/overworld/headbutt_tree_2.2bpp.lzp"
+HeadbuttTreeBGGFX::  INCBIN "gfx/overworld/headbutt_tree_bg.2bpp"
+assert @ - HeadbuttTreeBGGFX == NUM_HEADBUTT_BG_TILES * TILE_SIZE
 
 
 SECTION "Overworld Weather Graphics", ROMX
