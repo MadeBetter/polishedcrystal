@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard the Headbutt BG artwork, font workspace, and rendering contracts.
+"""Guard Headbutt BG artwork, collision eligibility, and rendering contracts.
 
 Run after `make` to include the generated 2bpp graphics check.
 """
@@ -57,6 +57,52 @@ class HeadbuttBGTests(unittest.TestCase):
                 self.assertEqual(tiles[start:start+12], expected, (name, block))
                 self.assertEqual(bytes(a & 0x68 for a in attrs[start:start+12]),
                                  bytes([8 if edge else 0, 0, 32, 32] + [0, 0, 32, 32] * 2))
+
+    def test_bushes_and_tree_caps_are_not_headbutt_targets(self):
+        # Exact 16x16 quadrants from the supplied bush and two tree-cap halves.
+        # Match bank/orientation as well as IDs, since IDs alone are ambiguous.
+        excluded = {
+            (0x12, 0x12, 0x22, 0x22): (0, 32, 0, 32),
+            (0x12, 0x13, 0x23, 0x31): (0, 0, 0, 0),
+            (0x13, 0x12, 0x31, 0x23): (32, 32, 32, 32),
+        }
+        for name in ('new_bark_cherrygrove', 'redplusplus_ecruteak', 'redplusplus_route32'):
+            tiles = (ROOT / f'data/tilesets/{name}_metatiles.bin').read_bytes()
+            attrs = (ROOT / f'data/tilesets/{name}_attributes.bin').read_bytes()
+            collisions = self.collisions(name)
+            matched = set()
+            for block in range(256):
+                for quadrant in range(4):
+                    start = block * 16 + quadrant // 2 * 8 + quadrant % 2 * 2
+                    indices = (start, start + 1, start + 4, start + 5)
+                    pattern = tuple(tiles[i] for i in indices)
+                    if pattern in excluded and tuple(attrs[i] & 0x68 for i in indices) == excluded[pattern]:
+                        self.assertNotEqual(collisions[block][quadrant], 'HEADBUTT_TREE',
+                                            (name, hex(block), quadrant))
+                        matched.add(pattern)
+            self.assertEqual(matched, set(excluded), name)
+
+    @staticmethod
+    def collisions(name):
+        return [tuple(line.split(';')[0].strip().removeprefix('tilecoll ').split(', '))
+                for line in (ROOT / f'data/tilesets/{name}_collision.asm').read_text().splitlines()
+                if line.lstrip().startswith('tilecoll ')]
+
+    def test_excluded_cells_stay_solid_and_tree_bodies_stay_headbuttable(self):
+        for name in ('new_bark_cherrygrove', 'redplusplus_ecruteak', 'redplusplus_route32'):
+            collisions = self.collisions(name)
+            self.assertEqual(collisions[0x80], ('WALL', 'WALL', 'FLOOR', 'FLOOR'))
+            self.assertEqual(collisions[0x85], ('FLOOR', 'WALL', 'FLOOR', 'WALL'))
+            self.assertEqual(collisions[0xaa], ('HEADBUTT_TREE',) * 4)
+        forest = self.collisions('redplusplus_ecruteak')
+        for block in (0xf, 0x13):
+            self.assertEqual(forest[block], ('HEADBUTT_TREE',) * 4)
+        for block in (0x25, 0x7b, 0x9d, 0xda):
+            self.assertEqual(forest[block].count('HEADBUTT_TREE'), 2)
+        route = self.collisions('redplusplus_route32')
+        for block in (0x1a, 0x1c):
+            self.assertEqual(route[block], ('HEADBUTT_TREE',) * 4)
+        self.assertEqual(route[0xd][2:], ('FLOOR', 'FLOOR'))
 
     def test_only_bg_queue_is_modified(self):
         for prohibited in ['wShadowOAM', 'InitSpriteAnimStruct', 'ClearSpriteAnims',

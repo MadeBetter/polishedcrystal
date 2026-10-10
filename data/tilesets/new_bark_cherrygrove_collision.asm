@@ -126,12 +126,12 @@
 	tilecoll WALL, WALL, WALL, WALL ; 7d
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 7e
 	tilecoll FLOOR, FLOOR, FLOOR, HEADBUTT_TREE ; 7f: Outskirts Route 42 preview 3f
-	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, FLOOR, FLOOR ; 80: Outskirts Route 42 preview 5d
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 80: Outskirts Route 42 preview 5d
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, FLOOR, HEADBUTT_TREE ; 81: Outskirts Route 42 preview 5e
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 82: Outskirts Route 42 preview 61
 	tilecoll WALL, WALL, WALL, WALL ; 83
 	tilecoll WALL, WALL, WALL, WALL ; 84
-	tilecoll FLOOR, HEADBUTT_TREE, FLOOR, HEADBUTT_TREE ; 85: Outskirts Route 42 preview 62
+	tilecoll FLOOR, WALL, FLOOR, WALL ; 85: Outskirts Route 42 preview 62
 	tilecoll WALL, WALL, WALL, WALL ; 86
 	tilecoll WALL, WALL, WALL, DOOR ; 87
 	tilecoll WALL, WALL, WALL, WALL ; 88

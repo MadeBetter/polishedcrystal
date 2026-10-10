@@ -2,17 +2,17 @@
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 01: Violet Red++ 8c
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 02
 	tilecoll TALL_GRASS, TALL_GRASS, TALL_GRASS, TALL_GRASS ; 03
-	tilecoll FLOOR, FLOOR, HEADBUTT_TREE, WARP_CARPET_DOWN ; 04: Route 36 Red++ 94; PC Headbutt trees
+	tilecoll FLOOR, FLOOR, WALL, WARP_CARPET_DOWN ; 04: Route 36 Red++ 94; bush
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 05
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 06
-	tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, HEADBUTT_TREE ; 07: Route 36 Red++ 95; PC Headbutt trees
+	tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WALL ; 07: Route 36 Red++ 95; bush
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 08: Violet Red++ 8d
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 09: Route 36 PNG correction (4,2)
 	tilecoll WALL, WALL, WALL, WALL ; 0a: Violet Red++ 96
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 0b
 	tilecoll WALL, WALL, WALL, WALL ; 0c: Violet Red++ 97
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 0d: Violet Red++ 99
-	tilecoll FLOOR, HEADBUTT_TREE, FLOOR, HEADBUTT_TREE ; 0e; PC Headbutt trees
+	tilecoll FLOOR, WALL, FLOOR, WALL ; 0e: bushes
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 0f; PC Headbutt trees
 	tilecoll WALL, WALL, WALL, WALL ; 10: Violet Red++ 9c
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 11: Route 36 PNG correction (4,3)
@@ -20,7 +20,7 @@
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 13; PC Headbutt trees
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; 14
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 15: Violet Red++ 9f
-	tilecoll FLOOR, HEADBUTT_TREE, FLOOR, FLOOR ; 16; PC Headbutt trees
+	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 16: bush
 	tilecoll WALL, WALL, WALL, WALL ; 17: Violet Red++ a0
 	tilecoll BUOY, BUOY, BUOY, WATER ; 18
 	tilecoll BUOY, BUOY, WATER, WATER ; 19
@@ -34,12 +34,12 @@
 	tilecoll WATER, WATER, BUOY, BUOY ; 21
 	tilecoll WALL, WALL, WALL, WALL ; 22: Violet Red++ b0
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, FLOOR, FLOOR ; 23; PC Headbutt trees
-	tilecoll FLOOR, FLOOR, HEADBUTT_TREE, HEADBUTT_TREE ; 24; PC Headbutt trees
-	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 25; PC Headbutt trees
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 24: tree caps
+	tilecoll WALL, WALL, HEADBUTT_TREE, HEADBUTT_TREE ; 25: tree caps above Headbutt body
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, WALL, WALL ; 26; PC Headbutt trees
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, WALL, WALL ; 27; PC Headbutt trees
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 28: Violet Red++ b3
-	tilecoll HEADBUTT_TREE, FLOOR, HEADBUTT_TREE, FLOOR ; 29: Outskirts Red++ 0c; PC Headbutt trees
+	tilecoll WALL, FLOOR, WALL, FLOOR ; 29: Outskirts Red++ 0c; bushes
 	tilecoll WALL, FLOOR, WALL, WALL ; 2a: Outskirts Red++ 28
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, WALL, WALL ; 2b; PC Headbutt trees
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 2c: Outskirts Red++ 29
@@ -118,20 +118,20 @@
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, TALL_GRASS, TALL_GRASS ; 75; PC Headbutt trees
 	tilecoll TALL_GRASS, TALL_GRASS, TALL_GRASS, TALL_GRASS ; 76
 	tilecoll TALL_GRASS, TALL_GRASS, WALL, WALL ; 77
-	tilecoll WALL, HEADBUTT_TREE, WALL, HEADBUTT_TREE ; 78; PC Headbutt trees
+	tilecoll WALL, WALL, WALL, WALL ; 78: bushes
 	tilecoll WALL, WALL, WALL, WALL ; 79
 	tilecoll WALL, WALL, WALL, WALL ; 7a: Outskirts PNG correction (4,5)
-	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 7b; PC Headbutt trees
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, WALL, WALL ; 7b: Headbutt body above bushes
 	tilecoll FLOOR, FLOOR, HEADBUTT_TREE, FLOOR ; 7c: Outskirts Route 42 preview 3e
 	tilecoll WALL, WALL, WALL, WALL ; 7d
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 7e
 	tilecoll FLOOR, FLOOR, FLOOR, HEADBUTT_TREE ; 7f: Outskirts Route 42 preview 3f
-	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, FLOOR, FLOOR ; 80: Outskirts Route 42 preview 5d
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 80: Outskirts Route 42 preview 5d
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, FLOOR, HEADBUTT_TREE ; 81: Outskirts Route 42 preview 5e
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 82: Outskirts Route 42 preview 61
 	tilecoll WALL, WALL, WALL, WALL ; 83
 	tilecoll WALL, WALL, WALL, WALL ; 84
-	tilecoll FLOOR, HEADBUTT_TREE, FLOOR, HEADBUTT_TREE ; 85: Outskirts Route 42 preview 62
+	tilecoll FLOOR, WALL, FLOOR, WALL ; 85: Outskirts Route 42 preview 62
 	tilecoll WALL, WALL, WALL, WALL ; 86
 	tilecoll WALL, WALL, WALL, DOOR ; 87
 	tilecoll WALL, WALL, WALL, WALL ; 88
@@ -155,7 +155,7 @@
 	tilecoll WALL, WALL, WALL, DOOR ; 9a: Violet Red++ 9a
 	tilecoll WALL, WALL, WALL, WALL ; 9b: Violet Red++ 9b
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 9c
-	tilecoll FLOOR, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 9d; PC Headbutt trees
+	tilecoll FLOOR, WALL, HEADBUTT_TREE, HEADBUTT_TREE ; 9d: tree cap above Headbutt body
 	tilecoll WALL, WALL, WALL, WALL ; 9e: Violet Red++ 9e
 	tilecoll WALL, FLOOR, WALL, WALL ; 9f
 	tilecoll WALL, WALL, WALL, WALL ; a0
@@ -216,7 +216,7 @@
 	tilecoll WALL, WALL, WALL, WALL ; d7
 	tilecoll WALL, WALL, WALL, WALL ; d8
 	tilecoll WALL, WALL, DOOR, WALL ; d9
-	tilecoll HEADBUTT_TREE, FLOOR, HEADBUTT_TREE, HEADBUTT_TREE ; da: Route 36 Red++ da; PC Headbutt trees
+	tilecoll WALL, FLOOR, HEADBUTT_TREE, HEADBUTT_TREE ; da: Route 36 Red++ da; tree cap above Headbutt body
 	tilecoll WARP_CARPET_LEFT, WALL, FLOOR, WALL ; db
 	tilecoll WALL, WALL, FLOOR, WALL ; dc: Route 36 Red++ dc
 	tilecoll FLOOR, FLOOR, WALL, WALL ; dd
@@ -227,7 +227,7 @@
 	tilecoll WALL, WALL, WALL, WALL ; e2: Route 36 Red++ e2
 	tilecoll WALL, WALL, WALL, WALL ; e3: Route 36 Red++ e3
 	tilecoll FLOOR, WALL, FLOOR, WALL ; e4: Route 36 Red++ e4
-	tilecoll FLOOR, FLOOR, WALL, HEADBUTT_TREE ; e5: Route 36 Red++ e5; PC Headbutt trees
+	tilecoll FLOOR, FLOOR, WALL, WALL ; e5: Route 36 Red++ e5; bush
 	tilecoll WALL, WALL, WALL, WALL ; e6
 	tilecoll WALL, WALL, WALL, WALL ; e7
 	tilecoll WALL, DOOR, FLOOR, FLOOR ; e8
