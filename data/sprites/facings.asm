@@ -280,7 +280,7 @@ FacingSplash2:
 
 FacingApricorn:
 	db 2 ; #
-	db  0,  4, 0, $05
+	db -4,  4, 0, $05
 	db 10,  4, FIXED_BROWN_PALETTE, $06
 
 FacingBerry:
