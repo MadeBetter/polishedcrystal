@@ -8,6 +8,7 @@ CutGrassBlockPointers:
 	dbw TILESET_NEW_BARK_CHERRYGROVE, .new_bark_cherrygrove
 	dbw TILESET_REDPLUSPLUS_ECRUTEAK, .new_bark_cherrygrove
 	dbw TILESET_REDPLUSPLUS_ROUTE32, .new_bark_cherrygrove
+	dbw TILESET_REDPLUSPLUS_AZALEA, .new_bark_cherrygrove
 	dbw TILESET_AZALEA_BLACKTHORN, .azalea_blackthorn
 	dbw TILESET_KANTO, .kanto
 	dbw TILESET_KANTO_NORTH, .kanto_north

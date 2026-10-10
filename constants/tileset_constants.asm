@@ -58,6 +58,7 @@ DEF NO_ROOF_TILESETS EQU const_value
 	const TILESET_KANTO_GYM            ; 37
 	const TILESET_REDPLUSPLUS_ECRUTEAK ; 38
 	const TILESET_REDPLUSPLUS_ROUTE32  ; 39
+	const TILESET_REDPLUSPLUS_AZALEA   ; 3a
 DEF NUM_TILESETS EQU const_value - 1
 
 ; wTileset struct size

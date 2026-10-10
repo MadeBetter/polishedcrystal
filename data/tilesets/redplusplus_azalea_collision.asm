@@ -1,10 +1,10 @@
 	tilecoll WALL, WALL, WALL, WALL ; 00
-	tilecoll WALL, WALL, WALL, WALL ; 01: Route 32 reference (2,4)
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 01: Azalea Town dry (4,2), Red++ aa
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 02
 	tilecoll TALL_GRASS, TALL_GRASS, TALL_GRASS, TALL_GRASS ; 03
-	tilecoll WALL, WALL, WALL, WALL ; 04: Route 32 reference (3,8)
+	tilecoll WALL, WALL, WALL, WALL ; 04: Azalea Town dry (15,4), Red++ a4
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 05
-	tilecoll WALL, WALL, WALL, WALL ; 06: Route 32 reference (2,9)
+	tilecoll FLOOR, WALL, WALL, WALL ; 06: Azalea Town dry (2,5), Red++ a7
 	tilecoll WALL, WALL, WALL, WALL ; 07
 	tilecoll WALL, WALL, DOOR, WALL ; 08: Route 32 reference (3,9)
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 09
@@ -107,7 +107,7 @@
 	tilecoll WALL, WALL, FLOOR, WALL ; 6a: Outskirts Red++ cf
 	tilecoll WALL, WALL, FLOOR, WALL ; 6b: Outskirts Red++ d0
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 6c: Outskirts Red++ d1
-	tilecoll WALL, WALL, WALL, WALL ; 6d: Outskirts Red++ d2
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 6d: Azalea Town dry (1,5), Red++ 6d
 	tilecoll FLOOR, WALL, FLOOR, WALL ; 6e: Outskirts Red++ d3
 	tilecoll FLOOR, WARP_CARPET_RIGHT, FLOOR, WARP_CARPET_RIGHT ; 6f
 	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 70: Outskirts Red++ d7
@@ -138,10 +138,10 @@
 	tilecoll FLOOR, FLOOR, HEADBUTT_TREE, HEADBUTT_TREE ; 89: Outskirts Route 42 preview 65
 	tilecoll WALL, WALL, WALL, WALL ; 8a
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 8b: Route 36 grotto tree band (same collision as 1f)
-	tilecoll WALL, WALL, WALL, WALL ; 8c
-	tilecoll WALL, WALL, WALL, WALL ; 8d
-	tilecoll WALL, WALL, WALL, WALL ; 8e
-	tilecoll WALL, WALL, WALL, WALL ; 8f
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 8c: Azalea Town dry (7,4), Red++ 8c
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 8d: Azalea Town dry (8,4), Red++ 8d
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 8e: Azalea Town dry (10,2), Red++ 8e
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 8f: Azalea Town dry (11,2), Red++ 8f
 	tilecoll WALL, WALL, WALL, DOOR ; 90
 	tilecoll WALL, WALL, POKECENTER_SIGN, WALL ; 91
 	tilecoll WALL, WALL, WALL, DOOR ; 92
@@ -150,31 +150,31 @@
 	tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WALL ; 95
 	tilecoll TALL_GRASS, TALL_GRASS, FLOOR, FLOOR ; 96
 	tilecoll FLOOR, FLOOR, TALL_GRASS, TALL_GRASS ; 97
-	tilecoll FLOOR, FLOOR, WALL, FLOOR ; 98: Violet Red++ 98
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 99
-	tilecoll WALL, WALL, WALL, DOOR ; 9a: Violet Red++ 9a
-	tilecoll WALL, WALL, WALL, WALL ; 9b: Violet Red++ 9b
-	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 9c
-	tilecoll FLOOR, WALL, WALL, WALL ; 9d
-	tilecoll WALL, WALL, WALL, WALL ; 9e: Violet Red++ 9e
-	tilecoll WALL, FLOOR, WALL, WALL ; 9f
-	tilecoll WALL, WALL, WALL, WALL ; a0
-	tilecoll WALL, WALL, WALL, WALL ; a1
-	tilecoll WALL, WALL, CAVE, WALL ; a2
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 98: Azalea Town dry (4,7), Red++ 98
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 99: Azalea Town dry (5,7), Red++ 99
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 9a: Azalea Town dry (6,7), Red++ 9a
+	tilecoll FLOOR, FLOOR, WALL, FLOOR ; 9b: Azalea Town dry (5,5), Red++ 9b
+	tilecoll WALL, WALL, WALL, WALL ; 9c: Azalea Town dry (4,8), Red++ 9c
+	tilecoll WALL, WALL, WALL, WALL ; 9d: Azalea Town dry (5,8), Red++ 9d
+	tilecoll WALL, WALL, WALL, WALL ; 9e: Azalea Town dry (6,8), Red++ 9e
+	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 9f: Azalea Town dry (14,5), Red++ 9f
+	tilecoll WALL, WALL, FLOOR, FLOOR ; a0: Azalea Town dry (4,9), Red++ a0
+	tilecoll DOOR, WALL, FLOOR, FLOOR ; a1: Azalea Town dry (5,9), Red++ a1
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; a2: Azalea Town dry (6,9), Red++ a2
 	tilecoll WATER, WATER, WATER, WATER ; a3: Violet Red++ a3
 	tilecoll WALL, WALL, WALL, WALL ; a4: gate facade with shrubs, left (same collision as 88)
-	tilecoll WALL, WALL, WALL, WALL ; a5
+	tilecoll WALL, FLOOR, WALL, FLOOR ; a5: Azalea Town dry (16,4), Red++ a5
 	tilecoll FLOOR, BOTTOM_WALL, WALL, CAVE ; a6: Route 33 Union Cave entrance (Red++ a6)
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; a7: Violet Outskirts left-side berry tree
-	tilecoll WALL, WALL, WALL, WALL ; a8
-	tilecoll WALL, WALL, WALL, WALL ; a9
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; a7: Azalea Town dry (4,1), Red++ 02
+	tilecoll WALL, CAVE, FLOOR, FLOOR ; a8: Azalea Town dry (15,5), Red++ a8
+	tilecoll WALL, FLOOR, FLOOR, FLOOR ; a9: Azalea Town dry (16,5), Red++ a9
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; aa: shared Route 36/Violet west gate tree (same graphics/priority in both tilesets)
-	tilecoll FLOOR, FLOOR, WALL, WALL ; ab
-	tilecoll WATER, WATER, FLOOR, FLOOR ; ac: Violet Red++ ac
-	tilecoll WATER, WATER, FLOOR, FLOOR ; ad: Violet Red++ ad
-	tilecoll WATER, WATER, FLOOR, FLOOR ; ae: Violet Red++ ae
-	tilecoll WALL, WALL, WALL, WALL ; af
-	tilecoll WALL, WALL, FLOOR, FLOOR ; b0
+	tilecoll WALL, WALL, WALL, WALL ; ab: Azalea Town dry (5,2), Red++ ab
+	tilecoll FLOOR, FLOOR, WALL, WALL ; ac: Azalea Town dry (10,6), Red++ ac
+	tilecoll FLOOR, FLOOR, WALL, WALL ; ad: Azalea Town dry (11,6), Red++ ad
+	tilecoll WALL, WALL, WALL, DOOR ; ae: Azalea Town dry (4,3), Red++ ae
+	tilecoll WALL, WALL, WALL, WALL ; af: Azalea Town dry (5,3), Red++ af
+	tilecoll WALL, WALL, FLOOR, FLOOR ; b0: Azalea Town dry (11,8), Red++ b0
 	tilecoll WALL, WALL, WALL, WALL ; b1: Violet Red++ b1
 	tilecoll WALL, WALL, WALL, WALL ; b2: Violet Red++ b2
 	tilecoll WALL, WALL, WALL, WALL ; b3
@@ -222,13 +222,13 @@
 	tilecoll FLOOR, FLOOR, WALL, WALL ; dd
 	tilecoll WALL, WALL, WALL, WALL ; de
 	tilecoll WALL, WALL, WALL, WALL ; df
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; e0: Route 33 berry tree top
-	tilecoll WALL, FLOOR, FLOOR, FLOOR ; e1: Route 33 berry tree base
+	tilecoll PUDDLE, PUDDLE, PUDDLE, PUDDLE ; e0: Azalea Town rain (9,9), Red++ e0
+	tilecoll PUDDLE, PUDDLE, PUDDLE, PUDDLE ; e1: Azalea Town rain (3,5), Red++ e1
 	tilecoll FLOOR, PUDDLE, FLOOR, PUDDLE ; e2: Route 33 rainy clearing, left (Red++ e2)
 	tilecoll PUDDLE, FLOOR, PUDDLE, FLOOR ; e3: Route 33 rainy clearing, right (Red++ e3)
 	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; e4: Route 33 tree band (same graphics as 1f)
 	tilecoll WALL, WALL, HEADBUTT_TREE, HEADBUTT_TREE ; e5: Route 33 tree cap/body (same graphics as 25)
-	tilecoll PUDDLE, PUDDLE, PUDDLE, PUDDLE ; e6: aligned Route 33 puddle (right half of e2 + left half of e3)
+	tilecoll PUDDLE, PUDDLE, PUDDLE, PUDDLE ; e6: aligned Azalea Town puddle (right half of e2 + left half of e3)
 	tilecoll WALL, WALL, WALL, WALL ; e7
 	tilecoll WALL, DOOR, FLOOR, FLOOR ; e8
 	tilecoll WALL, WALL, FLOOR, FLOOR ; e9

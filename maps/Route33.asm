@@ -5,17 +5,17 @@ Route33_MapScriptHeader:
 	callback MAPCALLBACK_TILES, Route33RainScript
 
 	def_warp_events
-	warp_event 11,  9, UNION_CAVE_1F, 3
+	warp_event 11, 11, UNION_CAVE_1F, 3
 
 	def_coord_events
 
 	def_bg_events
-	bg_event 11, 11, BGEVENT_JUMPTEXT, Route33SignText
+	bg_event 11, 13, BGEVENT_JUMPTEXT, Route33SignText
 
 	def_object_events
 	object_event  6, 13, SPRITE_HIKER, SPRITEMOVEDATA_SPINRANDOM_FAST, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 2, TrainerHikerAnthony, -1
-	object_event 12, 17, SPRITE_SCHOOLGIRL, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_DARK_RED, OBJECTTYPE_TRAINER, 3, TrainerSchoolgirlImogen, -1
-	fruittree_event 14, 16, FRUITTREE_ROUTE_33, PECHA_BERRY, PAL_NPC_PINK
+	object_event 12, 19, SPRITE_SCHOOLGIRL, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_DARK_RED, OBJECTTYPE_TRAINER, 3, TrainerSchoolgirlImogen, -1
+	fruittree_event 14, 18, FRUITTREE_ROUTE_33, PECHA_BERRY, PAL_NPC_PINK
 
 Route33RainScript:
 	special Special_GetOvercastIndex

@@ -228,8 +228,8 @@ ENDM
 	map_const AZALEA_MART,                                 6,  4 ;  3
 	map_const KURTS_HOUSE,                                 8,  4 ;  4
 	map_const AZALEA_GYM,                                  7, 12 ;  5
-	map_const ROUTE_33,                                   10,  9 ;  6
-	map_const AZALEA_TOWN,                                20,  9 ;  7
+	map_const ROUTE_33,                                   10, 12 ;  6
+	map_const AZALEA_TOWN,                                20, 13 ;  7
 
 	newgroup                                                     ;  9
 	map_const BATTLE_TOWER_1F,                            11,  8 ;  1

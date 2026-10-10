@@ -26,7 +26,7 @@ ENDM
 	connection west, Route36, ROUTE_36, 1
 	connection east, Route31, ROUTE_31, 11
 
-	map_attributes AzaleaTown, AZALEA_TOWN, $5
+	map_attributes AzaleaTown, AZALEA_TOWN, $f
 	connection west, Route34, ROUTE_34, -18
 	connection east, Route33, ROUTE_33, 0
 
@@ -89,12 +89,12 @@ ENDM
 
 	map_attributes Route32, ROUTE_32, $f
 	connection north, VioletCity, VIOLET_CITY, 2
-	connection south, Route33, ROUTE_33, 0
+	connection south, Route33, ROUTE_33, 2
 	connection west, MagnetTunnelEast, MAGNET_TUNNEL_EAST, 10
 	connection east, CherrygroveBay, CHERRYGROVE_BAY, 12
 
-	map_attributes Route33, ROUTE_33, $5
-	connection north, Route32, ROUTE_32, 0
+	map_attributes Route33, ROUTE_33, $f
+	connection north, Route32, ROUTE_32, -2
 	connection west, AzaleaTown, AZALEA_TOWN, 0
 
 	map_attributes Route34, ROUTE_34, $5

@@ -70,11 +70,15 @@ Tilesets::
 	dbas TilesetRedPlusPlusEcruteakMeta, TilesetRedPlusPlusEcruteakColl, TilesetRedPlusPlusEcruteakAttr
 	dba TilesetNewBarkCherrygroveGFX0, TilesetNewBarkCherrygroveGFX1, TilesetNewBarkCherrygroveGFX2
 	fardw TilesetNewBarkCherrygroveAnim
-	; Route 32 shares common terrain, with six reference-only yellow-entrance tiles
-	; in bank 1's second half. Keep northern connection block IDs shared.
+	; Routes 32/33 share common terrain, with yellow-entrance, cave and puddle
+	; tiles in bank 1's second half. Keep connection block IDs shared.
 	dbas TilesetRedPlusPlusRoute32Meta, TilesetRedPlusPlusRoute32Coll, TilesetRedPlusPlusRoute32Attr
 	dba TilesetNewBarkCherrygroveGFX0, TilesetNewBarkCherrygroveGFX1, TilesetRedPlusPlusRoute32GFX2
-	fardw TilesetNewBarkCherrygroveAnim
+	fardw TilesetRedPlusPlusRoute32Anim
+	; Azalea uses its own building pool, retaining Route 33's connection IDs.
+	dbas TilesetRedPlusPlusAzaleaMeta, TilesetRedPlusPlusAzaleaColl, TilesetRedPlusPlusAzaleaAttr
+	dba TilesetNewBarkCherrygroveGFX0, TilesetRedPlusPlusAzaleaGFX1, TilesetRedPlusPlusAzaleaGFX2
+	fardw TilesetRedPlusPlusRoute32Anim
 	assert_table_length NUM_TILESETS
 
 
@@ -221,6 +225,23 @@ SECTION "Tileset Data - redplusplus route32", ROMX
 TilesetRedPlusPlusRoute32Meta:: INCBIN "data/tilesets/redplusplus_route32_metatiles.bin.lzp"
 TilesetRedPlusPlusRoute32Attr:: INCBIN "data/tilesets/redplusplus_route32_attributes.bin.lzp"
 TilesetRedPlusPlusRoute32Coll:: INCBIN "data/tilesets/redplusplus_route32_collision.bin.lzp"
+
+
+SECTION "Tileset Graphics - redplusplus azalea vram1", ROMX
+
+TilesetRedPlusPlusAzaleaGFX1:: INCBIN "gfx/tilesets/redplusplus_azalea.redplusplus_johto_common.2bpp.vram0.lzp"
+
+
+SECTION "Tileset Graphics - redplusplus azalea vram2", ROMX
+
+TilesetRedPlusPlusAzaleaGFX2:: INCBIN "gfx/tilesets/redplusplus_azalea.redplusplus_johto_common.2bpp.vram1.lzp"
+
+
+SECTION "Tileset Data - redplusplus azalea", ROMX
+
+TilesetRedPlusPlusAzaleaMeta:: INCBIN "data/tilesets/redplusplus_azalea_metatiles.bin.lzp"
+TilesetRedPlusPlusAzaleaAttr:: INCBIN "data/tilesets/redplusplus_azalea_attributes.bin.lzp"
+TilesetRedPlusPlusAzaleaColl:: INCBIN "data/tilesets/redplusplus_azalea_collision.bin.lzp"
 
 
 SECTION "Tileset Graphics - azalea blackthorn vram0", ROMX

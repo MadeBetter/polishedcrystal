@@ -37,6 +37,21 @@ TilesetNewBarkCherrygroveAnim::
 	tileframe StandingTileFrame8
 	tileframe DoneTileAnimation
 
+TilesetRedPlusPlusRoute32Anim::
+	; Route 33/Azalea rainy blocks reference these reserved bank-1 tiles.
+	tileframe AnimateFarawayWaterTiles,         $0:03
+	tileframe AnimateRainTiles,                $1:86
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe AnimateRedPlusPlusFlowerTile,     $0:02
+	tileframe AnimateRainTiles,                $1:86
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe DoNothing
+	tileframe StandingTileFrame8
+	tileframe DoneTileAnimation
+
 TilesetJohtoTraditionalAnim::
 TilesetJohtoOutlandsAnim::
 TilesetJohtoAncientAnim::

@@ -49,6 +49,7 @@ class UnusedBlockTests(unittest.TestCase):
             if key not in {
                 "new_bark_cherrygrove", "azalea_blackthorn", "redplusplus_ecruteak",
                 "redplusplus_route32",
+                "redplusplus_azalea",
             }:
                 continue
             with self.subTest(map=name):
