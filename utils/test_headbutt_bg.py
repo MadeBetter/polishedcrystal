@@ -118,7 +118,7 @@ class HeadbuttBGTests(unittest.TestCase):
         states = re.findall(r'(ld a, TRUE|xor a)\s+call QueueHeadbuttTree', routine)
         self.assertEqual(states, ['ld a, TRUE', 'xor a'] * 3)
         delays = re.findall(r'ld c, (\d+)\s+call HeadbuttDelayFrames', routine)
-        self.assertEqual(delays, ['4', '4', '4', '3', '3', '14'])
+        self.assertEqual(delays, ['5', '5', '5', '4', '4', '9'])
         self.assertEqual(sum(map(int, delays)), 32)
         queue = self.animation.split('QueueHeadbuttTree:', 1)[1]
         self.assertRegex(queue, r'ld a, 6\s+ldh \[hBGMapTileCount\], a')

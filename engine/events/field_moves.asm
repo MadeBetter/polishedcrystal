@@ -66,7 +66,15 @@ endr
 	call PlaySFX
 	ld a, TRUE
 	call QueueHeadbuttTree
-	ld c, 4
+	ld c, 5
+	call HeadbuttDelayFrames
+	xor a
+	call QueueHeadbuttTree
+	ld c, 5
+	call HeadbuttDelayFrames
+	ld a, TRUE
+	call QueueHeadbuttTree
+	ld c, 5
 	call HeadbuttDelayFrames
 	xor a
 	call QueueHeadbuttTree
@@ -75,19 +83,11 @@ endr
 	ld a, TRUE
 	call QueueHeadbuttTree
 	ld c, 4
-	call HeadbuttDelayFrames
-	xor a
-	call QueueHeadbuttTree
-	ld c, 3
-	call HeadbuttDelayFrames
-	ld a, TRUE
-	call QueueHeadbuttTree
-	ld c, 3
 	call HeadbuttDelayFrames
 	xor a
 	call QueueHeadbuttTree
 	; Keep the original 32-frame pacing, with the tree restored for the rest.
-	ld c, 14
+	ld c, 9
 	call HeadbuttDelayFrames
 	farcall RestoreHeadbuttFontTiles
 	pop af
