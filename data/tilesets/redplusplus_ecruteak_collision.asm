@@ -137,7 +137,7 @@
 	tilecoll WALL, WALL, WALL, WALL ; 88
 	tilecoll FLOOR, FLOOR, HEADBUTT_TREE, HEADBUTT_TREE ; 89: Outskirts Route 42 preview 65
 	tilecoll WALL, WALL, WALL, WALL ; 8a
-	tilecoll FLOOR, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 8b: Outskirts Route 42 preview 66
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE, HEADBUTT_TREE ; 8b: Route 36 grotto tree band (same collision as 1f)
 	tilecoll WALL, WALL, WALL, WALL ; 8c
 	tilecoll WALL, WALL, WALL, WALL ; 8d
 	tilecoll WALL, WALL, WALL, WALL ; 8e
@@ -162,7 +162,7 @@
 	tilecoll WALL, WALL, WALL, WALL ; a1
 	tilecoll WALL, WALL, CAVE, WALL ; a2
 	tilecoll WATER, WATER, WATER, WATER ; a3: Violet Red++ a3
-	tilecoll WALL, TOP_WALL, WALL, FLOOR ; a4: Outskirts Route 42 preview 6a
+	tilecoll WALL, WALL, WALL, WALL ; a4: gate facade with shrubs, left (same collision as 88)
 	tilecoll WALL, WALL, WALL, WALL ; a5
 	tilecoll FLOOR, FLOOR, WALL, WALL ; a6
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; a7: Violet Outskirts left-side berry tree
@@ -236,12 +236,12 @@
 	tilecoll WALL, WALL, WALL, WALL ; eb
 	tilecoll WALL, WALL, WALL, WALL ; ec
 	tilecoll WALL, WALL, WALL, WALL ; ed
-	tilecoll WALL, WALL, WALL, WALL ; ee
+	tilecoll WALL, WALL, WALL, WALL ; ee: gate facade with shrubs, right (same collision as 8a)
 	tilecoll WATER, WATER, WATER, WATER ; ef
 	tilecoll WALL, TOP_WALL, WALL, FLOOR ; f0
 	tilecoll TOP_WALL, WALL, FLOOR, WALL ; f1
 	tilecoll WATER, WATER, WALL, WALL ; f2
-	tilecoll BUOY, WATER, WALL, WALL ; f3
+	tilecoll HEADBUTT_TREE, HEADBUTT_TREE, FLOOR, FLOOR ; f3: Route 36 grotto tree base (same collision as 23)
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; f4
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; f5
 	tilecoll WALL, WALL, TALL_GRASS, TALL_GRASS ; f6
