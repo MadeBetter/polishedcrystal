@@ -17,7 +17,9 @@ class HeadbuttBGTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.moves = (ROOT / 'engine/events/field_moves.asm').read_text()
-        cls.animation = cls.moves.split('ShakeHeadbuttTree:', 1)[1].split('OWCutAnimation:', 1)[0]
+        cls.dispatch = cls.moves.split('ShakeHeadbuttTree:', 1)[1].split('ShakeHeadbuttTreeBG:', 1)[0]
+        cls.animation = cls.moves.split('ShakeHeadbuttTreeBG:', 1)[1].split('ShakeLegacyHeadbuttTree:', 1)[0]
+        cls.legacy = cls.moves.split('ShakeLegacyHeadbuttTree:', 1)[1].split('OWCutAnimation:', 1)[0]
 
     def test_seven_tile_asset_and_color_indices(self):
         png = (ROOT / 'gfx/overworld/headbutt_tree_bg.png').read_bytes()
@@ -123,14 +125,29 @@ class HeadbuttBGTests(unittest.TestCase):
         queue = self.animation.split('QueueHeadbuttTree:', 1)[1]
         self.assertRegex(queue, r'ld a, 6\s+ldh \[hBGMapTileCount\], a')
 
-    def test_no_legacy_fallback_and_gameplay_entry_unchanged(self):
-        self.assertIn('cp BANK(TilesetNewBarkCherrygroveGFX0)', self.animation)
-        self.assertIn('cp LOW(TilesetNewBarkCherrygroveGFX0)', self.animation)
-        self.assertIn('cp HIGH(TilesetNewBarkCherrygroveGFX0)', self.animation)
+    def test_graphics_family_dispatch_and_gameplay_entry_unchanged(self):
+        self.assertIn('cp BANK(TilesetNewBarkCherrygroveGFX0)', self.dispatch)
+        self.assertIn('cp LOW(TilesetNewBarkCherrygroveGFX0)', self.dispatch)
+        self.assertIn('cp HIGH(TilesetNewBarkCherrygroveGFX0)', self.dispatch)
+        self.assertRegex(self.dispatch, r'call IsRedPlusPlusHeadbuttTileset\s+jp z, ShakeHeadbuttTreeBG\s+jmp ShakeLegacyHeadbuttTree')
+        self.assertNotIn('ShakeLegacyHeadbuttTree', self.animation)
         self.assertNotIn('HeadbuttTree2GFX', self.animation)
         script = (ROOT / 'engine/events/overworld.asm').read_text()
         self.assertRegex(script, r'AutoHeadbuttScript:\s+reanchormap\s+callasm ShakeHeadbuttTree\s+callasm TreeMonEncounter')
         self.assertIn('callasm TreeItemEncounter', script)
+
+    def test_legacy_sprite_animation_and_cleanup(self):
+        self.assertRegex(self.legacy, r'call GetFacingTileCoord\s+cp COLL_HEADBUTT_TREE\s+ret nz')
+        self.assertRegex(self.legacy, r'cp NOISY_FOREST\s+ld hl, HeadbuttTree2GFX\s+jr z, .got_gfx\s+ld hl, HeadbuttTreeGFX')
+        for instruction in ('call DecompressRequest2bpp', 'call Cut_Headbutt_GetPixelFacing',
+                            'ld a, SPRITE_ANIM_INDEX_HEADBUTT', 'call InitSpriteAnimStruct',
+                            'call HideHeadbuttTree', 'ld a, 32', 'call LoadMapPart',
+                            'call ApplyTilemapInVBlank', 'call ClearSpriteAnims',
+                            'jmp UpdatePlayerSprite'):
+            self.assertIn(instruction, self.legacy)
+        table = self.legacy.split('TreeRelativeLocationTable:', 1)[1]
+        self.assertEqual(len(re.findall(r'^\s+dwcoord ', table, re.MULTILINE)), 4)
+        self.assertIn('and 1 << OW_WEATHER_LIGHTNING_DISABLED_F', self.legacy)
 
     def test_selected_font_restored_in_existing_scratch_union(self):
         font = (ROOT / 'engine/gfx/load_font.asm').read_text()

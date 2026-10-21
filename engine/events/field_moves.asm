@@ -10,10 +10,27 @@ BlindingFlash::
 	jmp FadeInPalettes_EnableDynNoApply
 
 ShakeHeadbuttTree:
+; Select by the loaded graphics family, including connected-map strips.
+; A failed RedPlusPlus signature must never fall back to a small-tree sprite.
+	call IsRedPlusPlusHeadbuttTileset
+	jp z, ShakeHeadbuttTreeBG
+	jmp ShakeLegacyHeadbuttTree
+
+IsRedPlusPlusHeadbuttTileset:
+	ld a, [wTilesetGFX0Bank]
+	cp BANK(TilesetNewBarkCherrygroveGFX0)
+	ret nz
+	ld hl, wTilesetGFX0Address
+	ld a, [hli]
+	cp LOW(TilesetNewBarkCherrygroveGFX0)
+	ret nz
+	ld a, [hl]
+	cp HIGH(TilesetNewBarkCherrygroveGFX0)
+	ret
+
+ShakeHeadbuttTreeBG:
 ; AutoHeadbuttScript has reanchored the map: wTilemap/wAttrmap are fresh,
 ; the BG origin is (0,0), and text/map-name popup updates are suspended.
-; Only the RedPlusPlus tree artwork is supported. Other trees still run
-; the unchanged encounter/item scripts, without a visual animation.
 	call FindHeadbuttTree
 	ret nc
 	ld a, l
@@ -103,17 +120,7 @@ endr
 
 FindHeadbuttTree:
 ; Return carry, hl = original band's tilemap address, b,c = screen y,x.
-; Match the graphics family, not map/block IDs (including connection strips).
-	ld a, [wTilesetGFX0Bank]
-	cp BANK(TilesetNewBarkCherrygroveGFX0)
-	jr nz, .not_supported
-	ld hl, wTilesetGFX0Address
-	ld a, [hli]
-	cp LOW(TilesetNewBarkCherrygroveGFX0)
-	jr nz, .not_supported
-	ld a, [hl]
-	cp HIGH(TilesetNewBarkCherrygroveGFX0)
-	jr nz, .not_supported
+; The dispatcher has already checked the loaded RedPlusPlus graphics family.
 	call GetFacingTileCoord
 	cp COLL_HEADBUTT_TREE
 	jr nz, .not_supported
@@ -372,6 +379,161 @@ HeadbuttDelayFrames:
 	dec c
 	jr nz, HeadbuttDelayFrames
 	ret
+
+ShakeLegacyHeadbuttTree:
+; Retain the original 16x16 sprite animation for unconverted tilesets.
+	call GetFacingTileCoord
+	cp COLL_HEADBUTT_TREE
+	ret nz
+	ld a, [wWeatherFlags]
+	push af
+	ld hl, wWeatherFlags
+	set OW_WEATHER_LIGHTNING_DISABLED_F, [hl]
+	farcall CancelOWFadePalettes
+	farcall CopyBGGreenToOBPal7
+	call ClearSpriteAnims
+	call GetCurrentLandmark
+	cp NOISY_FOREST
+	ld hl, HeadbuttTree2GFX
+	jr z, .got_gfx
+	ld hl, HeadbuttTreeGFX
+.got_gfx
+	ld de, vTiles0 tile $61
+	lb bc, BANK("Overworld Effect Graphics"), 12
+	call DecompressRequest2bpp
+	call Cut_Headbutt_GetPixelFacing
+	ld a, SPRITE_ANIM_INDEX_HEADBUTT
+	call InitSpriteAnimStruct
+	ld hl, SPRITEANIMSTRUCT_TILE_ID
+	add hl, bc
+	ld [hl], $61
+
+	; shift all sprites left in OAM by 4 slots
+	; hl = source, de = destination, bc = length
+	ldh a, [hUsedOAMIndex]
+	; a = OAM_SIZE - a
+	cpl
+	add OAM_SIZE + 1
+	ld h, HIGH(wShadowOAM)
+	ld l, a
+	sub (4 * OBJ_SIZE)
+	ld e, a
+	ld d, h
+	ld b, 0
+	ldh a, [hUsedOAMIndex]
+	ld c, a
+.copy_loop
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .copy_loop
+
+	ld a, LOW(wShadowOAMSprite36)
+	ld [wCurSpriteOAMAddr], a
+	call DoNextFrameForAllSprites
+	call HideHeadbuttTree
+	ld a, 32
+	ld [wFrameCounter], a
+	call WaitSFX
+	ld de, SFX_SANDSTORM
+	call PlaySFX
+.loop
+	ld hl, wFrameCounter
+	ld a, [hl]
+	and a
+	jr z, .done
+	dec [hl]
+
+	ld a, LOW(wShadowOAMSprite36)
+	ld [wCurSpriteOAMAddr], a
+	call DoNextFrameForAllSprites_OW
+	farcall DoOverworldWeather
+	call DelayFrame
+	jr .loop
+
+.done
+	call LoadMapPart
+	call ApplyTilemapInVBlank
+	xor a
+	assert NO_BG_MAP_TRANSFER == 0
+	ldh [hBGMapMode], a
+
+	; shift all sprites right in OAM by 4 slots
+	; hl = source, de = destination, bc = length
+	ldh a, [hUsedOAMIndex]
+	; a = OAM_SIZE - a - 1
+	cpl
+	add OAM_SIZE
+	ld l, a
+	ld h, HIGH(wShadowOAM)
+	ld de, wShadowOAMSprite39 + 3
+	ld c, OBJ_SIZE * 4
+.copy_done_loop
+	ld a, [hld]
+	ld [de], a
+	dec de
+	dec c
+	jr nz, .copy_done_loop
+	ld h, HIGH(wShadowOAM)
+	ldh a, [hUsedOAMIndex]
+	; a = (OAM_COUNT - 4) * OBJ_SIZE - a
+	cpl
+	add (OAM_COUNT - 4) * OBJ_SIZE + 1
+	ld l, a
+
+	ld c, 4
+	ld de, OBJ_SIZE
+	ld a, OAM_YCOORD_HIDDEN
+.hide_loop
+	ld [hl], a
+	add hl, de
+	dec c
+	jr nz, .hide_loop
+
+	call ClearSpriteAnims
+	call DelayFrame
+	pop af
+	and 1 << OW_WEATHER_LIGHTNING_DISABLED_F
+	jr nz, .update_player
+	ld hl, wWeatherFlags
+	res OW_WEATHER_LIGHTNING_DISABLED_F, [hl]
+.update_player
+	jmp UpdatePlayerSprite
+
+HideHeadbuttTree:
+	xor a
+	assert NO_BG_MAP_TRANSFER == 0
+	ldh [hBGMapMode], a
+	ld a, [wPlayerDirection]
+	and %00001100
+	srl a
+	ld e, a
+	ld d, 0
+	ld hl, TreeRelativeLocationTable
+	add hl, de
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+	ld a, ' '
+	ld [hli], a
+	ld [hld], a
+	ld bc, SCREEN_WIDTH
+	add hl, bc
+	ld [hli], a
+	ld [hld], a
+	call ApplyTilemapInVBlank
+	xor a
+	assert NO_BG_MAP_TRANSFER == 0
+	ldh [hBGMapMode], a
+	ret
+
+TreeRelativeLocationTable:
+	dwcoord 8,     8 + 2 ; DOWN
+	dwcoord 8,     8 - 2 ; UP
+	dwcoord 8 - 2, 8     ; LEFT
+	dwcoord 8 + 2, 8     ; RIGHT
 
 OWCutAnimation:
 	; Animation index in a
