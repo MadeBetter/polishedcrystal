@@ -84,8 +84,8 @@ DEF OW_RIGHT EQU RIGHT << 2
 	shift_const ABSOLUTE_TILE_ID    ; 2
 	shift_const NEXT_PALETTE        ; 3
 
-; object palette slot reserved for fruit tree trunks
-DEF FRUIT_TREE_TRUNK_PAL_SLOT EQU 6
+; Object palette slot reserved for fruit tree trunks; weather owns slot 6.
+DEF FRUIT_TREE_TRUNK_PAL_SLOT EQU 5
 
 ; map_object struct members (see macros/ram.asm)
 rsreset

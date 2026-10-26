@@ -101,6 +101,7 @@ DEF NO_PAL_LOADED EQU -1
 
 ; fixed palette indexes
 DEF PAL_OW_WEATHER EQU 6
+assert FRUIT_TREE_TRUNK_PAL_SLOT != PAL_OW_WEATHER, "Fruit tree trunks and weather must use separate object palettes."
 
 MACRO ow_mon_pal_const
 	DEF _const_value_low = const_value & $0f
