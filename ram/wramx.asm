@@ -1264,9 +1264,9 @@ wRuinsOfAlphKabutoChamberSceneID:: db
 wRuinsOfAlphOmanyteChamberSceneID:: db
 wRuinsOfAlphOutsideSceneID:: db
 wRuinsOfAlphResearchCenterSceneID:: db
-wSeagallopFerryNavelGateSceneID:: db
-wSeagallopFerryShamoutiGateSceneID:: db
-wSeagallopFerryVermilionGateSceneID:: db
+wSeagallopFerryGatesSceneID:: db
+wCableCarGatesSceneID:: db
+	ds 1 ; unused
 wShamoutiHotelRestaurantSceneID:: db
 wSproutTower3FSceneID:: db
 wTeamRocketBaseB2FSceneID:: db
