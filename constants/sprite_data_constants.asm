@@ -81,18 +81,19 @@ DEF NUM_OW_TIME_OF_DAY_PALS EQU const_value
 	ow_npc_pal_const DRILL             ; 30
 	ow_npc_pal_const PEARL             ; 31
 	ow_npc_pal_const CAMPFIRE          ; 32
-	ow_npc_pal_const TINY_WINDOW       ; 33
+	ow_npc_pal_const CABLE_CAR         ; 33
+	ow_npc_pal_const TINY_WINDOW       ; 34
 DEF NUM_OW_INDIVIDUAL_PALS EQU const_value - NUM_OW_TIME_OF_DAY_PALS
 DEF FIRST_COPY_BG_PAL EQU const_value
-	ow_npc_pal_const COPY_BG_GRAY      ; 34
-	ow_npc_pal_const COPY_BG_RED       ; 35
-	ow_npc_pal_const COPY_BG_GREEN     ; 36
-	ow_npc_pal_const COPY_BG_WATER     ; 37
-	ow_npc_pal_const COPY_BG_YELLOW    ; 38
-	ow_npc_pal_const COPY_BG_BROWN     ; 39
-	ow_npc_pal_const COPY_BG_ROOF      ; 3a
-	ow_npc_pal_const COPY_BG_TEXT      ; 3b
-	ow_npc_pal_const COPY_BG_WHITE     ; 3c
+	ow_npc_pal_const COPY_BG_GRAY      ; 35
+	ow_npc_pal_const COPY_BG_RED       ; 36
+	ow_npc_pal_const COPY_BG_GREEN     ; 37
+	ow_npc_pal_const COPY_BG_WATER     ; 38
+	ow_npc_pal_const COPY_BG_YELLOW    ; 39
+	ow_npc_pal_const COPY_BG_BROWN     ; 3a
+	ow_npc_pal_const COPY_BG_ROOF      ; 3b
+	ow_npc_pal_const COPY_BG_TEXT      ; 3c
+	ow_npc_pal_const COPY_BG_WHITE     ; 3d
 DEF NUM_OW_BG_COPY_PALS EQU const_value - NUM_OW_INDIVIDUAL_PALS
 DEF NUM_OW_PALS EQU const_value
 
