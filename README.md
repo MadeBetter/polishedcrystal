@@ -73,8 +73,6 @@ Additional resource:
 
 ### Pokémon Polished Crystal DX
 
-Work-in-progress battle previews showing colorized trainers, all three player characters—Chris, Kris, and Crys—and Lyra's catching tutorial from the [oam-trainer-tiles branch](https://github.com/MadeBetter/polishedcrystal/tree/oam-trainer-tiles).
-
 ![Colorized Youngster Joey and Chris in battle](screenshots/dx/colorized-youngster.png)
 ![Colorized Bird Keeper Perry and Chris in battle](screenshots/dx/colorized-bird-keeper.png)
 ![Colorized Lyra and Chris in battle](screenshots/dx/colorized-lyra.png)
