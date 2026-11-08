@@ -36,6 +36,17 @@ class LZPCompressorTests(unittest.TestCase):
         self.run_tool("--align=13", success=False)
         self.run_tool("--align", success=False)
 
+    def test_empty_equals_arguments_are_rejected_without_aborting(self):
+        for option, message in (
+            ("--align=", "must be a number"),
+            ("--binary=", "does not take an argument"),
+        ):
+            with self.subTest(option=option):
+                result = subprocess.run([str(TOOL), option], input=b"",
+                                        capture_output=True, cwd=ROOT)
+                self.assertEqual(result.returncode, 64)
+                self.assertIn(message, result.stderr.decode())
+
     def test_round_trips_patterns_and_command_length_boundaries(self):
         rng = random.Random(0)
         for length in (0, 1, 2, 3, 31, 32, 33, 255, 256, 257, 511, 512, 513):

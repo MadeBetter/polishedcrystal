@@ -1312,14 +1312,14 @@ struct Options {
 				}
 
 			} else if (arg[1] == '-') { // Long option.
-				char const *name_start = &arg[2];
-				char const *name_end = name_start;
-				while (*name_end != '\0' && *name_end != '=') { // `--opt=arg`
-					++name_end;
+				std::string_view name(&arg[2]);
+				char const *option_arg = nullptr;
+				if (auto eq_pos = name.find('='); eq_pos != name.npos) { // `--opt=arg`
+					// argv has a terminator beyond the view; don't index name[size()].
+					option_arg = name.data() + eq_pos + 1;
+					name = name.substr(0, eq_pos);
 				}
-				std::string_view name(name_start, name_end - name_start);
 
-				char const *option_arg = *name_end == '=' ? &name_end[1] : nullptr;
 				auto ensure_no_arg = [&option_arg, &name] {
 					if (option_arg != nullptr) {
 						error_exit(EXIT_BAD_USAGE, "--%.*s does not take an argument\n",
