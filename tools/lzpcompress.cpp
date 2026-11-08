@@ -1078,10 +1078,28 @@ decompress(std::vector<std::pair<Command, uint8_t const *>> const &commands) {
 	return data;
 }
 
+static void write_padding(size_t count, FILE *output, bool textual, char const *filename) {
+	if (count == 0) {
+		return;
+	}
+	if (textual) {
+		fputs("\tdb 0", output);
+		for (size_t i = 1; i < count; ++i) {
+			fputs(", 0", output);
+		}
+		xputc('\n', output, filename);
+	} else {
+		for (size_t i = 0; i < count; ++i) {
+			xputc(0, output, filename);
+		}
+	}
+}
+
 static void serialize(std::forward_list<Command> const &cmds,
                       std::vector<uint8_t> const &uncompressed, FILE *output, bool textual_output,
-                      char const *filename) {
+                      char const *filename, uint8_t alignment_nb_bits) {
 	uint8_t const *bytes = uncompressed.data();
+	size_t encoded_size = 1; // Includes the stream terminator.
 	for (Command const &cmd : cmds) {
 		LzCmd const &inner_base = lz_cmd(cmd);
 		assert(inner_base.len >= inner_base.min_length());
@@ -1092,6 +1110,7 @@ static void serialize(std::forward_list<Command> const &cmds,
 		inner_base.serialize(bytes, output, textual_output, filename);
 
 		bytes += inner_base.len;
+		encoded_size += inner_base.num_encoded_bytes();
 	}
 
 	assert(size_t(bytes - uncompressed.data()) == uncompressed.size());
@@ -1100,6 +1119,8 @@ static void serialize(std::forward_list<Command> const &cmds,
 	} else {
 		xputc(LZ_END, output, filename);
 	}
+	size_t mask = (size_t(1) << alignment_nb_bits) - 1;
+	write_padding((-encoded_size) & mask, output, textual_output, filename);
 }
 static void serialize(std::vector<std::pair<Command, uint8_t const *>> const &cmds,
                       std::vector<uint8_t> const &uncompressed, FILE *output, bool textual_output,
@@ -1219,7 +1240,8 @@ deserialize(std::vector<uint8_t> const &compressed) {
 		commands.emplace_back(std::move(cmd), payload_start);
 	}
 
-	if (byte_idx != compressed.size()) {
+	if (!std::all_of(compressed.begin() + byte_idx, compressed.end(),
+	                 [](uint8_t byte) { return byte == 0; })) {
 		error_exit(EXIT_DATA_ERR,
 		           "corrupted input (end marker found after %zu bytes, but %zu remain)\n",
 		           byte_idx - 1, compressed.size() - byte_idx);
@@ -1268,7 +1290,7 @@ struct Options {
 	char const *input;
 	char const *output;
 	enum { MODE_COMPRESS_BIN, MODE_COMPRESS_TEXT, MODE_DECOMPRESS, MODE_DUMP } mode;
-	uint8_t alignment_nb_bits; // TODO: not hooked up to anything
+	uint8_t alignment_nb_bits;
 	static constexpr uint8_t max_alignment = 12;
 
 	/// Parse from CLI args.
@@ -1431,7 +1453,8 @@ int main(int argc, char *argv[]) {
 
 		bool textual_output = options.mode == Options::MODE_COMPRESS_TEXT;
 		FILE *output = open_output_file(options.output, textual_output);
-		serialize(commands, input_bytes, output, textual_output, options.input);
+		serialize(commands, input_bytes, output, textual_output, options.output,
+		          options.alignment_nb_bits);
 		close_output_file(output);
 	} break;
 
@@ -1444,7 +1467,12 @@ int main(int argc, char *argv[]) {
 		if (options.mode == Options::MODE_DECOMPRESS) {
 			xfwrite(decompressed.data(), decompressed.size(), output, options.output);
 		} else {
-			serialize(commands, decompressed, output, true, options.input);
+			serialize(commands, decompressed, output, true, options.output);
+			size_t encoded_size = 1; // Includes the stream terminator.
+			for (auto const &[cmd, payload] : commands) {
+				encoded_size += lz_cmd(cmd).num_encoded_bytes();
+			}
+			write_padding(input_bytes.size() - encoded_size, output, true, options.output);
 		}
 		close_output_file(output);
 	} break;
