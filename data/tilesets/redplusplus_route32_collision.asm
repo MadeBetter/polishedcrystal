@@ -190,24 +190,24 @@
 	tilecoll FLOOR, WALL, FLOOR, FLOOR ; bd: Violet Red++ bd
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; be: Violet Red++ be
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; bf
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c0
-	tilecoll WATER, WATER, FLOOR, FLOOR ; c1: Violet Red++ c1
-	tilecoll WATER, WATER, WALL, WALL ; c2: Violet Red++ c2
-	tilecoll WATER, WATER, WALL, WALL ; c3: Violet Red++ c3
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c4
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c5
-	tilecoll WALL, WALL, WALL, WALL ; c6: Violet Red++ c6
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c7
-	tilecoll WALL, WALL, WALL, DOOR ; c8: Violet Red++ c8
-	tilecoll WALL, WALL, WALL, WALL ; c9: Violet Red++ c9
+	tilecoll BUOY, WATER, BUOY, WATER ; c0: Route 32 Coast reference (Red++ 1c)
+	tilecoll WATER, BUOY, WATER, BUOY ; c1: Route 32 Coast reference (Red++ 1e)
+	tilecoll BUOY, BUOY, WATER, BUOY ; c2: Route 32 Coast reference (Red++ 1a)
+	tilecoll BUOY, WATER, WALL, WALL ; c3: Route 32 Coast reference (Red++ f3)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c4: Route 32 Coast reference (Red++ bd)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c5: Route 32 Coast reference (Red++ be)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c6: Route 32 Coast reference (Red++ c3)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c7: Route 32 Coast reference (Red++ 06)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c8: Route 32 Coast reference (Red++ cb)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; c9: Route 32 Coast reference (Red++ c6)
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; ca
-	tilecoll FLOOR, WALL, FLOOR, WALL ; cb: Outskirts Red++ cb
-	tilecoll FLOOR, FLOOR, WALL, WALL ; cc
-	tilecoll FLOOR, FLOOR, WALL, WALL ; cd
-	tilecoll WALL, WALL, WALL, WALL ; ce
-	tilecoll WALL, WALL, WALL, WALL ; cf
-	tilecoll WALL, WALL, WALL, DOOR ; d0
-	tilecoll WALL, WALL, WALL, WALL ; d1
+	tilecoll FLOOR, FLOOR, WALL, FLOOR ; cb: Route 32 Coast reference (Red++ 15)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; cc: Route 32 Coast reference (Red++ c2)
+	tilecoll WALL, WALL, WALL, DOOR ; cd: Route 32 Coast reference (Red++ e0)
+	tilecoll WALL, WALL, WALL, WALL ; ce: Route 32 Coast reference (Red++ e1)
+	tilecoll FLOOR, WALL, FLOOR, FLOOR ; cf: Route 32 Coast reference (Red++ 02)
+	tilecoll WALL, WALL, FLOOR, WALL ; d0: Route 32 Coast reference (Red++ 0a)
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; d1: Route 32 Coast reference (Red++ c8)
 	tilecoll WALL, DOOR, FLOOR, FLOOR ; d2
 	tilecoll WALL, WALL, FLOOR, FLOOR ; d3
 	tilecoll WALL, WALL, WALL, WALL ; d4

@@ -91,7 +91,8 @@ ENDM
 	connection north, VioletCity, VIOLET_CITY, 2
 	connection south, Route33, ROUTE_33, 2
 	connection west, MagnetTunnelEast, MAGNET_TUNNEL_EAST, 10
-	connection east, CherrygroveBay, CHERRYGROVE_BAY, 12
+	; The last seven block rows meet Route 32 Coast's first seven rows.
+	connection east, Route32Coast, ROUTE_32_COAST, 39
 
 	map_attributes Route33, ROUTE_33, $f
 	connection north, Route32, ROUTE_32, -2
@@ -371,8 +372,9 @@ ENDM
 	connection west, CherrygroveBay, CHERRYGROVE_BAY, 0
 	connection east, Route30, ROUTE_30, -13
 
-	map_attributes Route32Coast, ROUTE_32_COAST, $35
+	map_attributes Route32Coast, ROUTE_32_COAST, $41
 	connection north, CherrygroveBay, CHERRYGROVE_BAY, 0
+	connection west, Route32, ROUTE_32, -39
 
 	map_attributes VioletOutskirts, VIOLET_OUTSKIRTS, $f
 	connection north, Route42, ROUTE_42, -5
