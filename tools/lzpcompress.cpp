@@ -1291,7 +1291,10 @@ struct Options {
 
 			} else if (arg[1] == '-') { // Long option.
 				char const *name_start = &arg[2];
-				char const *name_end = strchrnul(name_start, '='); // `--opt=arg`
+				char const *name_end = name_start;
+				while (*name_end != '\0' && *name_end != '=') { // `--opt=arg`
+					++name_end;
+				}
 				std::string_view name(name_start, name_end - name_start);
 
 				char const *option_arg = *name_end == '=' ? &name_end[1] : nullptr;
