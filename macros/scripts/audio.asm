@@ -181,7 +181,7 @@ ENDM
 	const pitch_offset_cmd ; $e7
 MACRO pitch_offset
 	db pitch_offset_cmd
-	if (\1) < $100
+	if (\1) < $80
 		db \1
 	else
 		assert (\1) < $8000, "'pitch_offset \1' is out of range"
