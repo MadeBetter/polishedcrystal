@@ -1,28 +1,30 @@
-# Pokémon Polished Crystal
+# Pokémon Polished Crystal DX
 
-This is a custom Pokémon game based on [the Pokémon Crystal disassembly](https://github.com/pret/pokecrystal).
+**Pokémon Polished Crystal DX** is a graphics enhancement project for [Pokémon Polished Crystal](https://github.com/Rangi42/polishedcrystal), the ROM hack by Rangi42 and its contributors built on [the Pokémon Crystal disassembly](https://github.com/pret/pokecrystal).
 
-My goal is to create what the title says: an improved, polished version of Pokémon Crystal. It fixes bugs, takes into account the official game changes since 2001, and adds some new ideas of my own. Many features restore what was removed from R/B/Y, or original to HG/SS.
+**DX is a work in progress and is planned for release as a patch for the next official Polished Crystal release.**
 
-I've had vague plans to make a Pokémon game for years. I'm very impressed by the effort that's gone into disassembling Pokémon Crystal and making the code so well-organized. Thanks to making it open-source (and to the ROM hackers that inspired me), I'm finally making this game a reality.
+Our goal is to refresh Polished Crystal's graphics while keeping its gameplay, content, mechanics, and quality-of-life features broadly the same. The patch focuses on:
 
-> There are many ways to create games but the way we work at Game Freak may be a little different from other companies. That is, we constantly change and tweak what we have come up with. To make a fun game even more fun and polish it up, we take what we have made and start thinking about it from scratch. And to make the game the most fun to play we make endless changes and tweaks no matter how long it takes. It may not be the best way, but I think these tweaks are important to make our games fun and better.
->
-> — Junichi Masuda, "[HIDDEN POWER of masuda No. 7](https://www.gamefreak.co.jp/blog/dir_english/?p=21)"
+- **Colorized trainer sprites in battle.**
+- **A brand-new overworld look**, based on the Gen 3 demake maps created by **Rangi42 and Luna**.
+- **Further graphical enhancements** throughout the adventure.
+
+The DX patch also converts Polished Crystal from the **MBC3 mapper to MBC30**, expanding the ROM to **4 MiB** to make room for the enhanced graphics. Playing DX requires an emulator or flashcart with MBC30 support.
+
+DX is a separate patch project. Credit for the original game and its features goes to the Polished Crystal team, and credit for the Gen 3 demake maps goes to Rangi42 and Luna.
 
 ## Download and Play
 
-The **current official release** is **v3.2.3** (the “Polished Crystal” release). It's fully playable from start to finish and includes major overhauls to gameplay, mechanics, and quality of life. A more detailed changelog is forthcoming, but you can find the major highlights below.
+The DX patch is still in development and will target the **next official Polished Crystal release**. The links below are for earlier releases of the **official Polished Crystal base game**; they are provided for reference and are not DX downloads.
 
-- **[Download v3.2.3 here](https://github.com/Rangi42/polishedcrystal/releases/tag/v3.2.3)**
+- **[Download the official Polished Crystal v3.2.3 base game](https://github.com/Rangi42/polishedcrystal/releases/tag/v3.2.3)**
 
-The previous official version was [v3.1.1](https://github.com/Rangi42/polishedcrystal/releases/tag/v3.1.1) (February 1, 2025).
+The earlier official v3.1.1 release is available [here](https://github.com/Rangi42/polishedcrystal/releases/tag/v3.1.1) (February 1, 2025).
 
-*If you have any questions about playing or patching, [read the FAQ](FAQ.md)!*
+## What's New in the Polished Crystal v3.2.3 Base Game
 
-## What’s New in v3.2.3
-
-Below is a brief summary of the major changes and additions. A more detailed changelog will be released soon.
+Below is a brief summary of the base game's major changes and additions. These are Polished Crystal features that DX aims to preserve alongside its graphical enhancements.
 
 - **Customizable New Game Setup:** You can now toggle Natures and Abilities on/off, choose how EVs work (classic no-limit, modern 510 limit, or disabled), and configure various other gameplay options before starting a new adventure.
 - **DVs No Longer Determine Natures/Shininess/Gender/Unown Form:** DVs still affect color variation (slightly different hues for the same species), but everything else is now handled separately.
@@ -39,7 +41,7 @@ Below is a brief summary of the major changes and additions. A more detailed cha
 
 ## Features
 
-A full list of features is in [FEATURES.md](FEATURES.md). Some highlights:
+A full list of the underlying Polished Crystal features is in [FEATURES.md](FEATURES.md). DX aims to keep these features overall the same while enhancing the graphics. Some highlights:
 
 - **289 Pokémon species**, including some new evolutions, plus **56 cosmetic forms** (e.g., Magikarp patterns, Pikachu Fly/Surf, Arbok patterns, Unown Forms) and **46 variants** (Alolan, Galarian, Hisuian, etc.)—for a total of **391 unique Pokémon**.
 - **73 new moves** (72 on faithful builds), **75 TMs**, and **31 move tutors**.
@@ -53,7 +55,7 @@ A full list of features is in [FEATURES.md](FEATURES.md). Some highlights:
 
 ## Discussion
 
-If you have questions or comments, please check or post on any of these sites. (Read the [FAQ](FAQ.md) first if you have general questions!)
+The following are community links for the original Polished Crystal project. (Read the [FAQ](FAQ.md) first if you have general questions!)
 
 - [Discord](https://discord.gg/ZK5pqK8)
 - [Skeetendo](https://hax.iimarckus.org/topic/6874/)
@@ -68,6 +70,24 @@ Additional resource:
 - [PolishedDex](https://www.polisheddex.app/) — An online companion for Polished Crystal. PolishedDex provides a searchable Pokédex, move list, item list, locations, abilities, special events, and a team builder. It also includes a FAQ and links to the official ROM releases, making it a convenient reference while playing.
 
 ## Screenshots
+
+### Pokémon Polished Crystal DX
+
+Work-in-progress battle previews showing colorized trainers, all three player characters—Chris, Kris, and Crys—and Lyra's catching tutorial from the [oam-trainer-tiles branch](https://github.com/MadeBetter/polishedcrystal/tree/oam-trainer-tiles).
+
+![Colorized Youngster Joey and Chris in battle](screenshots/dx/colorized-youngster.png)
+![Colorized Bird Keeper Perry and Chris in battle](screenshots/dx/colorized-bird-keeper.png)
+![Colorized Lyra and Chris in battle](screenshots/dx/colorized-lyra.png)
+![Colorized rival Silver and Chris in battle](screenshots/dx/colorized-rival.png)
+
+![Colorized Bug Catcher Wade and Kris in battle](screenshots/dx/colorized-kris-bug-catcher.png)
+![Colorized Schoolgirl Molly and Kris in battle](screenshots/dx/colorized-kris-schoolgirl.png)
+![Colorized Sage Chow and Crys in battle](screenshots/dx/colorized-crys-sage.png)
+![Colorized Ace Trainer Gaven and Crys in battle](screenshots/dx/colorized-crys-cooltrainer.png)
+
+![Colorized Lyra using a Poké Ball on Pidgey during the catching tutorial](screenshots/dx/lyra-catching-tutorial.png)
+
+### Pokémon Polished Crystal
 
 ![title-screen](screenshots/title-screen.png)
 ![which-photo](screenshots/which-photo.png)
